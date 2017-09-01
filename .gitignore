@@ -2,6 +2,7 @@
 *.apk
 *.ap_
 
+# ZFoo
 # Java class files
 *.class
 
