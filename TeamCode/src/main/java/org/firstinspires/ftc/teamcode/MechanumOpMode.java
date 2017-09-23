@@ -132,6 +132,9 @@ public abstract class MechanumOpMode extends OpMode {
 
     }
 
+    /**
+     * Stop moving the robot
+     */
     public void stop(){
         FLWheel.setPower(0);
         FRWheel.setPower(0);
