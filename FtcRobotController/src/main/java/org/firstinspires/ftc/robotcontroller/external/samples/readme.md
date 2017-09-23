@@ -17,7 +17,11 @@ To summarize: A range of different samples classes will reside in the java/exter
 The class names will follow a naming convention which indicates the purpose of each class.
 The prefix of the name will be one of the following:
 
+<<<<<<< HEAD
 Template:	This is a minimally functional OpMode used to illustrate the skeleton/structure
+=======
+Basic:  	This is a minimally functional OpMode used to illustrate the skeleton/structure
+>>>>>>> ftc_app/master
             of a particular style of OpMode.  These are bare bones examples.
 
 Sensor:    	This is a Sample OpMode that shows how to use a specific sensor.

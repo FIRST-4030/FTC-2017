@@ -8,7 +8,11 @@ buildscript {
         jcenter()
     }
     dependencies {
+<<<<<<< HEAD
         classpath 'com.android.tools.build:gradle:2.2.3'
+=======
+        classpath 'com.android.tools.build:gradle:2.3.3'
+>>>>>>> ftc_app/master
     }
 }
 

@@ -1,5 +1,8 @@
+<<<<<<< HEAD
 import java.util.regex.Pattern
 
+=======
+>>>>>>> ftc_app/master
 //
 // build.gradle in FtcRobotController
 //
@@ -13,7 +16,12 @@ android {
     }
 
     compileSdkVersion 23
+<<<<<<< HEAD
     buildToolsVersion '23.0.3'
+=======
+    buildToolsVersion '25.0.3'
+
+>>>>>>> ftc_app/master
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_7
         targetCompatibility JavaVersion.VERSION_1_7
