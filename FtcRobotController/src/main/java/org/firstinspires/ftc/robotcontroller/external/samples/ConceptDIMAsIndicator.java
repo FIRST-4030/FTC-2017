@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-=======
 /* Copyright (c) 2017 FIRST. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -29,16 +27,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
->>>>>>> ftc_app/master
 package org.firstinspires.ftc.robotcontroller.external.samples;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-<<<<<<< HEAD
-import com.qualcomm.robotcore.hardware.DcMotor;
-=======
->>>>>>> ftc_app/master
 import com.qualcomm.robotcore.hardware.DeviceInterfaceModule;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -76,11 +69,7 @@ public class ConceptDIMAsIndicator extends LinearOpMode {
 
         // Connect to motor (Assume standard left wheel)
         // Change the text in quotes to match any motor name on your robot.
-<<<<<<< HEAD
-        dim = this.hardwareMap.deviceInterfaceModule.get("dim");
-=======
         dim = hardwareMap.get(DeviceInterfaceModule.class, "dim");
->>>>>>> ftc_app/master
 
         // Toggle LEDs while Waiting for the start button
         telemetry.addData(">", "Press Play to test LEDs." );

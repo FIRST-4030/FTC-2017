@@ -1,11 +1,3 @@
-<<<<<<< HEAD
-package org.firstinspires.ftc.robotcontroller.external.samples;
-
-import com.qualcomm.hardware.matrix.MatrixDcMotorController;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
-=======
 /* Copyright (c) 2017 FIRST. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -39,7 +31,6 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
 
 import com.qualcomm.hardware.matrix.MatrixDcMotorController;
 import com.qualcomm.robotcore.hardware.HardwareMap;
->>>>>>> ftc_app/master
 import com.qualcomm.robotcore.hardware.ServoController;
 
 /**
@@ -103,13 +94,8 @@ public class HardwarePushbotMatrix extends HardwarePushbot
          */
 
         // Initialize Matrix Motor and Servo objects
-<<<<<<< HEAD
-        matrixMotorController = (MatrixDcMotorController)ahwMap.dcMotorController.get("matrix controller");
-        matrixServoController = ahwMap.servoController.get("matrix controller");
-=======
         matrixMotorController = ahwMap.get(MatrixDcMotorController.class, "matrix controller");
         matrixServoController = ahwMap.get(ServoController.class, "matrix controller");
->>>>>>> ftc_app/master
 
         // Enable Servos
         matrixServoController.pwmEnable();       // Don't forget to enable Matrix Output

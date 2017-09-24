@@ -1,27 +1,3 @@
-<<<<<<< HEAD
-# ftc_app
-FTC Android Studio project to create FTC Robot Controller app.
-
-This is the FTC SDK that can be used to create an FTC Robot Controller app, with custom op modes.
-The FTC Robot Controller app is designed to work in conjunction with the FTC Driver Station app.
-The FTC Driver Station app is available through Google Play.
-
-To use this SDK, download/clone the entire project to your local computer.
-
-*** Important note regarding the repository size ***:  this repository is large and it can take a long time and a lot of space to clone the entire repository. If you would like to save time and space, there are some options that you can choose to download only the most current version of the Android project folder.
-
-If you are a git user, you can use the --depth command line argument to only clone the most current version of the repository:
-
-  git clone --depth=1 https://github.com/ftctechnh/ftc_app.git
-
-Or, if you prefer, you can use the "Download Zip" button available through the main repository page.  You can also download the project folder (as a .zip or .tar.gz archive file) from the Downloads subsection of the Releases page for this repository.
-
-Use Android Studio to import the folder  ("Import project (Eclipse ADT, Gradle, etc.)").
-
-The Javadoc reference documentation for the FTC SDK is now available online.  Visit the following URL to view the FTC SDK documentation as a live website:
-
-http://ftctechnh.github.io/ftc_app/doc/javadoc/index.html
-=======
 ## Welcome!
 This GitHub repository contains the source code that is used to build an Android app to control a *FIRST* Tech Challenge competition robot.  To use this SDK, download/clone the entire project to your local computer.
 
@@ -54,19 +30,11 @@ Once you have downloaded and uncompressed (if needed) your folder, you can use A
 The Javadoc reference documentation for the FTC SDK is now available online.  Visit the following URL to view the FTC SDK documentation as a live website:
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;http://ftctechnh.github.io/ftc_app/doc/javadoc/index.html    
->>>>>>> ftc_app/master
 
 Documentation for the FTC SDK is also included with this repository.  There is a subfolder called "doc" which contains several subfolders:
 
  * The folder "apk" contains the .apk files for the FTC Driver Station and FTC Robot Controller apps.
  * The folder "javadoc" contains the JavaDoc user documentation for the FTC SDK.
-<<<<<<< HEAD
- * The folder "tutorial" contains PDF files that help teach the basics of using the FTC SDK.
-
-For technical questions regarding the SDK, please visit the FTC Technology forum:
-
-  http://ftcforum.usfirst.org/forumdisplay.php?156-FTC-Technology
-=======
 
 ### Online User Forum
 For technical questions regarding the SDK, please visit the FTC Technology forum:
@@ -159,7 +127,6 @@ Known issues:
      - Inner classes
      - Can't handle casted objects
      - Any objects coming from an parenthetically enclosed expression
->>>>>>> ftc_app/master
 
 **************************************************************************************
 
@@ -224,11 +191,7 @@ Changes include:
     - Includes support for REV Control Hub (note that the REV Control Hub is not yet approved for FTC use).
     - Implements FTC Blocks programming support for REV Expansion Hub and sensor hardware.
     - Detects and alerts when I2C device disconnect.
-<<<<<<< HEAD
-    
-=======
 
->>>>>>> ftc_app/master
 **************************************************************************************
 
 Version 2.62 (built on 17.01.07)
@@ -249,11 +212,7 @@ Version 2.6 (released on 16.12.16)
      - fix isCalibrating issues.
   * Blocks Programming mode changes:
      - Blocks now ignores a device in the configuration xml if the name is empty. Other devices work in configuration work fine.
-<<<<<<< HEAD
-     
-=======
 
->>>>>>> ftc_app/master
 **************************************************************************************
 
 Version 2.5 (internal release on released on 16.12.13)
@@ -361,11 +320,7 @@ Version 2.30 (released on 16.10.05)
      - Fix for CompassSensor setMode block
   * Vuforia
      - Fix deadlock / make camera data available while Vuforia is running.
-<<<<<<< HEAD
-     - Update to Vuforia 6.0.117 (recommended by Vuforia and Google to close security loophole). 
-=======
      - Update to Vuforia 6.0.117 (recommended by Vuforia and Google to close security loophole).
->>>>>>> ftc_app/master
   * Fix for autonomous 30 second timer bug (where timer was in effect, even though it appeared to have timed out).
   * opModeIsActive changes to allow cleanup after op mode is stopped (with enforced 2 second safety timeout).
   * Fix to avoid reading i2c twice.
@@ -493,11 +448,7 @@ Release 16.03.09
  * Added code to create log messages while waiting for LinearOpMode shutdown.
  * Fix so Wifi Direct Config activity will no longer launch multiple times.
  * Added the ability to specify an alternate i2c address in software for the Modern Robotics gyro.
-<<<<<<< HEAD
- 
-=======
 
->>>>>>> ftc_app/master
 **************************************************************************************
 
 Release 16.02.09
@@ -581,11 +532,7 @@ Release 15.11.04.001
  * Fix to keep references stable when updating gamepad.
  * For legacy Matrix motor/servo controllers removed necessity of appending "Motor" and "Servo" to controller names.
  * Updated HT color sensor driver to use constants from ModernRoboticsUsbLegacyModule class.
-<<<<<<< HEAD
- * Updated MR color sensor driver to use constants from ModernRoboticsUsbDeviceInterfaceModule class. 
-=======
  * Updated MR color sensor driver to use constants from ModernRoboticsUsbDeviceInterfaceModule class.
->>>>>>> ftc_app/master
  * Correctly handle I2C Address change in all color sensors
  * Updated/cleaned up op modes.
   - Updated comments in LinearI2cAddressChange.java example op mode.
@@ -600,11 +547,7 @@ Release 15.11.04.001
 
 T. Eng
 November 5, 2015
-<<<<<<< HEAD
- 
-=======
 
->>>>>>> ftc_app/master
 **************************************************************************************
 
 Release 15.10.06.002

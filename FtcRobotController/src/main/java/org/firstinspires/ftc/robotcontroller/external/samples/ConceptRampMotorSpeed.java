@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-=======
 /* Copyright (c) 2017 FIRST. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -29,7 +27,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
->>>>>>> ftc_app/master
 package org.firstinspires.ftc.robotcontroller.external.samples;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -69,11 +66,7 @@ public class ConceptRampMotorSpeed extends LinearOpMode {
 
         // Connect to motor (Assume standard left wheel)
         // Change the text in quotes to match any motor name on your robot.
-<<<<<<< HEAD
-        motor = hardwareMap.dcMotor.get("left_drive");
-=======
         motor = hardwareMap.get(DcMotor.class, "left_drive");
->>>>>>> ftc_app/master
 
         // Wait for the start button
         telemetry.addData(">", "Press Start to run Motors." );

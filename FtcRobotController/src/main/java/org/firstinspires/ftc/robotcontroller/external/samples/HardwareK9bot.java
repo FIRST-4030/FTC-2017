@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-=======
 /* Copyright (c) 2017 FIRST. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -29,7 +27,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
->>>>>>> ftc_app/master
 package org.firstinspires.ftc.robotcontroller.external.samples;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -58,13 +55,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class HardwareK9bot
 {
     /* Public OpMode members. */
-<<<<<<< HEAD
-    public DcMotor  leftMotor   = null;
-    public DcMotor  rightMotor  = null;
-=======
     public DcMotor  leftDrive   = null;
     public DcMotor  rightDrive  = null;
->>>>>>> ftc_app/master
     public Servo    arm         = null;
     public Servo    claw        = null;
 
@@ -89,52 +81,6 @@ public class HardwareK9bot
         hwMap = ahwMap;
 
         // Define and Initialize Motors
-<<<<<<< HEAD
-        leftMotor   = hwMap.dcMotor.get("left_drive");
-        rightMotor  = hwMap.dcMotor.get("right_drive");
-        leftMotor.setDirection(DcMotor.Direction.REVERSE);
-
-        // Set all motors to zero power
-        leftMotor.setPower(0);
-        rightMotor.setPower(0);
-
-        // Set all motors to run without encoders.
-        // May want to use RUN_USING_ENCODERS if encoders are installed.
-        leftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        rightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        // Define and initialize ALL installed servos.
-        arm = hwMap.servo.get("arm");
-        claw = hwMap.servo.get("claw");
-        arm.setPosition(ARM_HOME);
-        claw.setPosition(CLAW_HOME);
-    }
-
-    /***
-     *
-     * waitForTick implements a periodic delay. However, this acts like a metronome with a regular
-     * periodic tick.  This is used to compensate for varying processing times for each cycle.
-     * The function looks at the elapsed cycle time, and sleeps for the remaining time interval.
-     *
-     * @param periodMs  Length of wait cycle in mSec.
-     */
-    public void waitForTick(long periodMs) {
-
-        long  remaining = periodMs - (long)period.milliseconds();
-
-        // sleep for the remaining portion of the regular cycle period.
-        if (remaining > 0) {
-            try {
-                Thread.sleep(remaining);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
-        }
-
-        // Reset the cycle clock for the next pass.
-        period.reset();
-    }
-=======
         leftDrive  = hwMap.get(DcMotor.class, "left_drive");
         rightDrive = hwMap.get(DcMotor.class, "right_drive");
         leftDrive.setDirection(DcMotor.Direction.REVERSE);
@@ -154,5 +100,4 @@ public class HardwareK9bot
         arm.setPosition(ARM_HOME);
         claw.setPosition(CLAW_HOME);
     }
->>>>>>> ftc_app/master
 }

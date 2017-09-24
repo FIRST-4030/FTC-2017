@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-=======
 /* Copyright (c) 2017 FIRST. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -29,16 +27,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
->>>>>>> ftc_app/master
 package org.firstinspires.ftc.robotcontroller.external.samples;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-<<<<<<< HEAD
-import com.qualcomm.robotcore.hardware.DcMotor;
-=======
->>>>>>> ftc_app/master
 import com.qualcomm.robotcore.hardware.Servo;
 
 /**
@@ -75,11 +68,7 @@ public class ConceptScanServo extends LinearOpMode {
 
         // Connect to servo (Assume PushBot Left Hand)
         // Change the text in quotes to match any servo name on your robot.
-<<<<<<< HEAD
-        servo = hardwareMap.servo.get("left_hand");
-=======
         servo = hardwareMap.get(Servo.class, "left_hand");
->>>>>>> ftc_app/master
 
         // Wait for the start button
         telemetry.addData(">", "Press Start to scan Servo." );
