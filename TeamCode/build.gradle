@@ -11,5 +11,5 @@
 // Include common definitions from above.
 apply from: '../build.common.gradle'
 dependencies {
-    compile files('C:/Users/robotics/Documents/FTC-2017/libs/Vuforia.jar')
+    compile files('libs/Vuforia.jar')
 }
