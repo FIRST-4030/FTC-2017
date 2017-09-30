@@ -34,7 +34,10 @@ package org.firstinspires.ftc.teamcode.vuforia;
 
 import com.qualcomm.ftcrobotcontroller.R;
 import com.qualcomm.robotcore.util.RobotLog;
+import com.vuforia.Frame;
 import com.vuforia.HINT;
+import com.vuforia.Image;
+import com.vuforia.PIXEL_FORMAT;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -47,10 +50,13 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
-import org.firstinspires.ftc.robotcore.internal.android.dx.cf.code.Frame;
 
+import java.nio.ByteBuffer;
+import java.security.InvalidKeyException;
+import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.InvalidPropertiesFormatException;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
@@ -74,7 +80,7 @@ public class VuforiaFTC {
 
     // Frame capture constants
     private static final int CAPTURE_QUEUE_DISABLE = 0;
-    private static final int CAPTURE_QUEUE_SIZE = 2;
+    private static final int CAPTURE_QUEUE_LEN = 2;
     private static final int CAPTURE_POLL_TIMEOUT = 100;
 
     // Tracking config
@@ -208,33 +214,96 @@ public class VuforiaFTC {
         telemetry.addData("X/Y Heading", getX() + "/" + getY() + " " + getHeading() + "°");
     }
 
+    /**
+     * @return True if frame capture is enabled
+     */
     public boolean getCapture() {
         return vuforia.getFrameQueueCapacity() > CAPTURE_QUEUE_DISABLE ? true : false;
     }
 
+    /**
+     * @param enable Enable or disable frame capture
+     */
     public void setCapture(boolean enable) {
-        vuforia.setFrameQueueCapacity(enable ? CAPTURE_QUEUE_SIZE : CAPTURE_QUEUE_DISABLE);
+        vuforia.setFrameQueueCapacity(enable ? CAPTURE_QUEUE_LEN : CAPTURE_QUEUE_DISABLE);
     }
 
-    public com.vuforia.Image getFrame() {
-        com.vuforia.Image image = null;
+    /**
+     * @return If frame capture is enabled, and a frame is available, the most recent frame as an Image
+     */
+    public Image getImage() {
         if (!getCapture()) {
-            return image;
+            return null;
         }
 
+        Image image = null;
         BlockingQueue<VuforiaLocalizer.CloseableFrame> queue = vuforia.getFrameQueue();
         try {
             VuforiaLocalizer.CloseableFrame qFrame = queue.poll(CAPTURE_POLL_TIMEOUT, TimeUnit.MILLISECONDS);
-            if (qFrame == null || qFrame.getNumImages() < 1) {
-                return image;
+            if (qFrame != null && qFrame.getNumImages() < 1) {
+                Frame frame = qFrame.clone();
+                image = frame.getImage(0);
             }
-            com.vuforia.Frame frame = qFrame.clone();
-            qFrame.close();
-            image = frame.getImage(0);
+            if (qFrame != null) {
+                qFrame.close();
+            }
         } catch (InterruptedException e) {
-            return image;
         }
         return image;
+    }
+
+    /**
+     *
+     * @param image Image to be analyzed.
+     * @param x x coordinate of the pixel to be analyzed
+     * @param y y coordinate of the pixel to be analyzed
+     * @return Individual R, G, and B values from the pixel
+     */
+    public int[] rgb(Image image, int x, int y) {
+        int[] pixel = {x, y};
+        return rgb(image, pixel, pixel);
+    }
+
+    /**
+     * @param image Image to be analyzed. Only supports the RGB888 format at present.
+     * @param c1    x,y coordinates of the upper-left corner of the region to be analyzed
+     * @param c2    x,y coordinates of he lower-right corner of the region to be analyzed
+     * @return Individual sums of the R, G, and B values from the region specified
+     */
+    public int[] rgb(Image image, int[] c1, int[] c2) {
+        int[] rgb = {0, 0, 0};
+        int RED = 0;
+        int GREEN = 1;
+        int BLUE = 2;
+
+        // We can only process 24-bit data (for now)
+        int bpp = 3;
+        int format = image.getFormat();
+        if (format != PIXEL_FORMAT.RGB888) {
+            throw new InvalidParameterException("Format not implemented: " + format);
+        }
+
+        // Ensure the rectangle we define exists
+        if (c1[0] <= c2[0] || c1[1] <= c2[1] ||
+                c2[0] >= image.getHeight() || c2[1] >= image.getWidth()) {
+            throw new InvalidParameterException("Invalid corners: " +
+                    "i(" + image.getBufferHeight() + "," + image.getBufferWidth() + ")" +
+                    ", c1(" + +c1[0] + "," + c1[1] + ")" +
+                    ", c2(" + c2[0] + "," + c2[1] + ")");
+        }
+
+        // Sum all of the RGB values in the defined region
+        ByteBuffer bytes = image.getPixels();
+        int offset = (c1[1] * image.getStride()) + (c1[0] * bpp);
+        for (int y = 0; y <= c2[1] - c1[1]; y++) {
+            for (int x = 0; x <= c2[0] - c1[0]; x++) {
+                rgb[RED] += bytes.get(offset + RED + (x * bpp));
+                rgb[GREEN] += bytes.get(offset + GREEN + (x * bpp));
+                rgb[BLUE] += bytes.get(offset + BLUE + (x * bpp));
+            }
+            offset += image.getStride();
+        }
+        return rgb;
     }
 
     /**
@@ -280,6 +349,14 @@ public class VuforiaFTC {
      */
     public VuforiaTrackable getTrackable(int index) {
         return targets.get(index);
+    }
+
+    /**
+     * @param name CONFIG_TARGETS name.
+     * @return Live VuforiaTrackable for the named target.
+     */
+    public VuforiaTrackable getTrackable(String name) {
+        return targets.get(getTargetIndex(name));
     }
 
     /**

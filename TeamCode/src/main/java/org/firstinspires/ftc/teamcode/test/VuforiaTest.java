@@ -20,6 +20,7 @@ public class VuforiaTest extends OpMode {
     private int lastDistance = 0;
     private String lastTarget = "<None>";
     private String lastMark = "<None>";
+    private int[] lastRGB = {0, 0, 0};
     private VuforiaTrackable mark;
 
     // Sensor reference types for our DriveTo callbacks
@@ -38,7 +39,7 @@ public class VuforiaTest extends OpMode {
         vuforia = new VuforiaFTC(VuforiaConfigs.AssetName, VuforiaConfigs.TargetCount,
                 VuforiaConfigs.Field(), VuforiaConfigs.Bot());
         vuforia.init();
-        mark = vuforia.getTrackable(vuforia.getTargetIndex("VuMark"));
+        mark = vuforia.getTrackable("VuMark");
 
         // Wait for the game to begin
         telemetry.addData(">", "Ready for game start");
@@ -55,6 +56,7 @@ public class VuforiaTest extends OpMode {
 
         // Start Vuforia tracking
         vuforia.start();
+        vuforia.setCapture(true);
     }
 
     @SuppressWarnings("UnnecessaryReturnStatement")
@@ -65,6 +67,7 @@ public class VuforiaTest extends OpMode {
         vuforia.display(telemetry);
         telemetry.addData("Target (" + lastTarget + ")", lastDistance + "mm @ " + lastBearing + "°");
         telemetry.addData("Mark", lastMark);
+        telemetry.addData("RGB", "(" + lastRGB[0] + "," + lastRGB[1] + "," + lastRGB[2] + ")");
         telemetry.update();
 
         // Update our location and target info
@@ -105,6 +108,12 @@ public class VuforiaTest extends OpMode {
             case RIGHT:
                 lastMark = "Right";
                 break;
+        }
+
+        // RGB analysis of the upper-left-most pixel
+        com.vuforia.Image image = vuforia.getImage();
+        if (image != null) {
+            lastRGB = vuforia.rgb(image, 0, 0);
         }
 
         /*
