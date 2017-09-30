@@ -422,4 +422,8 @@ public class VuforiaFTC {
     private int cartesianToCardinal(int heading) {
         return FULL_CIRCLE - (heading + HEADING_OFFSET);
     }
+
+    public VuforiaTrackable getTrackable(int index) {
+        return targets.get(index);
+    }
 }

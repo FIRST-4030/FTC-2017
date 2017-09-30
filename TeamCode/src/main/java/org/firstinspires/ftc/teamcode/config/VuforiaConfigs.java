@@ -6,7 +6,7 @@ import org.firstinspires.ftc.teamcode.vuforia.VuforiaTarget;
 
 public class VuforiaConfigs {
     public static final String AssetName = "RelicVuMark";
-    public static final int TargetCount = 4;
+    public static final int TargetCount = 1;
 
     static public VuforiaTarget Bot() {
         // TODO: This location and rotation is imaginary, but should at least be close.
@@ -20,33 +20,16 @@ public class VuforiaConfigs {
 
     static public VuforiaTarget[] Field() {
         // TODO: These targets, locations and rotations are imaginary.
-        // They are just copied from the 2016 season
-        float[] ROTATION_RED = {90, 0, 0};
         float[] ROTATION_BLUE = {90, 270, 0};
-        float[] ADJUST_RED = {0, -300, 0};
         float[] ADJUST_BLUE = {-300, 0, 0};
 
         int X_BLUE = Field.FIELD_WIDTH / 2;
-        int Y_RED = Field.FIELD_WIDTH / 2;
         int OFFSET_NEAR = (int) (12 * Field.MM_PER_INCH);
-        int OFFSET_FAR = (int) (36 * Field.MM_PER_INCH);
 
         return new VuforiaTarget[]{new VuforiaTarget(
-                "Wheels", Field.AllianceColor.BLUE,
+                "VuMark", Field.AllianceColor.BLUE,
                 new float[]{X_BLUE, -OFFSET_NEAR, 0},
                 ADJUST_BLUE, ROTATION_BLUE
-        ), new VuforiaTarget(
-                "Tools", Field.AllianceColor.RED,
-                new float[]{OFFSET_FAR, Y_RED, 0},
-                ADJUST_RED, ROTATION_RED
-        ), new VuforiaTarget(
-                "LEGO", Field.AllianceColor.BLUE,
-                new float[]{X_BLUE, OFFSET_FAR, 0},
-                ADJUST_BLUE, ROTATION_BLUE
-        ), new VuforiaTarget(
-                "Gears", Field.AllianceColor.RED,
-                new float[]{-OFFSET_NEAR, Y_RED, 0},
-                ADJUST_RED, ROTATION_RED
         )};
     }
 }

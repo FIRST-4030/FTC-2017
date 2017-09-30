@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.test;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
+import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.teamcode.vuforia.VuforiaFTC;
 import org.firstinspires.ftc.teamcode.config.VuforiaConfigs;
 
@@ -14,10 +16,11 @@ public class VuforiaTest extends OpMode {
 
     // Dynamic things we need to remember
     private VuforiaFTC vuforia;
-    private double headingSyncExpires;
     private int lastBearing = 0;
     private int lastDistance = 0;
     private String lastTarget = "<None>";
+    private String lastMark = "<None>";
+    private VuforiaTrackable mark;
 
     // Sensor reference types for our DriveTo callbacks
     enum SENSOR_TYPE {
@@ -35,6 +38,7 @@ public class VuforiaTest extends OpMode {
         vuforia = new VuforiaFTC(VuforiaConfigs.AssetName, VuforiaConfigs.TargetCount,
                 VuforiaConfigs.Field(), VuforiaConfigs.Bot());
         vuforia.init();
+        mark = vuforia.getTrackable(vuforia.getTargetIndex("VuMark"));
 
         // Wait for the game to begin
         telemetry.addData(">", "Ready for game start");
@@ -60,6 +64,7 @@ public class VuforiaTest extends OpMode {
         // Driver feedback
         vuforia.display(telemetry);
         telemetry.addData("Target (" + lastTarget + ")", lastDistance + "mm @ " + lastBearing + "°");
+        telemetry.addData("Mark", lastMark);
         telemetry.update();
 
         // Update our location and target info
@@ -86,6 +91,21 @@ public class VuforiaTest extends OpMode {
             lastDistance = distance;
         }
 
+        // Read the VuMark
+        RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.from(mark);
+        switch (vuMark) {
+            case UNKNOWN:
+                break;
+            case LEFT:
+                lastMark = "Left";
+                break;
+            case CENTER:
+                lastMark = "Center";
+                break;
+            case RIGHT:
+                lastMark = "Right";
+                break;
+        }
 
         /*
          * It's always safe to return after this; it should be nothing but auto-drive modes
