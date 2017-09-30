@@ -47,10 +47,13 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
+import org.firstinspires.ftc.robotcore.internal.android.dx.cf.code.Frame;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 public class VuforiaFTC {
     /**
@@ -69,6 +72,11 @@ public class VuforiaFTC {
     private static final int FULL_CIRCLE = 360;
     private static final int HEADING_OFFSET = -FULL_CIRCLE / 4;
 
+    // Frame capture constants
+    private static final int CAPTURE_QUEUE_DISABLE = 0;
+    private static final int CAPTURE_QUEUE_SIZE = 2;
+    private static final int CAPTURE_POLL_TIMEOUT = 100;
+
     // Tracking config
     private final String CONFIG_ASSET;
     private final int CONFIG_TARGETS_NUM;
@@ -76,6 +84,8 @@ public class VuforiaFTC {
     private final VuforiaTarget CONFIG_PHONE;
 
     // Dynamic things we need to remember
+    private VuforiaLocalizer vuforia = null;
+    private boolean capture = false;
     private int trackingTimeout = 100;
     private VuforiaTrackables targetsRaw = null;
     private final List<VuforiaTrackable> targets = new ArrayList<>();
@@ -100,7 +110,7 @@ public class VuforiaFTC {
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(R.id.cameraMonitorViewId);
         parameters.vuforiaLicenseKey = VUFORIA_KEY;
         parameters.cameraDirection = CAMERA_DIRECTION;
-        VuforiaLocalizer vuforia = ClassFactory.createVuforiaLocalizer(parameters);
+        vuforia = ClassFactory.createVuforiaLocalizer(parameters);
 
         /**
          * Pre-processed target images from the Vuforia target manager:
@@ -198,6 +208,35 @@ public class VuforiaFTC {
         telemetry.addData("X/Y Heading", getX() + "/" + getY() + " " + getHeading() + "°");
     }
 
+    public boolean getCapture() {
+        return vuforia.getFrameQueueCapacity() > CAPTURE_QUEUE_DISABLE ? true : false;
+    }
+
+    public void setCapture(boolean enable) {
+        vuforia.setFrameQueueCapacity(enable ? CAPTURE_QUEUE_SIZE : CAPTURE_QUEUE_DISABLE);
+    }
+
+    public com.vuforia.Image getFrame() {
+        com.vuforia.Image image = null;
+        if (!getCapture()) {
+            return image;
+        }
+
+        BlockingQueue<VuforiaLocalizer.CloseableFrame> queue = vuforia.getFrameQueue();
+        try {
+            VuforiaLocalizer.CloseableFrame qFrame = queue.poll(CAPTURE_POLL_TIMEOUT, TimeUnit.MILLISECONDS);
+            if (qFrame == null || qFrame.getNumImages() < 1) {
+                return image;
+            }
+            com.vuforia.Frame frame = qFrame.clone();
+            qFrame.close();
+            image = frame.getImage(0);
+        } catch (InterruptedException e) {
+            return image;
+        }
+        return image;
+    }
+
     /**
      * Getters
      */
@@ -233,6 +272,14 @@ public class VuforiaFTC {
      */
     public int getTargetIndex(String target) {
         return targetIndex.get(target);
+    }
+
+    /**
+     * @param index CONFIG_TARGETS index.
+     * @return Live VuforiaTrackable for the indexed target.
+     */
+    public VuforiaTrackable getTrackable(int index) {
+        return targets.get(index);
     }
 
     /**
@@ -421,9 +468,5 @@ public class VuforiaFTC {
 
     private int cartesianToCardinal(int heading) {
         return FULL_CIRCLE - (heading + HEADING_OFFSET);
-    }
-
-    public VuforiaTrackable getTrackable(int index) {
-        return targets.get(index);
     }
 }
