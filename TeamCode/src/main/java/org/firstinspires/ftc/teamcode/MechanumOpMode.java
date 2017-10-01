@@ -22,9 +22,9 @@ public abstract class MechanumOpMode extends OpMode {
 
 
     @Override
-    /**
-     * Make sure to call `super.init()` the first line of the init() method when you extend this
-     * class
+    /*
+      Make sure to call `super.init()` the first line of the init() method when you extend this
+      class
      */
     public void init() {
         FLWheel = hardwareMap.dcMotor.get("FL");
@@ -52,7 +52,7 @@ public abstract class MechanumOpMode extends OpMode {
     /**
      * Move the mechanum drive base given a move speed, a move angle, and a rotation speed
      *
-     * Will throw an Illegal argument exception if the speed or rotationSpeed are not betweeen -1
+     * Will throw an Illegal argument exception if the speed or rotationSpeed are not between -1
      * and 1 inclusive
      *
      * @param moveAngle The direction of the robot's desired velocity vector.

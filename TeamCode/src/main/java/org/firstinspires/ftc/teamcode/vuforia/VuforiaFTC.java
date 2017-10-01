@@ -52,11 +52,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefau
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 
 import java.nio.ByteBuffer;
-import java.security.InvalidKeyException;
-import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.InvalidPropertiesFormatException;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
@@ -82,6 +79,9 @@ public class VuforiaFTC {
     private static final int CAPTURE_QUEUE_DISABLE = 0;
     private static final int CAPTURE_QUEUE_LEN = 2;
     private static final int CAPTURE_POLL_TIMEOUT = 100;
+    public static final int RED = 0;
+    public static final int GREEN = RED + 1;
+    public static final int BLUE = GREEN + 1;
 
     // Tracking config
     private final String CONFIG_ASSET;
@@ -103,6 +103,8 @@ public class VuforiaFTC {
     private final HashMap<String, Boolean> targetVisible = new HashMap<>();
     private final HashMap<String, Integer> targetAngle = new HashMap<>();
     private final HashMap<String, Integer> targetIndex = new HashMap<>();
+    private Image image = null;
+    private long imageTimestamp = 0;
 
     public VuforiaFTC(String targetAsset, int numTargets, VuforiaTarget[] targetConfig, VuforiaTarget phoneConfig) {
         CONFIG_TARGETS = targetConfig;
@@ -118,7 +120,7 @@ public class VuforiaFTC {
         parameters.cameraDirection = CAMERA_DIRECTION;
         vuforia = ClassFactory.createVuforiaLocalizer(parameters);
 
-        /**
+        /*
          * Pre-processed target images from the Vuforia target manager:
          * https://developer.vuforia.com/target-manager.
          */
@@ -154,7 +156,7 @@ public class VuforiaFTC {
                 targetAngle.put(trackable.getName(), (int) poseOrientation.secondAngle);
             }
 
-            /**
+            /*
              * Update the location and orientation track
              *
              * We poll for each trackable so this happens in the loop, but the overall tracking
@@ -217,79 +219,94 @@ public class VuforiaFTC {
     /**
      * @return True if frame capture is enabled
      */
-    public boolean getCapture() {
-        return vuforia.getFrameQueueCapacity() > CAPTURE_QUEUE_DISABLE ? true : false;
+    private boolean capturing() {
+        return vuforia.getFrameQueueCapacity() > CAPTURE_QUEUE_DISABLE;
     }
 
     /**
      * @param enable Enable or disable frame capture
      */
-    public void setCapture(boolean enable) {
+    public void enableCapture(boolean enable) {
         vuforia.setFrameQueueCapacity(enable ? CAPTURE_QUEUE_LEN : CAPTURE_QUEUE_DISABLE);
     }
 
     /**
-     * @return If frame capture is enabled, and a frame is available, the most recent frame as an Image
+     * Grab the currently available frame, if any
      */
-    public Image getImage() {
-        if (!getCapture()) {
-            return null;
+    public void capture() {
+        if (!capturing()) {
+            return;
         }
 
-        Image image = null;
         BlockingQueue<VuforiaLocalizer.CloseableFrame> queue = vuforia.getFrameQueue();
+        //noinspection EmptyCatchBlock
         try {
             VuforiaLocalizer.CloseableFrame qFrame = queue.poll(CAPTURE_POLL_TIMEOUT, TimeUnit.MILLISECONDS);
             if (qFrame != null && qFrame.getNumImages() < 1) {
                 Frame frame = qFrame.clone();
                 image = frame.getImage(0);
+                imageTimestamp = System.currentTimeMillis();
             }
             if (qFrame != null) {
                 qFrame.close();
             }
         } catch (InterruptedException e) {
         }
+    }
+
+    /**
+     * @return The most recent available frame, if any
+     */
+    public Image getImage() {
         return image;
     }
 
     /**
      *
-     * @param image Image to be analyzed.
+     * @return System timestamp of the last frame capture
+     */
+    public long getImageTimestamp() {
+        return imageTimestamp;
+    }
+
+    /**
      * @param x x coordinate of the pixel to be analyzed
      * @param y y coordinate of the pixel to be analyzed
      * @return Individual R, G, and B values from the pixel
      */
-    public int[] rgb(Image image, int x, int y) {
+    public int[] rgb(int x, int y) {
         int[] pixel = {x, y};
-        return rgb(image, pixel, pixel);
+        return rgb(pixel, pixel);
     }
 
     /**
-     * @param image Image to be analyzed. Only supports the RGB888 format at present.
-     * @param c1    x,y coordinates of the upper-left corner of the region to be analyzed
-     * @param c2    x,y coordinates of he lower-right corner of the region to be analyzed
+     * @param c1 x,y coordinates of the upper-left corner of the region to be analyzed
+     * @param c2 x,y coordinates of he lower-right corner of the region to be analyzed
      * @return Individual sums of the R, G, and B values from the region specified
      */
-    public int[] rgb(Image image, int[] c1, int[] c2) {
+    public int[] rgb(int[] c1, int[] c2) {
         int[] rgb = {0, 0, 0};
-        int RED = 0;
-        int GREEN = 1;
-        int BLUE = 2;
+        if (image == null) {
+            return rgb;
+        }
 
         // We can only process 24-bit data (for now)
-        int bpp = 3;
+        int bpp = BLUE + 1;
         int format = image.getFormat();
         if (format != PIXEL_FORMAT.RGB888) {
-            throw new InvalidParameterException("Format not implemented: " + format);
+            System.err.println("Format not implemented: " + format);
+            return rgb;
         }
 
         // Ensure the rectangle we define exists
         if (c1[0] <= c2[0] || c1[1] <= c2[1] ||
-                c2[0] >= image.getHeight() || c2[1] >= image.getWidth()) {
-            throw new InvalidParameterException("Invalid corners: " +
-                    "i(" + image.getBufferHeight() + "," + image.getBufferWidth() + ")" +
+                c2[0] >= image.getHeight() ||
+                c2[1] >= image.getWidth()) {
+            System.err.println("Invalid corners: " +
+                    "i(" + image.getHeight() + "," + image.getWidth() + ")" +
                     ", c1(" + +c1[0] + "," + c1[1] + ")" +
                     ", c2(" + c2[0] + "," + c2[1] + ")");
+            return rgb;
         }
 
         // Sum all of the RGB values in the defined region
@@ -394,7 +411,7 @@ public class VuforiaFTC {
 
     /**
      * @return The Y component of the robot's last known location relative to the field center.
-     * Negative sign denotes audiance side of field.
+     * Negative sign denotes audience side of field.
      * <p>
      * This value may be out-of-date. Most uses should include an evaluation of validity based on
      * {@link #isStale() isStale()} or {@link #getTimestamp() getTimestamp()}

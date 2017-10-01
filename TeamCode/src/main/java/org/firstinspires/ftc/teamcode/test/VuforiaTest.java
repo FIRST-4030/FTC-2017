@@ -21,6 +21,7 @@ public class VuforiaTest extends OpMode {
     private String lastTarget = "<None>";
     private String lastMark = "<None>";
     private int[] lastRGB = {0, 0, 0};
+    private String lastImage = "<None>";
     private VuforiaTrackable mark;
 
     // Sensor reference types for our DriveTo callbacks
@@ -56,7 +57,7 @@ public class VuforiaTest extends OpMode {
 
         // Start Vuforia tracking
         vuforia.start();
-        vuforia.setCapture(true);
+        vuforia.enableCapture(true);
     }
 
     @SuppressWarnings("UnnecessaryReturnStatement")
@@ -67,7 +68,8 @@ public class VuforiaTest extends OpMode {
         vuforia.display(telemetry);
         telemetry.addData("Target (" + lastTarget + ")", lastDistance + "mm @ " + lastBearing + "°");
         telemetry.addData("Mark", lastMark);
-        telemetry.addData("RGB", "(" + lastRGB[0] + "," + lastRGB[1] + "," + lastRGB[2] + ")");
+        telemetry.addData("Image", lastImage);
+        telemetry.addData("RGB", "(" + lastRGB[VuforiaFTC.RED] + "," + lastRGB[VuforiaFTC.GREEN] + "," + lastRGB[VuforiaFTC.BLUE] + ")");
         telemetry.update();
 
         // Update our location and target info
@@ -111,10 +113,12 @@ public class VuforiaTest extends OpMode {
         }
 
         // RGB analysis of the upper-left-most pixel
+        vuforia.capture();
         com.vuforia.Image image = vuforia.getImage();
         if (image != null) {
-            lastRGB = vuforia.rgb(image, 0, 0);
+            lastImage = image.getFormat() + "(" + image.getHeight() + "," + image.getWidth() + ") " + vuforia.getImageTimestamp();
         }
+        lastRGB = vuforia.rgb(0, 0);
 
         /*
          * It's always safe to return after this; it should be nothing but auto-drive modes

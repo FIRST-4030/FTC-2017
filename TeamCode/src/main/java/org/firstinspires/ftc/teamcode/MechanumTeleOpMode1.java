@@ -1,9 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-/**
- * Created by robotics on 9/22/2017.
- */
-
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 @TeleOp(name="MechanumTeleOpMode1", group="MechanumOpMode")
