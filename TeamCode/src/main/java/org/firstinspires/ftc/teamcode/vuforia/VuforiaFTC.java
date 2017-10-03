@@ -34,10 +34,10 @@ package org.firstinspires.ftc.teamcode.vuforia;
 
 import com.qualcomm.ftcrobotcontroller.R;
 import com.qualcomm.robotcore.util.RobotLog;
-import com.vuforia.Frame;
 import com.vuforia.HINT;
 import com.vuforia.Image;
 import com.vuforia.PIXEL_FORMAT;
+import com.vuforia.Vuforia;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -219,7 +219,7 @@ public class VuforiaFTC {
     /**
      * @return True if frame capture is enabled
      */
-    private boolean capturing() {
+    public boolean capturing() {
         return vuforia.getFrameQueueCapacity() > CAPTURE_QUEUE_DISABLE;
     }
 
@@ -228,6 +228,7 @@ public class VuforiaFTC {
      */
     public void enableCapture(boolean enable) {
         vuforia.setFrameQueueCapacity(enable ? CAPTURE_QUEUE_LEN : CAPTURE_QUEUE_DISABLE);
+        Vuforia.setFrameFormat(PIXEL_FORMAT.RGB888, enable);
     }
 
     /**
@@ -241,14 +242,20 @@ public class VuforiaFTC {
         BlockingQueue<VuforiaLocalizer.CloseableFrame> queue = vuforia.getFrameQueue();
         //noinspection EmptyCatchBlock
         try {
-            VuforiaLocalizer.CloseableFrame qFrame = queue.poll(CAPTURE_POLL_TIMEOUT, TimeUnit.MILLISECONDS);
-            if (qFrame != null && qFrame.getNumImages() < 1) {
-                Frame frame = qFrame.clone();
-                image = frame.getImage(0);
+            VuforiaLocalizer.CloseableFrame frame = queue.poll(CAPTURE_POLL_TIMEOUT, TimeUnit.MILLISECONDS);
+            if (frame != null && frame.getNumImages() > 0) {
+                for (int i = 0; i < frame.getNumImages(); i++) {
+                    Image img = frame.getImage(i);
+                    if (img != null && img.getFormat() == PIXEL_FORMAT.RGB888) {
+                        ByteBuffer bytes = img.getPixels();
+                        image = img;
+                        break;
+                    }
+                }
                 imageTimestamp = System.currentTimeMillis();
             }
-            if (qFrame != null) {
-                qFrame.close();
+            if (frame != null) {
+                frame.close();
             }
         } catch (InterruptedException e) {
         }
@@ -262,7 +269,6 @@ public class VuforiaFTC {
     }
 
     /**
-     *
      * @return System timestamp of the last frame capture
      */
     public long getImageTimestamp() {
@@ -292,19 +298,18 @@ public class VuforiaFTC {
 
         // We can only process 24-bit data (for now)
         int bpp = BLUE + 1;
-        int format = image.getFormat();
-        if (format != PIXEL_FORMAT.RGB888) {
-            System.err.println("Format not implemented: " + format);
+        if (image.getFormat() != PIXEL_FORMAT.RGB888) {
+            System.err.println("Format not implemented: " + image.getFormat());
             return rgb;
         }
 
         // Ensure the rectangle we define exists
-        if (c1[0] <= c2[0] || c1[1] <= c2[1] ||
+        if (c1[0] < c2[0] || c1[1] < c2[1] ||
                 c2[0] >= image.getHeight() ||
                 c2[1] >= image.getWidth()) {
             System.err.println("Invalid corners: " +
                     "i(" + image.getHeight() + "," + image.getWidth() + ")" +
-                    ", c1(" + +c1[0] + "," + c1[1] + ")" +
+                    ", c1(" + c1[0] + "," + c1[1] + ")" +
                     ", c2(" + c2[0] + "," + c2[1] + ")");
             return rgb;
         }
@@ -314,9 +319,9 @@ public class VuforiaFTC {
         int offset = (c1[1] * image.getStride()) + (c1[0] * bpp);
         for (int y = 0; y <= c2[1] - c1[1]; y++) {
             for (int x = 0; x <= c2[0] - c1[0]; x++) {
-                rgb[RED] += bytes.get(offset + RED + (x * bpp));
-                rgb[GREEN] += bytes.get(offset + GREEN + (x * bpp));
-                rgb[BLUE] += bytes.get(offset + BLUE + (x * bpp));
+                rgb[RED] += (bytes.get(offset + RED + (x * bpp)) & 0xff);
+                rgb[GREEN] += (bytes.get(offset + GREEN + (x * bpp)) & 0xff);
+                rgb[BLUE] += (bytes.get(offset + BLUE + (x * bpp)) & 0xff);
             }
             offset += image.getStride();
         }

@@ -4,8 +4,8 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
-import org.firstinspires.ftc.teamcode.vuforia.VuforiaFTC;
 import org.firstinspires.ftc.teamcode.config.VuforiaConfigs;
+import org.firstinspires.ftc.teamcode.vuforia.VuforiaFTC;
 
 @SuppressWarnings("unused")
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "Vuforia Test", group = "Test")
@@ -68,6 +68,7 @@ public class VuforiaTest extends OpMode {
         vuforia.display(telemetry);
         telemetry.addData("Target (" + lastTarget + ")", lastDistance + "mm @ " + lastBearing + "°");
         telemetry.addData("Mark", lastMark);
+        telemetry.addData("Capturing", vuforia.capturing());
         telemetry.addData("Image", lastImage);
         telemetry.addData("RGB", "(" + lastRGB[VuforiaFTC.RED] + "," + lastRGB[VuforiaFTC.GREEN] + "," + lastRGB[VuforiaFTC.BLUE] + ")");
         telemetry.update();
@@ -117,8 +118,12 @@ public class VuforiaTest extends OpMode {
         com.vuforia.Image image = vuforia.getImage();
         if (image != null) {
             lastImage = image.getFormat() + "(" + image.getHeight() + "," + image.getWidth() + ") " + vuforia.getImageTimestamp();
+            lastRGB = vuforia.rgb(0, 0);
+            vuforia.enableCapture(false);
         }
-        lastRGB = vuforia.rgb(0, 0);
+        if (System.currentTimeMillis() - vuforia.getImageTimestamp() > 1000) {
+            vuforia.enableCapture(true);
+        }
 
         /*
          * It's always safe to return after this; it should be nothing but auto-drive modes
