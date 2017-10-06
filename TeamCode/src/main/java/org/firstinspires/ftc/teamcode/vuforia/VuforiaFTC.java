@@ -103,8 +103,7 @@ public class VuforiaFTC {
     private final HashMap<String, Boolean> targetVisible = new HashMap<>();
     private final HashMap<String, Integer> targetAngle = new HashMap<>();
     private final HashMap<String, Integer> targetIndex = new HashMap<>();
-    private Image image = null;
-    private long imageTimestamp = 0;
+    private ImageFTC image = null;
 
     public VuforiaFTC(String targetAsset, int numTargets, VuforiaTarget[] targetConfig, VuforiaTarget phoneConfig) {
         CONFIG_TARGETS = targetConfig;
@@ -247,12 +246,10 @@ public class VuforiaFTC {
                 for (int i = 0; i < frame.getNumImages(); i++) {
                     Image img = frame.getImage(i);
                     if (img != null && img.getFormat() == PIXEL_FORMAT.RGB888) {
-                        ByteBuffer bytes = img.getPixels();
-                        image = img;
+                        image = new ImageFTC(img.getPixels(), img.getHeight(), img.getWidth());
                         break;
                     }
                 }
-                imageTimestamp = System.currentTimeMillis();
             }
             if (frame != null) {
                 frame.close();
@@ -264,15 +261,8 @@ public class VuforiaFTC {
     /**
      * @return The most recent available frame, if any
      */
-    public Image getImage() {
+    public ImageFTC getImage() {
         return image;
-    }
-
-    /**
-     * @return System timestamp of the last frame capture
-     */
-    public long getImageTimestamp() {
-        return imageTimestamp;
     }
 
     /**
@@ -296,13 +286,6 @@ public class VuforiaFTC {
             return rgb;
         }
 
-        // We can only process 24-bit data (for now)
-        int bpp = BLUE + 1;
-        if (image.getFormat() != PIXEL_FORMAT.RGB888) {
-            System.err.println("Format not implemented: " + image.getFormat());
-            return rgb;
-        }
-
         // Ensure the rectangle we define exists
         if (c1[0] < c2[0] || c1[1] < c2[1] ||
                 c2[0] >= image.getHeight() ||
@@ -316,12 +299,12 @@ public class VuforiaFTC {
 
         // Sum all of the RGB values in the defined region
         ByteBuffer bytes = image.getPixels();
-        int offset = (c1[1] * image.getStride()) + (c1[0] * bpp);
+        int offset = (c1[1] * image.getStride()) + (c1[0] * image.getBpp());
         for (int y = 0; y <= c2[1] - c1[1]; y++) {
             for (int x = 0; x <= c2[0] - c1[0]; x++) {
-                rgb[RED] += (bytes.get(offset + RED + (x * bpp)) & 0xff);
-                rgb[GREEN] += (bytes.get(offset + GREEN + (x * bpp)) & 0xff);
-                rgb[BLUE] += (bytes.get(offset + BLUE + (x * bpp)) & 0xff);
+                rgb[RED] += (bytes.get(offset + RED + (x * image.getBpp())) & 0xff);
+                rgb[GREEN] += (bytes.get(offset + GREEN + (x * image.getBpp())) & 0xff);
+                rgb[BLUE] += (bytes.get(offset + BLUE + (x * image.getBpp())) & 0xff);
             }
             offset += image.getStride();
         }

@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.teamcode.config.VuforiaConfigs;
+import org.firstinspires.ftc.teamcode.vuforia.ImageFTC;
 import org.firstinspires.ftc.teamcode.vuforia.VuforiaFTC;
 
 @SuppressWarnings("unused")
@@ -16,13 +17,13 @@ public class VuforiaTest extends OpMode {
 
     // Dynamic things we need to remember
     private VuforiaFTC vuforia;
+    private VuforiaTrackable mark;
     private int lastBearing = 0;
     private int lastDistance = 0;
     private String lastTarget = "<None>";
     private String lastMark = "<None>";
-    private int[] lastRGB = {0, 0, 0};
     private String lastImage = "<None>";
-    private VuforiaTrackable mark;
+    private int[] lastRGB = {0, 0, 0};
 
     // Sensor reference types for our DriveTo callbacks
     enum SENSOR_TYPE {
@@ -66,11 +67,10 @@ public class VuforiaTest extends OpMode {
 
         // Driver feedback
         vuforia.display(telemetry);
-        telemetry.addData("Target (" + lastTarget + ")", lastDistance + "mm @ " + lastBearing + "°");
         telemetry.addData("Mark", lastMark);
-        telemetry.addData("Capturing", vuforia.capturing());
-        telemetry.addData("Image", lastImage);
         telemetry.addData("RGB", "(" + lastRGB[VuforiaFTC.RED] + "," + lastRGB[VuforiaFTC.GREEN] + "," + lastRGB[VuforiaFTC.BLUE] + ")");
+        telemetry.addData("Target (" + lastTarget + ")", lastDistance + "mm @ " + lastBearing + "°");
+        telemetry.addData("Image", lastImage);
         telemetry.update();
 
         // Update our location and target info
@@ -115,14 +115,10 @@ public class VuforiaTest extends OpMode {
 
         // RGB analysis of the upper-left-most pixel
         vuforia.capture();
-        com.vuforia.Image image = vuforia.getImage();
+        ImageFTC image = vuforia.getImage();
         if (image != null) {
-            lastImage = image.getFormat() + "(" + image.getHeight() + "," + image.getWidth() + ") " + vuforia.getImageTimestamp();
+            lastImage = "(" + image.getHeight() + "," + image.getWidth() + ") " + vuforia.getImage().getTimestamp();
             lastRGB = vuforia.rgb(0, 0);
-            vuforia.enableCapture(false);
-        }
-        if (System.currentTimeMillis() - vuforia.getImageTimestamp() > 1000) {
-            vuforia.enableCapture(true);
         }
 
         /*
