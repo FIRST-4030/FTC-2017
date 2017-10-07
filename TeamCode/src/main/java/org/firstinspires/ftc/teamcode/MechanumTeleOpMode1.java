@@ -14,12 +14,15 @@ public class MechanumTeleOpMode1 extends MechanumOpMode{
         double speed = Math.sqrt(Math.pow(lStickX, 2) + Math.pow(lStickY, 2));
         double moveAngle = Math.atan2(lStickY, lStickX);
 
+        speed = Math.min(speed, 1);
+        speed = Math.max(speed, -1);
+
         double rotationSpeed = 0;
 
         if(gamepad1.left_trigger > 0) rotationSpeed = gamepad1.left_trigger;
         else if(gamepad1.right_trigger > 0) rotationSpeed = gamepad1.right_trigger;
 
-        move(speed, moveAngle, rotationSpeed);
+        move(moveAngle, speed, rotationSpeed);
 
         Direction moveDirection = null;
 

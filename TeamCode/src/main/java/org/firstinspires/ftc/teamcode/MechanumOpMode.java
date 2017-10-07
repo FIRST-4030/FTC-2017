@@ -42,7 +42,7 @@ public abstract class MechanumOpMode extends OpMode {
      * @param power The power to turn the motor at. Between -1 and 1
      */
     public void turnMotor(DcMotor motor, double power){
-        if(Math.abs(power) > 1) throw new IllegalArgumentException("The motor power must be between -1 and 1");
+        if(Math.abs(power) > 1) throw new IllegalArgumentException("turnMotor: The motor power must be between -1 and 1");
 
         motor.setPower(power);
 
@@ -63,9 +63,9 @@ public abstract class MechanumOpMode extends OpMode {
     public void move(double moveAngle, double speed, double rotationSpeed){
 
         if(Math.abs(speed) > 1) throw new IllegalArgumentException(
-                "The speed parameter must be between 1 and -1 inclusive");
+                "move: The speed parameter must be between 1 and -1 inclusive");
         if(Math.abs(rotationSpeed) > 1) throw new IllegalArgumentException(
-                "The rotationSpeed parameter must be between 1 and -1 inclusive");
+                "move: The rotationSpeed parameter must be between 1 and -1 inclusive");
 
         /*
 
@@ -93,14 +93,22 @@ public abstract class MechanumOpMode extends OpMode {
 
         // Account for the range of the VMs
         double largestVM = Math.abs(fLVM);
-        if(Math.abs(fRVM) > largestVM) largestVM = fRVM;
-        if(Math.abs(bLVM) > largestVM) largestVM = bLVM;
-        if(Math.abs(bRVM) > largestVM) largestVM = bRVM;
+        if(Math.abs(fRVM) > largestVM) largestVM = Math.abs(fRVM);
+        if(Math.abs(bLVM) > largestVM) largestVM = Math.abs(bLVM);
+        if(Math.abs(bRVM) > largestVM) largestVM = Math.abs(bRVM);
 
-        fLVM = fLVM / largestVM;
-        fRVM = fRVM / largestVM;
-        bLVM = bLVM / largestVM;
-        bRVM = bRVM / largestVM;
+        if(largestVM != 0) {
+            fLVM = fLVM / largestVM;
+            fRVM = fRVM / largestVM;
+            bLVM = bLVM / largestVM;
+            bRVM = bRVM / largestVM;
+        }
+
+        telemetry.addData("FL Speed", fLVM);
+        telemetry.addData("FR Speed", fRVM);
+        telemetry.addData("BL Speed", bLVM);
+        telemetry.addData("BR Speed", bRVM);
+        telemetry.update();
 
         // Use the VMs as power values for the motors
         turnMotor(FLWheel, fLVM);
@@ -126,7 +134,7 @@ public abstract class MechanumOpMode extends OpMode {
     public void simpleMove(Direction direction, double speed){
 
         if(Math.abs(speed) > 1) throw new IllegalArgumentException(
-                "The parameter speed must be between -1 and 1 inclusive");
+                "simpleMove: The parameter speed must be between -1 and 1 inclusive");
 
         move(direction.moveDirection, speed, 0);
 
