@@ -21,7 +21,7 @@ public class MotorTestOpMode extends OpMode {
     @Override
     public void loop() {
 
-        double power;
+        double power = 0;
 
         if(gamepad1.a) power = 2;
         else if(gamepad1.b) power = 1.5;
@@ -30,7 +30,7 @@ public class MotorTestOpMode extends OpMode {
         else power = 0;
 
         motor.setPower(power);
-        telemetry.addData("power", .5);
+        telemetry.addData("power", power);
         telemetry.update();
 
     }
