@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.test;
 
+import android.graphics.Color;
+
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
@@ -23,7 +25,7 @@ public class VuforiaTest extends OpMode {
     private String lastTarget = "<None>";
     private String lastMark = "<None>";
     private String lastImage = "<None>";
-    private int[] lastRGB = {0, 0, 0};
+    private int lastRGB = 0;
 
     // Sensor reference types for our DriveTo callbacks
     enum SENSOR_TYPE {
@@ -68,7 +70,7 @@ public class VuforiaTest extends OpMode {
         // Driver feedback
         vuforia.display(telemetry);
         telemetry.addData("Mark", lastMark);
-        telemetry.addData("RGB", "(" + lastRGB[VuforiaFTC.RED] + "," + lastRGB[VuforiaFTC.GREEN] + "," + lastRGB[VuforiaFTC.BLUE] + ")");
+        telemetry.addData("RGB", "(" + Color.red(lastRGB) + "," + Color.green(lastRGB) + "," + Color.blue(lastRGB) + ")");
         telemetry.addData("Target (" + lastTarget + ")", lastDistance + "mm @ " + lastBearing + "°");
         telemetry.addData("Image", lastImage);
         telemetry.update();
@@ -117,7 +119,7 @@ public class VuforiaTest extends OpMode {
         vuforia.capture();
         ImageFTC image = vuforia.getImage();
         if (image != null) {
-            lastImage = "(" + image.getHeight() + "," + image.getWidth() + ") " + vuforia.getImage().getTimestamp();
+            lastImage = "(" + image.getHeight() + "," + image.getWidth() + ") " + image.getTimestamp();
             lastRGB = vuforia.rgb(0, 0);
         }
 
