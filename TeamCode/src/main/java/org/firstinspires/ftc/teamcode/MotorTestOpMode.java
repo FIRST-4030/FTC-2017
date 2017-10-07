@@ -3,10 +3,6 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-/**
- * Created by robotics on 10/2/2017.
- */
-
 public class MotorTestOpMode extends OpMode {
 
     public DcMotor motor;

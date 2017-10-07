@@ -1,53 +1,48 @@
 package org.firstinspires.ftc.teamcode.vuforia;
 
-import java.nio.ByteBuffer;
+import android.graphics.Bitmap;
+
+import com.vuforia.Image;
+import com.vuforia.PIXEL_FORMAT;
 
 public class ImageFTC {
-    private static final int BPP_DEFAULT = 3;
+    public static final int FORMAT_DEFAULT_VUFORIA = PIXEL_FORMAT.RGBA8888;
 
-    private ByteBuffer pixels = null;
-    private int height = 0;
-    private int width = 0;
-    private int bpp = BPP_DEFAULT;
+    private Bitmap bitmap;
     private long timestamp = 0;
 
-    public ImageFTC(ByteBuffer pixels, int height, int width, int bpp) {
-        if (pixels.isDirect()) {
-            this.pixels = ByteBuffer.allocateDirect(pixels.remaining());
-        } else {
-            this.pixels = ByteBuffer.allocate(pixels.remaining());
+    public ImageFTC(Image img, int vuforiaFormat) {
+        Bitmap.Config format;
+        switch (vuforiaFormat) {
+            case PIXEL_FORMAT.RGBA8888:
+                format = Bitmap.Config.ARGB_8888;
+                break;
+            case PIXEL_FORMAT.RGB565:
+                format = Bitmap.Config.RGB_565;
+                break;
+            default:
+                throw new IllegalArgumentException("Unable to process Vuforia format: " + vuforiaFormat);
         }
-        this.pixels.put(pixels);
-        this.pixels.order(pixels.order());
-
-        this.height = height;
-        this.width = width;
-        this.bpp = bpp;
+        this.bitmap = Bitmap.createBitmap(img.getWidth(), img.getHeight(), format);
+        this.bitmap.copyPixelsFromBuffer(img.getPixels());
         this.timestamp = System.currentTimeMillis();
     }
 
-    public ImageFTC(ByteBuffer bytes, int height, int width) {
-        this(bytes, height, width, BPP_DEFAULT);
-    }
-
     public int getHeight() {
-        return height;
+        return bitmap.getHeight();
     }
 
     public int getWidth() {
-        return width;
+        return bitmap.getWidth();
     }
 
-    public int getBpp() {
-        return bpp;
+    public int getPixel(int x, int y) {
+        return bitmap.getPixel(x, y);
     }
 
-    public int getStride() {
-        return bpp * width;
-    }
-
-    public ByteBuffer getPixels() {
-        return pixels;
+    @SuppressWarnings("unused")
+    public Bitmap getBitmap() {
+        return bitmap;
     }
 
     public long getTimestamp() {

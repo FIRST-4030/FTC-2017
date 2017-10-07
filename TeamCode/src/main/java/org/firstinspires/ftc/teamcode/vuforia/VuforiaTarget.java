@@ -7,21 +7,22 @@ public class VuforiaTarget {
     private static final int NUM_DIMENSIONS = 3;
 
     public final String name;
+    @SuppressWarnings({"WeakerAccess", "unused"})
     public final Field.AllianceColor color;
     public final float[] raw;
-    public final float[] offset;
     public final float[] rotation;
     public final AxesOrder axesOrder;
     public final int[] adjusted;
 
-    public VuforiaTarget(String name, Field.AllianceColor color, float[] location, float[] offset, float[] rotation, AxesOrder axesOrder) {
+    private VuforiaTarget(String name, Field.AllianceColor color, float[] location, float[] offset, float[] rotation, AxesOrder axesOrder) {
         this.name = name;
         this.color = color;
         this.raw = location;
+        float[] offset1;
         if (offset != null) {
-            this.offset = offset;
+            offset1 = offset;
         } else {
-            this.offset = new float[NUM_DIMENSIONS];
+            offset1 = new float[NUM_DIMENSIONS];
         }
         this.rotation = rotation;
         if (axesOrder != null) {
@@ -32,7 +33,7 @@ public class VuforiaTarget {
 
         this.adjusted = new int[NUM_DIMENSIONS];
         for (int i = 0; i < NUM_DIMENSIONS; i++) {
-            this.adjusted[i] = (int) (this.raw[i] + this.offset[i]);
+            this.adjusted[i] = (int) (this.raw[i] + offset1[i]);
         }
     }
 
