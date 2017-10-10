@@ -8,7 +8,7 @@ public class MechanumTeleOpMode1 extends MechanumOpMode{
     @Override
     public void loop() {
 
-        double lStickX = gamepad1.left_stick_x;
+        double lStickX = - gamepad1.left_stick_x;
         double lStickY = gamepad1.left_stick_y;
 
         double speed = Math.sqrt(Math.pow(lStickX, 2) + Math.pow(lStickY, 2));
@@ -20,9 +20,9 @@ public class MechanumTeleOpMode1 extends MechanumOpMode{
         double rotationSpeed = 0;
 
         if(gamepad1.left_trigger > 0) rotationSpeed = gamepad1.left_trigger;
-        else if(gamepad1.right_trigger > 0) rotationSpeed = gamepad1.right_trigger;
+        else if(gamepad1.right_trigger > 0) rotationSpeed = - gamepad1.right_trigger;
 
-        move(moveAngle, speed, rotationSpeed);
+        if(speed != 0) move(moveAngle, speed, rotationSpeed);
 
         Direction moveDirection = null;
 
@@ -33,7 +33,7 @@ public class MechanumTeleOpMode1 extends MechanumOpMode{
 
         if(moveDirection != null){
             simpleMove(moveDirection, 1);
-        } else {
+        } else if(speed == 0){
             stop();
         }
 
