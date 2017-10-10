@@ -15,12 +15,14 @@ public abstract class WestCoastOpMode extends OpMode{
     public DcMotor LWheel2;
     public DcMotor RWheel1;
     public DcMotor RWheel2;
+    public DcMotor Lift;
 
     public void init() {
         LWheel1 = hardwareMap.dcMotor.get("ML1");
         LWheel2 = hardwareMap.dcMotor.get("ML2");
         RWheel1 = hardwareMap.dcMotor.get("MR1");
         RWheel2 = hardwareMap.dcMotor.get("MR2");
+        Lift = hardwareMap.dcMotor.get("LM1");
     }
 
     /**
@@ -38,5 +40,11 @@ public abstract class WestCoastOpMode extends OpMode{
         }
 
         motor.setPower(power);
+    }
+
+    public void liftMotor(DcMotor liftMotor, double power){
+        if (Math.abs(power) > 1) {
+            throw new IllegalArgumentException("liftMotor: the power value must be between -1 and 1 inclusive");
+        }
     }
 }
