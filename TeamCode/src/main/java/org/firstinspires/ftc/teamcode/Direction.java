@@ -16,7 +16,17 @@ public enum Direction {
     RIGHT(Math.PI / 2),
     LEFT(3 * Math.PI / 2);
 
-    public double moveDirection;
+    public double getMoveDirection(){
+
+        switch(this){
+        case FORWARD: return Math.PI;
+        case BACKWARD: return 0;
+        case RIGHT: return Math.PI / 2;
+        case LEFT: return 3 * Math.PI / 2;
+        default: return 0;
+        }
+
+    }
 
 
     Direction(double moveDirection) {

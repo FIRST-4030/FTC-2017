@@ -27,10 +27,14 @@ public abstract class MechanumOpMode extends OpMode {
       class
      */
     public void init() {
+
+        // NOTE: THE BACK LEFT AND BACK RIGHT WHEELS ARE LABELED WRONG ON THE MECHANUM CONFIGURATION!
+        // TO COMPENSATE, THE BACK WHEELS ARE SWITCHED IN THIS PIECE OF CODE, TO AVOID SCREWING WITH EXISTING CODE.
+
         FLWheel = hardwareMap.dcMotor.get("FL");
         FRWheel = hardwareMap.dcMotor.get("FR");
-        BLWheel = hardwareMap.dcMotor.get("BL");
-        BRWheel = hardwareMap.dcMotor.get("BR");
+        BLWheel = hardwareMap.dcMotor.get("BR");
+        BRWheel = hardwareMap.dcMotor.get("BL");
     }
 
     /**
@@ -87,8 +91,8 @@ public abstract class MechanumOpMode extends OpMode {
 
         // Calculate the VMs
         double fLVM = (speed * Math.sin(moveAngle + (Math.PI / 4))) + rotationSpeed;
-        double fRVM = (speed * Math.cos(moveAngle + (Math.PI / 4))) - rotationSpeed;
-        double bLVM = (speed * Math.cos(moveAngle + (Math.PI / 4))) + rotationSpeed;
+        double fRVM = (speed * Math.cos(moveAngle + (Math.PI / 4))) + rotationSpeed;
+        double bLVM = (speed * Math.cos(moveAngle + (Math.PI / 4))) - rotationSpeed;
         double bRVM = (speed * Math.sin(moveAngle + (Math.PI / 4))) - rotationSpeed;
 
         // Account for the range of the VMs
@@ -108,11 +112,14 @@ public abstract class MechanumOpMode extends OpMode {
         telemetry.addData("FR Speed", fRVM);
         telemetry.addData("BL Speed", bLVM);
         telemetry.addData("BR Speed", bRVM);
+        telemetry.addData("netSpeed", speed);
+        telemetry.addData("moveAngle", moveAngle);
+        telemetry.addData("rotationSpeed", rotationSpeed);
         telemetry.update();
 
         // Use the VMs as power values for the motors
-        turnMotor(FLWheel, fLVM);
-        turnMotor(FRWheel, fRVM);
+        turnMotor(FLWheel, -fLVM);
+        turnMotor(FRWheel, -fRVM);
         turnMotor(BLWheel, bLVM);
         turnMotor(BRWheel, bRVM);
 
@@ -136,7 +143,7 @@ public abstract class MechanumOpMode extends OpMode {
         if(Math.abs(speed) > 1) throw new IllegalArgumentException(
                 "simpleMove: The parameter speed must be between -1 and 1 inclusive");
 
-        move(direction.moveDirection, speed, 0);
+        move(direction.getMoveDirection(), speed, 0);
 
     }
 
