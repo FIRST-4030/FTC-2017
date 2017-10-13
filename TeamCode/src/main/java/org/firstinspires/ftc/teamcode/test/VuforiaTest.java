@@ -1,14 +1,20 @@
 package org.firstinspires.ftc.teamcode.test;
 
+import android.graphics.Bitmap;
 import android.graphics.Color;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
+import org.firstinspires.ftc.teamcode.buttons.SinglePressButton;
 import org.firstinspires.ftc.teamcode.config.VuforiaConfigs;
 import org.firstinspires.ftc.teamcode.vuforia.ImageFTC;
 import org.firstinspires.ftc.teamcode.vuforia.VuforiaFTC;
+
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 @SuppressWarnings("unused")
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "Vuforia Test", group = "Test")
@@ -26,6 +32,7 @@ public class VuforiaTest extends OpMode {
     private String lastMark = "<None>";
     private String lastImage = "<None>";
     private int lastRGB = 0;
+    private SinglePressButton capture = new SinglePressButton();
 
     // Sensor reference types for our DriveTo callbacks
     enum SENSOR_TYPE {
@@ -66,6 +73,9 @@ public class VuforiaTest extends OpMode {
     @SuppressWarnings("UnnecessaryReturnStatement")
     @Override
     public void loop() {
+
+        // Update buttons
+        capture.update(gamepad1.a);
 
         // Driver feedback
         vuforia.display(telemetry);
@@ -115,9 +125,35 @@ public class VuforiaTest extends OpMode {
                 break;
         }
 
+        // Grab and optionally save an image
+        ImageFTC image = null;
+        if (capture.active()) {
+            vuforia.capture();
+            image = vuforia.getImage();
+
+            if (image != null && gamepad1.b) {
+                FileOutputStream out = null;
+                try {
+                    out = new FileOutputStream("capture.png");
+                } catch (FileNotFoundException e) {
+                    System.err.println("Unable to open output file");
+                }
+                if (out != null) {
+                    if (!image.getBitmap().compress(Bitmap.CompressFormat.PNG, 100, out)) {
+                        System.err.println("Unable to compress image");
+                    }
+                }
+                if (out != null) {
+                    try {
+                        out.close();
+                    } catch (IOException e) {
+                        System.err.println("Unable to close output file");
+                    }
+                }
+            }
+        }
+
         // RGB analysis of the upper-left-most pixel
-        vuforia.capture();
-        ImageFTC image = vuforia.getImage();
         if (image != null) {
             lastImage = "(" + image.getHeight() + "," + image.getWidth() + ") " + image.getTimestamp();
             lastRGB = vuforia.rgb(0, 0);
