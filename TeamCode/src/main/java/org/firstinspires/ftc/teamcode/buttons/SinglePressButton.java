@@ -22,7 +22,7 @@ public class SinglePressButton {
         }
 
         // Active only when the button first goes down
-        if (button && released) {
+        if (button) {
             active = true;
             released = false;
         }

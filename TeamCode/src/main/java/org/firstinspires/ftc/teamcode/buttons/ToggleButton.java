@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.buttons;
 
 public class ToggleButton {
     private boolean active = false;
-    private SinglePressButton toggle = new SinglePressButton();
+    private final SinglePressButton toggle = new SinglePressButton();
 
     public ToggleButton(boolean active) {
         this.active = active;

@@ -217,7 +217,6 @@ public class VuforiaFTC {
     /**
      * @return True if frame capture is enabled
      */
-    @SuppressWarnings("WeakerAccess")
     public boolean capturing() {
         return vuforia.getFrameQueueCapacity() > CAPTURE_QUEUE_DISABLE;
     }
@@ -227,7 +226,7 @@ public class VuforiaFTC {
      */
     public void enableCapture(boolean enable) {
         vuforia.setFrameQueueCapacity(enable ? CAPTURE_QUEUE_LEN : CAPTURE_QUEUE_DISABLE);
-        Vuforia.setFrameFormat(ImageFTC.FORMAT_DEFAULT_VUFORIA, enable);
+        Vuforia.setFrameFormat(ImageFTC.FORMAT_VUFORIA_DEFAULT, enable);
     }
 
     /**
@@ -245,8 +244,8 @@ public class VuforiaFTC {
             if (frame != null && frame.getNumImages() > 0) {
                 for (int i = 0; i < frame.getNumImages(); i++) {
                     Image img = frame.getImage(i);
-                    if (img != null && img.getFormat() == ImageFTC.FORMAT_DEFAULT_VUFORIA) {
-                        image = new ImageFTC(img, ImageFTC.FORMAT_DEFAULT_VUFORIA);
+                    if (img != null && img.getFormat() == ImageFTC.FORMAT_VUFORIA_DEFAULT) {
+                        image = new ImageFTC(img, ImageFTC.FORMAT_VUFORIA_DEFAULT);
                         break;
                     }
                 }
@@ -280,7 +279,6 @@ public class VuforiaFTC {
      * @param c2 x,y coordinates of he lower-right corner of the region to be analyzed
      * @return Individual sums of the R, G, and B values from the region specified
      */
-    @SuppressWarnings("WeakerAccess")
     public int rgb(int[] c1, int[] c2) {
         if (image == null) {
             throw new IllegalStateException("No image captured");
@@ -332,7 +330,6 @@ public class VuforiaFTC {
         return targetVisible.get(target);
     }
 
-    @SuppressWarnings("unused")
     public HashMap<String, Integer> getTargetAngle() {
         return targetAngle;
     }
@@ -343,7 +340,6 @@ public class VuforiaFTC {
      * @return The angle to the target's plane relative to the plane of the phone's image sensor
      * (i.e. 0° is dead-on, negative sign denotes right-of-center)
      */
-    @SuppressWarnings("WeakerAccess")
     public int getTargetAngle(String target) {
         return targetAngle.get(target);
     }
@@ -360,7 +356,6 @@ public class VuforiaFTC {
      * @param index CONFIG_TARGETS index.
      * @return Live VuforiaTrackable for the indexed target.
      */
-    @SuppressWarnings("unused")
     public VuforiaTrackable getTrackable(int index) {
         return targets.get(index);
     }
@@ -376,7 +371,6 @@ public class VuforiaFTC {
     /**
      * @return System.currentTimeMillis() as reported at the time of the last location update
      */
-    @SuppressWarnings("unused")
     public long getTimestamp() {
         return timestamp;
     }
@@ -388,12 +382,10 @@ public class VuforiaFTC {
         return (timestamp + trackingTimeout < System.currentTimeMillis());
     }
 
-    @SuppressWarnings("unused")
     public int[] getLocation() {
         return location;
     }
 
-    @SuppressWarnings("unused")
     public int[] getOrientation() {
         return orientation;
     }
@@ -405,7 +397,6 @@ public class VuforiaFTC {
      * This value may be out-of-date. Most uses should include an evaluation of validity based on
      * {@link #isStale() isStale()} or {@link #getTimestamp() getTimestamp()}
      */
-    @SuppressWarnings("WeakerAccess")
     public int getX() {
         return location[0];
     }
@@ -417,7 +408,6 @@ public class VuforiaFTC {
      * This value may be out-of-date. Most uses should include an evaluation of validity based on
      * {@link #isStale() isStale()} or {@link #getTimestamp() getTimestamp()}
      */
-    @SuppressWarnings("WeakerAccess")
     public int getY() {
         return location[1];
     }
@@ -428,7 +418,6 @@ public class VuforiaFTC {
      * This value may be out-of-date. Most uses should include an evaluation of validity based on
      * {@link #isStale() isStale()} or {@link #getTimestamp() getTimestamp()}
      */
-    @SuppressWarnings("WeakerAccess")
     public int getHeading() {
         int heading = orientation[2];
         if (orientation[0] < 0) {
@@ -445,7 +434,6 @@ public class VuforiaFTC {
      * This value may be out-of-date. Most uses should include an evaluation of validity based on
      * {@link #isStale() isStale()} or {@link #getTimestamp() getTimestamp()}
      */
-    @SuppressWarnings("WeakerAccess")
     public int bearing(int x, int y) {
         return bearing(new int[]{getX(), getY()}, new int[]{x, y});
     }
@@ -457,7 +445,6 @@ public class VuforiaFTC {
      * This value may be out-of-date. Most uses should include an evaluation of validity based on
      * {@link #isStale() isStale()} or {@link #getTimestamp() getTimestamp()}
      */
-    @SuppressWarnings("unused")
     public int bearing(int[] dest) {
         return bearing(dest[0], dest[1]);
     }
@@ -481,7 +468,6 @@ public class VuforiaFTC {
      * This value may be out-of-date. Most uses should include an evaluation of validity based on
      * {@link #isStale() isStale()} or {@link #getTimestamp() getTimestamp()}
      */
-    @SuppressWarnings("WeakerAccess")
     public int distance(int x, int y) {
         return distance(new int[]{getX(), getY()}, new int[]{x, y});
     }
@@ -504,17 +490,14 @@ public class VuforiaFTC {
      * This value may be out-of-date. Most uses should include an evaluation of validity based on
      * {@link #isStale() isStale()} or {@link #getTimestamp() getTimestamp()}
      */
-    @SuppressWarnings("unused")
     public int distance(int[] dest) {
         return distance(dest[0], dest[1]);
     }
 
-    @SuppressWarnings("unused")
     public void setTrackingTimeout(int timeout) {
         trackingTimeout = timeout;
     }
 
-    @SuppressWarnings("unused")
     public int getTrackingTimeout() {
         return trackingTimeout;
     }

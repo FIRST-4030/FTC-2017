@@ -7,7 +7,6 @@ public class VuforiaTarget {
     private static final int NUM_DIMENSIONS = 3;
 
     public final String name;
-    @SuppressWarnings({"WeakerAccess", "unused"})
     public final Field.AllianceColor color;
     public final float[] raw;
     public final float[] rotation;

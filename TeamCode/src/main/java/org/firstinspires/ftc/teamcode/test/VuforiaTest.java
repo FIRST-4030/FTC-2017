@@ -1,11 +1,8 @@
 package org.firstinspires.ftc.teamcode.test;
 
-import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.os.Environment;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
@@ -14,12 +11,6 @@ import org.firstinspires.ftc.teamcode.config.VuforiaConfigs;
 import org.firstinspires.ftc.teamcode.vuforia.ImageFTC;
 import org.firstinspires.ftc.teamcode.vuforia.VuforiaFTC;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-
-@SuppressWarnings("unused")
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "Vuforia Test", group = "Test")
 public class VuforiaTest extends OpMode {
 
@@ -35,7 +26,7 @@ public class VuforiaTest extends OpMode {
     private String lastMark = "<None>";
     private String lastImage = "<None>";
     private int lastRGB = 0;
-    private SinglePressButton capture = new SinglePressButton();
+    private final SinglePressButton capture = new SinglePressButton();
 
     // Sensor reference types for our DriveTo callbacks
     enum SENSOR_TYPE {
@@ -73,7 +64,6 @@ public class VuforiaTest extends OpMode {
         vuforia.enableCapture(true);
     }
 
-    @SuppressWarnings("UnnecessaryReturnStatement")
     @Override
     public void loop() {
 
@@ -133,28 +123,8 @@ public class VuforiaTest extends OpMode {
         if (capture.active()) {
             vuforia.capture();
             image = vuforia.getImage();
-
             if (image != null && gamepad1.b) {
-                FileOutputStream out = null;
-                try {
-                    File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
-                    File file = new File(path, "capture.png");
-                    out = new FileOutputStream(file);
-                } catch (Exception e) {
-                    System.err.println("Unable to open output file");
-                }
-                if (out != null) {
-                    if (!image.getBitmap().compress(Bitmap.CompressFormat.PNG, 100, out)) {
-                        System.err.println("Unable to compress image to file");
-                    }
-                }
-                if (out != null) {
-                    try {
-                        out.close();
-                    } catch (Exception e) {
-                        System.err.println("Unable to close output file");
-                    }
-                }
+                image.savePNG("capture.png");
             }
         }
 
@@ -175,6 +145,7 @@ public class VuforiaTest extends OpMode {
          * Cut the loop short when we don't have a vision fix
          */
         if (!valid) {
+            //noinspection UnnecessaryReturnStatement
             return;
         }
     }
