@@ -2,8 +2,10 @@ package org.firstinspires.ftc.teamcode.test;
 
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.os.Environment;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
@@ -12,6 +14,7 @@ import org.firstinspires.ftc.teamcode.config.VuforiaConfigs;
 import org.firstinspires.ftc.teamcode.vuforia.ImageFTC;
 import org.firstinspires.ftc.teamcode.vuforia.VuforiaFTC;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -134,19 +137,21 @@ public class VuforiaTest extends OpMode {
             if (image != null && gamepad1.b) {
                 FileOutputStream out = null;
                 try {
-                    out = new FileOutputStream("capture.png");
-                } catch (FileNotFoundException e) {
+                    File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+                    File file = new File(path, "capture.png");
+                    out = new FileOutputStream(file);
+                } catch (Exception e) {
                     System.err.println("Unable to open output file");
                 }
                 if (out != null) {
                     if (!image.getBitmap().compress(Bitmap.CompressFormat.PNG, 100, out)) {
-                        System.err.println("Unable to compress image");
+                        System.err.println("Unable to compress image to file");
                     }
                 }
                 if (out != null) {
                     try {
                         out.close();
-                    } catch (IOException e) {
+                    } catch (Exception e) {
                         System.err.println("Unable to close output file");
                     }
                 }
