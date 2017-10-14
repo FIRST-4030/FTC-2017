@@ -16,8 +16,8 @@ public abstract class WestCoastOpMode extends OpMode{
 
     public final double UPPER_CLAW_MAX = 1.2;
     public final double UPPER_CLAW_MIN = .2;
-    public final double LOWER_CLAW_MAX = 1.2;
-    public final double LOWER_CLAW_MIN = .2;
+    public final double LOWER_CLAW_MAX = 1.75;
+    public final double LOWER_CLAW_MIN = .5;
 
     public DcMotor lWheel1;
     public DcMotor lWheel2;
@@ -95,6 +95,8 @@ public abstract class WestCoastOpMode extends OpMode{
             turnMotor(rWheel2, power);
 
             break;
+        default:
+            throw new IllegalArgumentException("side must be either 0 (left) or 1 (right)");
         }
 
     }
