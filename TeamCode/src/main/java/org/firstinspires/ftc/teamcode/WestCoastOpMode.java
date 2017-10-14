@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.*;
 /**
- * Created by Alex and Brian on 10/9/2017.
+ * Created by Alex and Bryan on 10/9/2017.
  *
  * abstract class to provide west coast movement methods.
  *
@@ -14,10 +14,13 @@ public abstract class WestCoastOpMode extends OpMode{
     public final int LEFT = 0;
     public final int RIGHT = 1;
 
-    public final double UPPER_CLAW_MAX = 1.2;
-    public final double UPPER_CLAW_MIN = .2;
-    public final double LOWER_CLAW_MAX = 1.75;
-    public final double LOWER_CLAW_MIN = .5;
+    public final int TOP_CLAW = 0;
+    public final int BOTTOM_CLAW = 1;
+
+    public final double UPPER_CLAW_MAX = .53;
+    public final double UPPER_CLAW_MIN = .03;
+    public final double LOWER_CLAW_MAX = .53; // was 1
+    public final double LOWER_CLAW_MIN = .03; // was .5
 
     public DcMotor lWheel1;
     public DcMotor lWheel2;
@@ -37,13 +40,19 @@ public abstract class WestCoastOpMode extends OpMode{
         topClaw = hardwareMap.servo.get("CL1");
         bottomClaw = hardwareMap.servo.get("CL2");
 
-        topClaw.setDirection(Servo.Direction.REVERSE);
+
 
         topClaw.scaleRange(UPPER_CLAW_MIN, UPPER_CLAW_MAX);
         bottomClaw.scaleRange(LOWER_CLAW_MIN, LOWER_CLAW_MAX);
 
-        setServoPosition(topClaw, UPPER_CLAW_MIN);
-        setServoPosition(bottomClaw, LOWER_CLAW_MIN);
+        topClaw.setDirection(Servo.Direction.REVERSE);
+        bottomClaw.setDirection(Servo.Direction.REVERSE);
+
+        setServoPosition(TOP_CLAW, .5);
+        setServoPosition(BOTTOM_CLAW, .5);
+
+//        setServoPosition(topClaw, UPPER_CLAW_MIN);
+//        setServoPosition(bottomClaw, LOWER_CLAW_MIN);
 
     }
 
@@ -74,9 +83,11 @@ public abstract class WestCoastOpMode extends OpMode{
 
     }
 
-    public void setServoPosition(Servo servo, double position){
+    public void setServoPosition(int claw, double position){
 
-        servo.setPosition(position);
+        if(claw == TOP_CLAW) topClaw.setPosition(Math.max(UPPER_CLAW_MIN, Math.min(position, UPPER_CLAW_MAX)));
+        else if(claw == BOTTOM_CLAW) bottomClaw.setPosition(Math.max(LOWER_CLAW_MIN, Math.min(position, LOWER_CLAW_MAX)));
+        else throw new IllegalArgumentException("claw must be either 0 (top) or 1 (bottom)");
 
     }
 

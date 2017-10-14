@@ -32,11 +32,23 @@ public class WestCoastTeleOpMode1 extends WestCoastOpMode{
 
     public void moveClaws(){
 
-        if(gamepad2.a) setServoPosition(bottomClaw, LOWER_CLAW_MIN);
-        else if(gamepad2.b) setServoPosition(bottomClaw, LOWER_CLAW_MAX);
+        if(!gamepad2.right_bumper){
 
-        if(gamepad2.x) setServoPosition(topClaw, UPPER_CLAW_MIN);
-        else if(gamepad2.y) setServoPosition(topClaw, UPPER_CLAW_MAX);
+            setServoPosition(TOP_CLAW, gamepad2.right_trigger);
+
+        }
+
+        if(!gamepad2.left_bumper){
+
+            setServoPosition(BOTTOM_CLAW, gamepad2.left_trigger);
+
+        }
+
+//        if(gamepad2.a) setServoPosition(bottomClaw, LOWER_CLAW_MIN);
+//        else if(gamepad2.b) setServoPosition(bottomClaw, LOWER_CLAW_MAX);
+//
+//        if(gamepad2.x) setServoPosition(topClaw, UPPER_CLAW_MIN);
+//        else if(gamepad2.y) setServoPosition(topClaw, UPPER_CLAW_MAX);
 
     }
 
