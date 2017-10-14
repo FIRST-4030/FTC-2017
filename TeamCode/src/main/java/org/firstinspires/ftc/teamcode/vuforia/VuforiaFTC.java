@@ -79,9 +79,6 @@ public class VuforiaFTC {
     private static final int CAPTURE_QUEUE_DISABLE = 0;
     private static final int CAPTURE_QUEUE_LEN = 2;
     private static final int CAPTURE_POLL_TIMEOUT = 100;
-    private static final int RED = 0;
-    private static final int GREEN = RED + 1;
-    private static final int BLUE = GREEN + 1;
 
     // Tracking config
     private final String CONFIG_ASSET;
@@ -226,7 +223,9 @@ public class VuforiaFTC {
      */
     public void enableCapture(boolean enable) {
         vuforia.setFrameQueueCapacity(enable ? CAPTURE_QUEUE_LEN : CAPTURE_QUEUE_DISABLE);
-        Vuforia.setFrameFormat(ImageFTC.FORMAT_VUFORIA_DEFAULT, enable);
+        if (!Vuforia.setFrameFormat(ImageFTC.FORMAT_VUFORIA_DEFAULT, enable)) {
+            throw new IllegalArgumentException("Could not enable image capture format: " + ImageFTC.FORMAT_VUFORIA_DEFAULT);
+        }
     }
 
     /**
@@ -262,57 +261,6 @@ public class VuforiaFTC {
      */
     public ImageFTC getImage() {
         return image;
-    }
-
-    /**
-     * @param x x coordinate of the pixel to be analyzed
-     * @param y y coordinate of the pixel to be analyzed
-     * @return Individual R, G, and B values from the pixel
-     */
-    public int rgb(int x, int y) {
-        int[] pixel = {x, y};
-        return rgb(pixel, pixel);
-    }
-
-    /**
-     * @param c1 x,y coordinates of the upper-left corner of the region to be analyzed
-     * @param c2 x,y coordinates of he lower-right corner of the region to be analyzed
-     * @return Individual sums of the R, G, and B values from the region specified
-     */
-    public int rgb(int[] c1, int[] c2) {
-        if (image == null) {
-            throw new IllegalStateException("No image captured");
-        }
-
-        // Ensure the rectangle we define exists
-        if (c1[0] < c2[0] || c1[1] < c2[1] ||
-                c2[0] >= image.getHeight() ||
-                c2[1] >= image.getWidth()) {
-            throw new IllegalArgumentException("Invalid corners: " +
-                    "i(" + image.getHeight() + "," + image.getWidth() + ")" +
-                    ", c1(" + c1[0] + "," + c1[1] + ")" +
-                    ", c2(" + c2[0] + "," + c2[1] + ")");
-        }
-
-        // Sum all of the RGB values in the defined region
-        int numPixels = 0;
-        double[] rgb = {0, 0, 0};
-        for (int y = c1[1]; y <= c2[1]; y++) {
-            for (int x = c1[0]; x <= c2[0]; x++) {
-                int pixel = image.getPixel(x, y);
-                rgb[RED] += Color.red(pixel);
-                rgb[GREEN] += Color.green(pixel);
-                rgb[BLUE] += Color.blue(pixel);
-                numPixels++;
-            }
-        }
-
-        // Return the average color of the region
-        return Color.rgb(
-                (int) (rgb[RED] / numPixels),
-                (int) (rgb[GREEN] / numPixels),
-                (int) (rgb[BLUE] / numPixels)
-        );
     }
 
     /**

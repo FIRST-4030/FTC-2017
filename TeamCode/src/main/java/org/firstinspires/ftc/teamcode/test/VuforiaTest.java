@@ -6,13 +6,13 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
-import org.firstinspires.ftc.teamcode.buttons.SinglePressButton;
 import org.firstinspires.ftc.teamcode.config.VuforiaConfigs;
 import org.firstinspires.ftc.teamcode.vuforia.ImageFTC;
 import org.firstinspires.ftc.teamcode.vuforia.VuforiaFTC;
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "Vuforia Test", group = "Test")
 public class VuforiaTest extends OpMode {
+    private final static int COLOR_SLICES = 5;
 
     // Numeric constants
     private final static int FULL_CIRCLE = 360;
@@ -25,8 +25,7 @@ public class VuforiaTest extends OpMode {
     private String lastTarget = "<None>";
     private String lastMark = "<None>";
     private String lastImage = "<None>";
-    private int lastRGB = 0;
-    private final SinglePressButton capture = new SinglePressButton();
+    private String lastRGB = "<None>";
 
     // Sensor reference types for our DriveTo callbacks
     enum SENSOR_TYPE {
@@ -67,13 +66,10 @@ public class VuforiaTest extends OpMode {
     @Override
     public void loop() {
 
-        // Update buttons
-        capture.update(gamepad1.a);
-
         // Driver feedback
         vuforia.display(telemetry);
         telemetry.addData("Mark", lastMark);
-        telemetry.addData("RGB", "(" + Color.red(lastRGB) + "," + Color.green(lastRGB) + "," + Color.blue(lastRGB) + ")");
+        telemetry.addData("RGB", lastRGB);
         telemetry.addData("Target (" + lastTarget + ")", lastDistance + "mm @ " + lastBearing + "°");
         telemetry.addData("Image", lastImage);
         telemetry.update();
@@ -119,19 +115,23 @@ public class VuforiaTest extends OpMode {
         }
 
         // Grab and optionally save an image
-        ImageFTC image = null;
-        if (capture.active()) {
-            vuforia.capture();
-            image = vuforia.getImage();
-            if (image != null && gamepad1.b) {
-                image.savePNG("capture.png");
-            }
+        vuforia.capture();
+        ImageFTC image = vuforia.getImage();
+        if (image != null && gamepad1.a) {
+            image.savePNG("capture.png");
         }
 
         // RGB analysis of the upper-left-most pixel
         if (image != null) {
-            lastImage = "(" + image.getHeight() + "," + image.getWidth() + ") " + image.getTimestamp();
-            lastRGB = vuforia.rgb(0, 0);
+            lastImage = "(" + image.getWidth() + "," + image.getHeight() + ") " + image.getTimestamp();
+            int slice = image.getWidth() / COLOR_SLICES;
+            lastRGB = "";
+            for (int i = 0; i < COLOR_SLICES; i++) {
+                int rgb = image.rgb(
+                        new int[]{(i * slice), 0},
+                        new int[]{((i + 1) * slice) - 1, image.getHeight() - 1});
+                lastRGB += " (" + Color.red(rgb) + "," + Color.green(rgb) + "," + Color.blue(rgb) + ")";
+            }
         }
 
         /*
