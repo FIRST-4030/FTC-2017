@@ -9,7 +9,7 @@ public class WestCoastAuto1 extends WestCoastOpMode{
     @Override
     public void loop() {
 
-        
+
 
     }
 
