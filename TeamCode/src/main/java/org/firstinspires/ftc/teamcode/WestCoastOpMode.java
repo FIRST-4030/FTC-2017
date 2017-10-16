@@ -17,10 +17,10 @@ public abstract class WestCoastOpMode extends OpMode{
     public final int TOP_CLAW = 0;
     public final int BOTTOM_CLAW = 1;
 
-    public final double UPPER_CLAW_MAX = .94;
-    public final double UPPER_CLAW_MIN = .05;
-    public final double LOWER_CLAW_MAX = .75; // was 1
-    public final double LOWER_CLAW_MIN = .15; // was .5
+    public final double UPPER_CLAW_MAX = .48;
+    public final double UPPER_CLAW_MIN = .06;
+    public final double LOWER_CLAW_MAX = .6;
+    public final double LOWER_CLAW_MIN = .15;
 
     public DcMotor lWheel1;
     public DcMotor lWheel2;
@@ -42,8 +42,8 @@ public abstract class WestCoastOpMode extends OpMode{
 
         topClaw.setDirection(Servo.Direction.REVERSE);
 
-        topClaw.scaleRange(UPPER_CLAW_MIN, UPPER_CLAW_MAX);
-        bottomClaw.scaleRange(LOWER_CLAW_MIN, LOWER_CLAW_MAX);
+//        topClaw.scaleRange(UPPER_CLAW_MIN, UPPER_CLAW_MAX);
+//        bottomClaw.scaleRange(LOWER_CLAW_MIN, LOWER_CLAW_MAX);
 
 
 //        bottomClaw.setDirection(Servo.Direction.REVERSE);
