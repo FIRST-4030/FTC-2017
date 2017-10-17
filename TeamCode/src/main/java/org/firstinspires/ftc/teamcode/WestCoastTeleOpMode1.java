@@ -8,6 +8,9 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 @TeleOp(name="WestCoastTeleOpMode1", group="WestCoastOpMode")
 public class WestCoastTeleOpMode1 extends WestCoastOpMode{
 
+    public boolean rBumperPressed = false;
+    public boolean lBumperPressed = false;
+
     public boolean topClawOpen = false;
     public boolean bottomClawOpen = false;
 
@@ -36,21 +39,41 @@ public class WestCoastTeleOpMode1 extends WestCoastOpMode{
 
     public void moveClaws(){
 
-        if(gamepad2.right_bumper){
+        if(gamepad2.right_bumper && !rBumperPressed){
+            rBumperPressed = true;
 
             setServoPosition(TOP_CLAW, (topClawOpen ? UPPER_CLAW_MIN : UPPER_CLAW_MAX));
-
             topClawOpen = !topClawOpen;
 
+        } else if(!gamepad2.right_bumper){
+            rBumperPressed = false;
         }
 
-        if(gamepad2.left_bumper){
+        if(gamepad2.left_bumper && !lBumperPressed){
+            lBumperPressed = true;
 
             setServoPosition(BOTTOM_CLAW, (bottomClawOpen ? LOWER_CLAW_MIN : LOWER_CLAW_MAX));
-
             bottomClawOpen = !bottomClawOpen;
 
+        } else if(!gamepad2.left_bumper){
+            lBumperPressed = false;
         }
+
+//        if(gamepad2.right_bumper){
+//
+//            setServoPosition(TOP_CLAW, (topClawOpen ? UPPER_CLAW_MIN : UPPER_CLAW_MAX));
+//
+//            topClawOpen = !topClawOpen;
+//
+//        }
+//
+//        if(gamepad2.left_bumper){
+//
+//            setServoPosition(BOTTOM_CLAW, (bottomClawOpen ? LOWER_CLAW_MIN : LOWER_CLAW_MAX));
+//
+//            bottomClawOpen = !bottomClawOpen;
+//
+//        }
 
     }
 

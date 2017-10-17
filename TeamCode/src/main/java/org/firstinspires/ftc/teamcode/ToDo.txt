@@ -1,12 +1,23 @@
-transmission needs fixing
-orogram ending issues - software problem
-string jumping winder
-lift is skewing claws
-button for claws pressed multiple times per press
-lift switch wire getting pulled
-lift limits
-claws held up with friction even though lift is down
-too hard to get blocks - intakes (?)
-slow mode - moving too fast for small maneuvers
-claw mounts not strong enough
-lift wobbly when moving
+==HARDWARE==
+
+--Drive Base--
+[ ]  transmission needs fixing
+[ ]  too hard to get blocks - intakes
+
+--Lift--
+[ ]  Lift string jumping winder
+[ ]  lift switch wire getting pulled
+[ ]  lift wobbly when moving
+[ ]  claws held up with friction even though lift is down
+
+--Claws--
+[ ]  lift is skewing claws
+[ ]  claw mounts not strong enough
+
+==SOFTWARE==
+
+[ ]  Program ending issues - software problem
+[X]  button for claws pressed multiple times per "press"
+[ ]  lift limits
+[ ]  slow mode - moving too fast for small maneuvers
+
