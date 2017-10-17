@@ -48,11 +48,11 @@ public abstract class WestCoastOpMode extends OpMode{
 
 //        bottomClaw.setDirection(Servo.Direction.REVERSE);
 
-        setServoPosition(TOP_CLAW, .5);
-        setServoPosition(BOTTOM_CLAW, .5);
+//        setServoPosition(TOP_CLAW, .5);
+//        setServoPosition(BOTTOM_CLAW, .5);
 
-//        setServoPosition(topClaw, UPPER_CLAW_MIN);
-//        setServoPosition(bottomClaw, LOWER_CLAW_MIN);
+        setServoPosition(TOP_CLAW, UPPER_CLAW_MIN);
+        setServoPosition(BOTTOM_CLAW, LOWER_CLAW_MIN);
 
     }
 
@@ -74,7 +74,7 @@ public abstract class WestCoastOpMode extends OpMode{
 
     }
 
-    public void liftMotor(DcMotor liftMotor, double power){
+    public void setLiftPower(DcMotor liftMotor, double power){
         if (Math.abs(power) > 1) {
             throw new IllegalArgumentException("liftMotor: the power value must be between -1 and 1 inclusive");
         }
