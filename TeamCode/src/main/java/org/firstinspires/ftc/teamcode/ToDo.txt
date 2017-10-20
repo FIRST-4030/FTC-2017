@@ -16,7 +16,7 @@
 
 ==SOFTWARE==
 
-[ ]  Program ending issues - software problem
+[X]  Program ending issues - software problem (solved by tech support question 1)
 [X]  button for claws pressed multiple times per "press"
 [ ]  lift limits
 [ ]  slow mode - moving too fast for small maneuvers
