@@ -85,9 +85,9 @@ public abstract class WestCoastOpMode extends OpMode{
 
         boolean tryingToGoBelow = lift.getCurrentPosition() >= liftMinimum && power < 0;
         boolean tryingToGoAbove = lift.getCurrentPosition() <= (liftMinimum + liftRange) && power > 0;
-
+        
         if(tryingToGoBelow || tryingToGoAbove) liftMotor.setPower(power);
-
+        else liftMotor.setPower(0);
     }
 
     public void setServoPosition(int claw, double position){
