@@ -8,6 +8,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 @TeleOp(name="WestCoastTeleOpMode1", group="WestCoastOpMode")
 public class WestCoastTeleOpMode1 extends WestCoastOpMode{
 
+    public boolean slowMode = false;
+
     public boolean rBumperPressed = false;
     public boolean lBumperPressed = false;
 
@@ -26,7 +28,8 @@ public class WestCoastTeleOpMode1 extends WestCoastOpMode{
 
         telemetry.addData("Top Claw", topClaw.getPosition());
         telemetry.addData("Bottom Claw", bottomClaw.getPosition());
-        telemetry.addData("Lift Position", lift.getCurrentPosition());
+        // Actually, this IS what we want. The list motor encoder is just bad (sigh)
+        telemetry.addData("Lift.getCurrentPosition", lift.getCurrentPosition());
         telemetry.update();
 
     }
@@ -79,9 +82,13 @@ public class WestCoastTeleOpMode1 extends WestCoastOpMode{
 
     public void moveBase(){
 
+        if(gamepad1.left_bumper) slowMode = true;
+        if(gamepad1.right_bumper) slowMode = false;
+
         // Tank drive
-        setSidePower(LEFT, -gamepad1.left_stick_y);
-        setSidePower(RIGHT, -gamepad1.right_stick_y);
+        setSidePower(LEFT, -gamepad1.left_stick_y * (slowMode ? .5 : 1));
+        setSidePower(RIGHT, -gamepad1.right_stick_y * (slowMode ? .5 : 1));
+
 
     }
 

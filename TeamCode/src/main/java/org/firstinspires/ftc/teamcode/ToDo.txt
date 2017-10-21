@@ -18,6 +18,7 @@
 
 [X]  Program ending issues - software problem (solved by tech support question 1)
 [X]  button for claws pressed multiple times per "press"
-[ ]  lift limits
-[ ]  slow mode - moving too fast for small maneuvers
+[?]  lift limits
+[X]  slow mode - moving too fast for small maneuvers
 
+not sure about the progress on the hardware stuff

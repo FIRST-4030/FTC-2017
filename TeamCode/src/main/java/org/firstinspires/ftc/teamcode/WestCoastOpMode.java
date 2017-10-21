@@ -11,6 +11,8 @@ import com.qualcomm.robotcore.hardware.*;
 
 public abstract class WestCoastOpMode extends OpMode{
 
+    public final int liftRange = 100; //test value - to be changed
+
     public final int LEFT = 0;
     public final int RIGHT = 1;
 
@@ -29,6 +31,9 @@ public abstract class WestCoastOpMode extends OpMode{
     public DcMotor lift;
     public Servo topClaw;
     public Servo bottomClaw;
+    public DigitalChannel liftSwitch;
+
+    public int liftMinimum;
 
     public void init() {
         // Set Up hardware
@@ -39,20 +44,19 @@ public abstract class WestCoastOpMode extends OpMode{
         lift = hardwareMap.dcMotor.get("LM1");
         topClaw = hardwareMap.servo.get("CL1");
         bottomClaw = hardwareMap.servo.get("CL2");
+        liftSwitch = hardwareMap.digitalChannel.get("LS1");
 
         topClaw.setDirection(Servo.Direction.REVERSE);
 
-//        topClaw.scaleRange(UPPER_CLAW_MIN, UPPER_CLAW_MAX);
-//        bottomClaw.scaleRange(LOWER_CLAW_MIN, LOWER_CLAW_MAX);
-
-
-//        bottomClaw.setDirection(Servo.Direction.REVERSE);
-
-//        setServoPosition(TOP_CLAW, .5);
-//        setServoPosition(BOTTOM_CLAW, .5);
-
         setServoPosition(TOP_CLAW, UPPER_CLAW_MIN);
         setServoPosition(BOTTOM_CLAW, LOWER_CLAW_MIN);
+
+        while(liftSwitch.getState()){
+            lift.setPower(-1);
+        }
+
+        liftMinimum = lift.getCurrentPosition();
+        lift.setPower(0);
 
     }
 
@@ -79,7 +83,10 @@ public abstract class WestCoastOpMode extends OpMode{
             throw new IllegalArgumentException("liftMotor: the power value must be between -1 and 1 inclusive");
         }
 
-        liftMotor.setPower(power);
+        boolean tryingToGoBelow = lift.getCurrentPosition() >= liftMinimum && power < 0;
+        boolean tryingToGoAbove = lift.getCurrentPosition() <= (liftMinimum + liftRange) && power > 0;
+
+        if(tryingToGoBelow || tryingToGoAbove) liftMotor.setPower(power);
 
     }
 
