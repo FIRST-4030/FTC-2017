@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.hardware.*;
 
 public abstract class WestCoastOpMode extends OpMode{
 
-    public final int liftRange = 100; //test value - to be changed
+    public final int LIFT_RANGE = 100; //test value - to be changed
 
     public final int LEFT = 0;
     public final int RIGHT = 1;
@@ -31,7 +31,7 @@ public abstract class WestCoastOpMode extends OpMode{
     public DcMotor lift;
     public Servo topClaw;
     public Servo bottomClaw;
-    public DigitalChannel liftSwitch;
+    public AnalogInput liftSwitch;
 
     public int liftMinimum;
 
@@ -44,15 +44,15 @@ public abstract class WestCoastOpMode extends OpMode{
         lift = hardwareMap.dcMotor.get("LM1");
         topClaw = hardwareMap.servo.get("CL1");
         bottomClaw = hardwareMap.servo.get("CL2");
-        liftSwitch = hardwareMap.digitalChannel.get("LS1");
+        liftSwitch = hardwareMap.analogInput.get("LS1");
 
         topClaw.setDirection(Servo.Direction.REVERSE);
 
         setServoPosition(TOP_CLAW, UPPER_CLAW_MIN);
         setServoPosition(BOTTOM_CLAW, LOWER_CLAW_MIN);
 
-        while(liftSwitch.getState()){
-            lift.setPower(-1);
+        while(!liftSwitchIsPressed()){
+            lift.setPower(.5); // POSITIVE IS DOWN!!!
         }
 
         liftMinimum = lift.getCurrentPosition();
@@ -84,9 +84,10 @@ public abstract class WestCoastOpMode extends OpMode{
         }
 
         boolean tryingToGoBelow = lift.getCurrentPosition() >= liftMinimum && power < 0;
-        boolean tryingToGoAbove = lift.getCurrentPosition() <= (liftMinimum + liftRange) && power > 0;
-        
-        if(tryingToGoBelow || tryingToGoAbove) liftMotor.setPower(power);
+        boolean tryingToGoAbove = lift.getCurrentPosition() <= (liftMinimum + LIFT_RANGE) && power > 0;
+
+        if(!tryingToGoBelow || !tryingToGoAbove)
+            liftMotor.setPower(power);
         else liftMotor.setPower(0);
     }
 
@@ -117,6 +118,10 @@ public abstract class WestCoastOpMode extends OpMode{
             throw new IllegalArgumentException("side must be either 0 (left) or 1 (right)");
         }
 
+    }
+
+    public boolean liftSwitchIsPressed(){
+        return liftSwitch.getVoltage() < .5;
     }
 
 }
