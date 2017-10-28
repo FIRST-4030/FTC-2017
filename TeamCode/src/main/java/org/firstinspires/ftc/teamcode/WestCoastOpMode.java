@@ -21,8 +21,8 @@ public abstract class WestCoastOpMode extends OpMode{
 
     public final double UPPER_CLAW_MAX = .48;
     public final double UPPER_CLAW_MIN = .06;
-    public final double LOWER_CLAW_MAX = .6;
-    public final double LOWER_CLAW_MIN = .15;
+    public final double LOWER_CLAW_MAX = .35;
+    public final double LOWER_CLAW_MIN = .09;
 
     public DcMotor lWheel1;
     public DcMotor lWheel2;
@@ -48,8 +48,11 @@ public abstract class WestCoastOpMode extends OpMode{
 
         topClaw.setDirection(Servo.Direction.REVERSE);
 
+        setServoPosition(TOP_CLAW, UPPER_CLAW_MAX);
+        setServoPosition(BOTTOM_CLAW, LOWER_CLAW_MAX);
+
         while(!liftSwitchIsPressed()){
-            lift.setPower(.5); // POSITIVE IS DOWN!!!
+            lift.setPower(1); // POSITIVE IS DOWN!!!
         }
 
         liftMinimum = getLiftPosition();

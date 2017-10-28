@@ -26,6 +26,8 @@ public class WestCoastTeleOpMode1 extends WestCoastOpMode{
 
         moveLift();
 
+        telemetry.addData("SLOW MODE", slowMode);
+
         telemetry.addData("Top Claw", topClaw.getPosition());
         telemetry.addData("Bottom Claw", bottomClaw.getPosition());
         // Actually, this IS what we want. The list motor encoder is just bad (sigh)
