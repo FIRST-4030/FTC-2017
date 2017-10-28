@@ -14,11 +14,13 @@ public class AutoDriveTest extends OpMode implements DriveToListener{
     private static final float ENCODER_PER_MM = 3.2f;
     private static final int OVERRUN_ENCODER = 25;
     private static final int DRIVE_DISTANCE = 1830;
-    private DriveTo drive;
 
     //motor objects
     public DcMotor L;
     public DcMotor R;
+
+    //drive object
+    private DriveTo drive;
 
 
     //initialization loop, gets motors from hardware map
