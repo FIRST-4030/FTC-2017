@@ -48,15 +48,15 @@ public abstract class WestCoastOpMode extends OpMode{
 
         topClaw.setDirection(Servo.Direction.REVERSE);
 
-        setServoPosition(TOP_CLAW, UPPER_CLAW_MIN);
-        setServoPosition(BOTTOM_CLAW, LOWER_CLAW_MIN);
-
         while(!liftSwitchIsPressed()){
             lift.setPower(.5); // POSITIVE IS DOWN!!!
         }
 
-        liftMinimum = lift.getCurrentPosition();
+        liftMinimum = getLiftPosition();
         lift.setPower(0);
+
+        setServoPosition(TOP_CLAW, UPPER_CLAW_MIN);
+        setServoPosition(BOTTOM_CLAW, LOWER_CLAW_MIN);
 
     }
 
@@ -83,8 +83,8 @@ public abstract class WestCoastOpMode extends OpMode{
             throw new IllegalArgumentException("liftMotor: the power value must be between -1 and 1 inclusive");
         }
 
-        boolean tryingToGoBelow = lift.getCurrentPosition() >= liftMinimum && power < 0;
-        boolean tryingToGoAbove = lift.getCurrentPosition() <= (liftMinimum + LIFT_RANGE) && power > 0;
+        boolean tryingToGoBelow = getLiftPosition() >= liftMinimum && power < 0;
+        boolean tryingToGoAbove = getLiftPosition() <= (liftMinimum + LIFT_RANGE) && power > 0;
 
         if(!tryingToGoBelow || !tryingToGoAbove)
             liftMotor.setPower(power);
@@ -122,6 +122,10 @@ public abstract class WestCoastOpMode extends OpMode{
 
     public boolean liftSwitchIsPressed(){
         return liftSwitch.getVoltage() < .5;
+    }
+
+    public int getLiftPosition(){
+        return lWheel2.getCurrentPosition();
     }
 
 }

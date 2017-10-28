@@ -29,7 +29,7 @@ public class WestCoastTeleOpMode1 extends WestCoastOpMode{
         telemetry.addData("Top Claw", topClaw.getPosition());
         telemetry.addData("Bottom Claw", bottomClaw.getPosition());
         // Actually, this IS what we want. The list motor encoder is just bad (sigh)
-        telemetry.addData("Lift.getCurrentPosition", lift.getCurrentPosition());
+        telemetry.addData("Lift.getCurrentPosition", getLiftPosition());
         telemetry.addData("switch voltage", liftSwitch.getVoltage());
 //        telemetry.addData("switch value", liftSwitch.getValue());
         telemetry.update();
