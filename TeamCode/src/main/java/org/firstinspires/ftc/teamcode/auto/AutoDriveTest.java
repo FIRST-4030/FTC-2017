@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.auto;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+
+import org.firstinspires.ftc.teamcode.WestCoastOpMode;
 import org.firstinspires.ftc.teamcode.driveto.*;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
@@ -8,16 +10,12 @@ import com.qualcomm.robotcore.hardware.DcMotor;
  * Created by alexw on 10/27/2017.
  */
 
-public class AutoDriveTest extends OpMode implements DriveToListener{
+public class AutoDriveTest extends WestCoastOpMode{
 
     //starting values
     private static final float ENCODER_PER_MM = 3.2f;
     private static final int OVERRUN_ENCODER = 25;
     private static final int DRIVE_DISTANCE = 1830;
-
-    //motor objects
-    public DcMotor L;
-    public DcMotor R;
 
     //drive object
     private DriveTo drive;
@@ -25,10 +23,7 @@ public class AutoDriveTest extends OpMode implements DriveToListener{
 
     //initialization loop, gets motors from hardware map
     public void init()
-    {
-        L =  hardwareMap.dcMotor.get("L");
-        R =  hardwareMap.dcMotor.get("R");
-    }
+    {}
 
     @Override
     public void init_loop()
@@ -44,10 +39,18 @@ public class AutoDriveTest extends OpMode implements DriveToListener{
     @Override
     public void loop()
     {
-        driveForward(DRIVE_DISTANCE);
+        int ticks = (int) ((float) DRIVE_DISTANCE * ENCODER_PER_MM);
+        lWheel1.setPower(.5);
+        lWheel2.setPower(.5);
+        rWheel1.setPower(.5);
+        rWheel2.setPower(.5);
+        lWheel1.setTargetPosition(ticks);
+        lWheel2.setTargetPosition(ticks);
+        rWheel1.setTargetPosition(ticks);
+        rWheel2.setTargetPosition(ticks);
     }
 
-    public void driveToStop(DriveToParams params)
+    /*public void driveToStop(DriveToParams params)
     {}
 
     public void driveToRun(DriveToParams params)
@@ -55,12 +58,12 @@ public class AutoDriveTest extends OpMode implements DriveToListener{
 
     enum SENSOR_TYPE {
         GYRO, DRIVE_ENCODER, SHOOT_ENCODER
-    }
+    }*/
 
-    public double driveToSensor(DriveToParams params)
+    /*public double driveToSensor(DriveToParams params)
     {
         double value = 0;
-        switch ((SENSOR_TYPE) param.reference) {
+        switch ((SENSOR_TYPE) params.reference) {
             case GYRO:
                 value = gyro.getHeading();
                 break;
@@ -72,7 +75,8 @@ public class AutoDriveTest extends OpMode implements DriveToListener{
                 break;
         }
         return value;
-    }
+    }*/
+
 
     private void driveForward(int distance) {
         //tank.setTeleop(false);
@@ -82,10 +86,14 @@ public class AutoDriveTest extends OpMode implements DriveToListener{
         param.lessThan(ticks + L.getCurrentPosition() - OVERRUN_ENCODER);
         drive = new DriveTo(new DriveToParams[]{param});*/
 
-        int ticks = (int) ((float) distance * ENCODER_PER_MM);
-        L.setPower(.5);
-        R.setPower(.5);
-        L.setTargetPosition(ticks);
-        R.setTargetPosition(ticks);
+       /* int ticks = (int) ((float) distance * ENCODER_PER_MM);
+        lWheel1.setPower(.5);
+        lWheel2.setPower(.5);
+        rWheel1.setPower(.5);
+        rWheel2.setPower(.5);
+        lWheel1.setTargetPosition(ticks);
+        lWheel2.setTargetPosition(ticks);
+        rWheel1.setTargetPosition(ticks);
+        rWheel2.setTargetPosition(ticks);*/
     }
 }
