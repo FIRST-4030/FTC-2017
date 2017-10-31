@@ -4,41 +4,43 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 public class TankDrive {
     private static final int MIN_MOTORS = 2;
 
     private TankMotor[] motors = null;
     private boolean disabled = true;
     private boolean teleop = false;
-    private double speedScale = 1.0;
+    private double speedScale = 1.0f;
     private int encoderIndex = 0;
-    private double encoderScale = 1.0;
+    private double encoderScale = 1.0f;
 
-    public TankDrive(HardwareMap map, TankMotor[] motors, int index) {
-        this(map, motors, index, 1.0);
-    }
-
-    public TankDrive(HardwareMap map, TankMotor[] motors, int index, double scale) {
-        this.teleop = false;
+    public TankDrive(HardwareMap map, TankMotor[] motors, int index, double scale, Telemetry telemetry) {
         this.encoderIndex = index;
         this.encoderScale = scale;
-        try {
-            if (motors.length < MIN_MOTORS) {
-                throw new ArrayIndexOutOfBoundsException("TankDrive must configure at least " +
-                        MIN_MOTORS + " motors: " + motors.length);
+        if (motors == null || motors.length < MIN_MOTORS) {
+            throw new IllegalArgumentException("TankDrive must configure at least " +
+                    MIN_MOTORS + " motors: " + motors.length);
+        }
+        for (TankMotor motor : motors) {
+            if (motor == null || motor.name == null) {
+                throw new IllegalArgumentException("TankDrive: Null motor or motor name");
             }
-            this.motors = motors;
-            for (TankMotor motor : this.motors) {
+            try {
                 motor.motor = map.dcMotor.get(motor.name);
                 if (motor.reverse) {
                     motor.motor.setDirection(DcMotorSimple.Direction.REVERSE);
                 }
+            } catch (Exception e) {
+                if (telemetry != null) {
+                    telemetry.log().add("No such motor: " + motor.name);
+                }
+                return;
             }
-            this.disabled = false;
-        } catch (Exception e) {
-            this.motors = null;
-            this.disabled = true;
         }
+        this.motors = motors;
+        this.disabled = false;
     }
 
     public boolean isAvailable() {
