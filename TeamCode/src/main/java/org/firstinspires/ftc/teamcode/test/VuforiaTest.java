@@ -1,11 +1,18 @@
 package org.firstinspires.ftc.teamcode.test;
 
 import android.graphics.Color;
+import android.os.Handler;
+import android.view.Gravity;
+import android.view.View;
+import android.widget.FrameLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
+import org.firstinspires.ftc.teamcode.R;
 import org.firstinspires.ftc.teamcode.config.VuforiaConfigs;
 import org.firstinspires.ftc.teamcode.vuforia.ImageFTC;
 import org.firstinspires.ftc.teamcode.vuforia.VuforiaFTC;
@@ -26,6 +33,7 @@ public class VuforiaTest extends OpMode {
     private String lastMark = "<None>";
     private String lastImage = "<None>";
     private String lastRGB = "<None>";
+    private boolean added = false;
 
     // Sensor reference types for our DriveTo callbacks
     enum SENSOR_TYPE {
@@ -132,6 +140,31 @@ public class VuforiaTest extends OpMode {
                         new int[]{((i + 1) * slice) - 1, image.getHeight() - 1});
                 lastRGB += " (" + Color.red(rgb) + "," + Color.green(rgb) + "," + Color.blue(rgb) + ")";
             }
+        }
+
+        // Add UI elements to the video view
+        if (!added) {
+            added = true;
+            Handler ui = new Handler(hardwareMap.appContext.getMainLooper());
+            ui.post(new Runnable() {
+                @Override
+                public void run() {
+                    View layout = View.inflate(hardwareMap.appContext, R.layout.activity_ftc_controller, null);
+                    View view = layout.findViewById(R.id.cameraMonitorViewId);
+                    TextView text = new TextView(hardwareMap.appContext);
+                    text.setId(View.generateViewId());
+                    text.setText("ZValue");
+                    text.setTextColor(0);
+                    text.setTextSize(36);
+                    text.setBackgroundColor(128);
+                    FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
+                            FrameLayout.LayoutParams.MATCH_PARENT,
+                            FrameLayout.LayoutParams.WRAP_CONTENT,
+                            Gravity.CENTER);
+                    ((FrameLayout) view.getParent()).addView(text, params);
+                    System.err.println(text.getText());
+                }
+            });
         }
 
         /*

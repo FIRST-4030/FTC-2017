@@ -32,8 +32,6 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 package org.firstinspires.ftc.teamcode.vuforia;
 
-import android.graphics.Color;
-
 import com.qualcomm.ftcrobotcontroller.R;
 import com.qualcomm.robotcore.util.RobotLog;
 import com.vuforia.HINT;

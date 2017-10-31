@@ -11,16 +11,18 @@ import com.qualcomm.robotcore.hardware.*;
 
 public abstract class WestCoastOpMode extends OpMode{
 
+    public final int LIFT_RANGE = 100; //test value - to be changed
+
     public final int LEFT = 0;
     public final int RIGHT = 1;
 
     public final int TOP_CLAW = 0;
     public final int BOTTOM_CLAW = 1;
 
-    public final double UPPER_CLAW_MAX = .94;
-    public final double UPPER_CLAW_MIN = .05;
-    public final double LOWER_CLAW_MAX = .5; // was 1
-    public final double LOWER_CLAW_MIN = .2; // was .5
+    public final double UPPER_CLAW_MAX = .48;
+    public final double UPPER_CLAW_MIN = .06;
+    public final double LOWER_CLAW_MAX = .35;
+    public final double LOWER_CLAW_MIN = .09;
 
     public DcMotor lWheel1;
     public DcMotor lWheel2;
@@ -29,6 +31,9 @@ public abstract class WestCoastOpMode extends OpMode{
     public DcMotor lift;
     public Servo topClaw;
     public Servo bottomClaw;
+    public AnalogInput liftSwitch;
+
+    public int liftMinimum;
 
     public void init() {
         // Set Up hardware
@@ -39,20 +44,22 @@ public abstract class WestCoastOpMode extends OpMode{
         lift = hardwareMap.dcMotor.get("LM1");
         topClaw = hardwareMap.servo.get("CL1");
         bottomClaw = hardwareMap.servo.get("CL2");
-
-
-
-        topClaw.scaleRange(UPPER_CLAW_MIN, UPPER_CLAW_MAX);
-        bottomClaw.scaleRange(LOWER_CLAW_MIN, LOWER_CLAW_MAX);
+        liftSwitch = hardwareMap.analogInput.get("LS1");
 
         topClaw.setDirection(Servo.Direction.REVERSE);
-//        bottomClaw.setDirection(Servo.Direction.REVERSE);
 
-        setServoPosition(TOP_CLAW, .5);
-        setServoPosition(BOTTOM_CLAW, .5);
+        setServoPosition(TOP_CLAW, UPPER_CLAW_MAX);
+        setServoPosition(BOTTOM_CLAW, LOWER_CLAW_MAX);
 
-//        setServoPosition(topClaw, UPPER_CLAW_MIN);
-//        setServoPosition(bottomClaw, LOWER_CLAW_MIN);
+        while(!liftSwitchIsPressed()){
+            lift.setPower(1); // POSITIVE IS DOWN!!!
+        }
+
+        liftMinimum = getLiftPosition();
+        lift.setPower(0);
+
+        setServoPosition(TOP_CLAW, UPPER_CLAW_MIN);
+        setServoPosition(BOTTOM_CLAW, LOWER_CLAW_MIN);
 
     }
 
@@ -74,13 +81,17 @@ public abstract class WestCoastOpMode extends OpMode{
 
     }
 
-    public void liftMotor(DcMotor liftMotor, double power){
+    public void setLiftPower(DcMotor liftMotor, double power){
         if (Math.abs(power) > 1) {
             throw new IllegalArgumentException("liftMotor: the power value must be between -1 and 1 inclusive");
         }
 
-        liftMotor.setPower(power);
+        boolean tryingToGoBelow = getLiftPosition() >= liftMinimum && power < 0;
+        boolean tryingToGoAbove = getLiftPosition() <= (liftMinimum + LIFT_RANGE) && power > 0;
 
+        if(!tryingToGoBelow || !tryingToGoAbove)
+            liftMotor.setPower(power);
+        else liftMotor.setPower(0);
     }
 
     public void setServoPosition(int claw, double position){
@@ -110,6 +121,14 @@ public abstract class WestCoastOpMode extends OpMode{
             throw new IllegalArgumentException("side must be either 0 (left) or 1 (right)");
         }
 
+    }
+
+    public boolean liftSwitchIsPressed(){
+        return liftSwitch.getVoltage() < .5;
+    }
+
+    public int getLiftPosition(){
+        return lWheel2.getCurrentPosition();
     }
 
 }
