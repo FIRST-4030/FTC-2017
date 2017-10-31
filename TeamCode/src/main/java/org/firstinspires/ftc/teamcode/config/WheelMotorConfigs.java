@@ -14,7 +14,7 @@ public class WheelMotorConfigs {
         TankDrive tank = null;
         for (BOT i : BOT.values()) {
             bot = i;
-            tank = new TankDrive(map, config(), encoderIndex(), encoderScale());
+            tank = new TankDrive(map, config(), encoderIndex(), encoderScale(), telemetry);
             if (tank.isAvailable()) {
                 if (bot.ordinal() != 0) {
                     telemetry.log().add("NOTICE: Using wheel config: " + bot);
@@ -75,7 +75,7 @@ public class WheelMotorConfigs {
     public static final int CodeBotEncoder = 2;
 
     public static TankMotor[] CodeBot() {
-        TankMotor motors[] = new TankMotor[4];
+        TankMotor motors[] = new TankMotor[2];
         motors[0] = new TankMotor("L", MotorSide.LEFT);
         motors[1] = new TankMotor("R", MotorSide.RIGHT);
         return motors;
