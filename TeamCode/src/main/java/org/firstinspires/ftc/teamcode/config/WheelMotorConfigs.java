@@ -71,8 +71,15 @@ public class WheelMotorConfigs {
         return index;
     }
 
+    /*
+     *  Per-machine config follows.
+     *
+     *  Everything above is just syntax sugar.
+     *  No changes are needed above unless the enum BOT changes.
+     */
+
     private static final double CodeBotEncoderScale = 4.7 / 3;
-    public static final int CodeBotEncoder = 2;
+    private static final int CodeBotEncoder = 0;
 
     public static TankMotor[] CodeBot() {
         TankMotor motors[] = new TankMotor[2];
