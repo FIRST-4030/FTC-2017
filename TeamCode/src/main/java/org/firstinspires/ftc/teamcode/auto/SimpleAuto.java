@@ -67,6 +67,7 @@ public class SimpleAuto extends OpMode implements DriveToListener {
 
         // Driver feedback
         telemetry.addData("Encoder", tank.getEncoder(ENCODER_INDEX));
+        telemetry.addData("Drive", drive);
         telemetry.update();
 
         /*

@@ -26,6 +26,8 @@ public class WestCoastTeleOpMode1 extends WestCoastOpMode{
 
         moveLift();
 
+        bumpers();
+
         telemetry.addData("SLOW MODE", slowMode);
 
         telemetry.addData("Top Claw", topClaw.getPosition());
@@ -96,4 +98,40 @@ public class WestCoastTeleOpMode1 extends WestCoastOpMode{
 
     }
 
+    public void bumpers()
+    {
+        //used for spinner on-off switch
+        boolean isBumperStickOn = false;
+
+        //spinner on-off switch
+        if(gamepad2.a && isBumperStickOn == false)
+        {
+            isBumperStickOn = true;
+        }
+        else if (gamepad2.a && isBumperStickOn == true)
+        {
+            isBumperStickOn = false;
+        }
+
+        //set bumper motor power equal to right stick y value is isBumperStickOn = ture
+        if(isBumperStickOn)
+        {
+            lBumperM.setPower(gamepad2.right_stick_y);
+            rBumperM.setPower(gamepad2.right_stick_y);
+        }
+
+        //retract the servos
+        if(gamepad2.dpad_down)
+        {
+            lBumperS.setPosition(BUMPER_SERVO_MIN);
+            rBumperS.setPosition(BUMPER_SERVO_MIN);
+        }
+
+        if(gamepad2.dpad_up)
+        {
+            lBumperS.setPosition(BUMPER_SERVO_MAX);
+            rBumperS.setPosition(BUMPER_SERVO_MAX);
+        }
+
+    }
 }

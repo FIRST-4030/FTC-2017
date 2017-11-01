@@ -86,10 +86,10 @@ public class WheelMotorConfigs {
 
     private static TankMotor[] FinalBot() {
         TankMotor motors[] = new TankMotor[4];
-        motors[0] = new TankMotor("left front", MotorSide.LEFT);
-        motors[1] = new TankMotor("right front", MotorSide.RIGHT, true);
-        motors[2] = new TankMotor("left back", MotorSide.LEFT, true);
-        motors[3] = new TankMotor("right back", MotorSide.RIGHT);
+        motors[0] = new TankMotor("ML1", MotorSide.LEFT);
+        motors[1] = new TankMotor("ML2", MotorSide.LEFT);
+        motors[2] = new TankMotor("MR1", MotorSide.RIGHT);
+        motors[3] = new TankMotor("MR2", MotorSide.RIGHT);
         return motors;
     }
 }
