@@ -2,10 +2,7 @@ package org.firstinspires.ftc.teamcode.auto;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
-<<<<<<< HEAD
 import org.firstinspires.ftc.teamcode.WestCoastOpMode;
-=======
->>>>>>> d60b46151332045a319f8b6c5a7769e82b232566
 import org.firstinspires.ftc.teamcode.buttons.SinglePressButton;
 import org.firstinspires.ftc.teamcode.config.WheelMotorConfigs;
 import org.firstinspires.ftc.teamcode.driveto.DriveTo;
@@ -16,21 +13,13 @@ import org.firstinspires.ftc.teamcode.wheels.TankDrive;
 import java.util.NoSuchElementException;
 
 @com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "Straight Line", group = "Auto")
-<<<<<<< HEAD
 public class StraightLine extends WestCoastOpMode implements DriveToListener {
-=======
-public class StraightLine extends OpMode implements DriveToListener {
->>>>>>> d60b46151332045a319f8b6c5a7769e82b232566
 
     // Driving constants
     private static final float ENCODER_PER_MM = 3.2f;
     private static final float SPEED_DRIVE = 1.0f;
     private static final int OVERRUN_ENCODER = 10;
 
-<<<<<<< HEAD
-
-=======
->>>>>>> d60b46151332045a319f8b6c5a7769e82b232566
     // Devices and subsystems
     private TankDrive tank = null;
     private DriveTo drive = null;
@@ -140,7 +129,6 @@ public class StraightLine extends OpMode implements DriveToListener {
                 timer = time + delay.seconds();
                 state = state.next();
                 break;
-<<<<<<< HEAD
             case LIFTSTUFF:
                 setServoPosition(TOP_CLAW, UPPER_CLAW_MAX);
                 setServoPosition(BOTTOM_CLAW, LOWER_CLAW_MAX);
@@ -151,10 +139,7 @@ public class StraightLine extends OpMode implements DriveToListener {
             case DRIVE_FORWARD:
                 driveForward(distance.millimeters());
                 setLiftPower(lift, 0);
-=======
-            case DRIVE_FORWARD:
                 driveForward(distance.millimeters());
->>>>>>> d60b46151332045a319f8b6c5a7769e82b232566
                 state = state.next();
                 break;
             case DONE:
@@ -205,10 +190,7 @@ public class StraightLine extends OpMode implements DriveToListener {
     enum AUTO_STATE {
         INIT,
         DELAY,
-<<<<<<< HEAD
         LIFTSTUFF,
-=======
->>>>>>> d60b46151332045a319f8b6c5a7769e82b232566
         DRIVE_FORWARD,
         DONE;
 
@@ -237,13 +219,8 @@ public class StraightLine extends OpMode implements DriveToListener {
 
     // Configurable straight-line distance
     enum DISTANCE {
-<<<<<<< HEAD
         SHORT(965),
         LONG(1016);
-=======
-        SHORT(500),
-        LONG(1000);
->>>>>>> d60b46151332045a319f8b6c5a7769e82b232566
 
         private int millimeters;
 
