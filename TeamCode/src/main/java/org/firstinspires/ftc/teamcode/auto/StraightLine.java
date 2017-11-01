@@ -2,14 +2,17 @@ package org.firstinspires.ftc.teamcode.auto;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
+import org.firstinspires.ftc.teamcode.buttons.SinglePressButton;
 import org.firstinspires.ftc.teamcode.config.WheelMotorConfigs;
 import org.firstinspires.ftc.teamcode.driveto.DriveTo;
 import org.firstinspires.ftc.teamcode.driveto.DriveToListener;
 import org.firstinspires.ftc.teamcode.driveto.DriveToParams;
 import org.firstinspires.ftc.teamcode.wheels.TankDrive;
 
-@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "Simple Auto", group = "AutoTest")
-public class SimpleAuto extends OpMode implements DriveToListener {
+import java.util.NoSuchElementException;
+
+@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "Straight Line", group = "Auto")
+public class StraightLine extends OpMode implements DriveToListener {
 
     // Driving constants
     private static final float ENCODER_PER_MM = 3.2f;
@@ -17,8 +20,20 @@ public class SimpleAuto extends OpMode implements DriveToListener {
     private static final int OVERRUN_ENCODER = 10;
 
     // Devices and subsystems
-    private TankDrive tank;
-    private DriveTo drive;
+    private TankDrive tank = null;
+    private DriveTo drive = null;
+
+    // Runtime state
+    private AUTO_STATE state = AUTO_STATE.INIT;
+    private double timer = 0;
+
+    // Init-time config
+    private SinglePressButton up;
+    private SinglePressButton down;
+    private SinglePressButton left;
+    private SinglePressButton right;
+    private DISTANCE distance = DISTANCE.SHORT;
+    private DELAY delay = DELAY.NONE;
 
     // Sensor reference types for our DriveTo callbacks
     enum SENSOR_TYPE {
@@ -43,11 +58,39 @@ public class SimpleAuto extends OpMode implements DriveToListener {
 
     @Override
     public void init_loop() {
+
+        // Update the dpad buttons
+        up.update(gamepad1.dpad_up);
+        down.update(gamepad1.dpad_down);
+        left.update(gamepad1.dpad_left);
+        right.update(gamepad1.dpad_right);
+
+        // Adjust delay
+        if (up.active()) {
+            delay = delay.next();
+        } else if (down.active()) {
+            delay = delay.prev();
+        }
+
+        // Adjust distance
+        if (right.active()) {
+            distance = distance.next();
+        } else if (left.active()) {
+            distance = distance.prev();
+        }
+
+        // Driver feedback
+        telemetry.addData("Delay", delay);
+        telemetry.addData("Distance", distance);
+        telemetry.update();
     }
 
     @Override
     public void start() {
         telemetry.clearAll();
+
+        // Steady...
+        state = AUTO_STATE.first;
     }
 
     @Override
@@ -69,15 +112,29 @@ public class SimpleAuto extends OpMode implements DriveToListener {
         telemetry.update();
 
         /*
-         * Cut the loop short when we are auto-driving
-         * This keeps us out of the state machine until the last auto-drive command is complete
+         * Cut the loop short when we are auto-driving or waiting on a timer
+         * This keeps us out of the state machine until the preceding auto-drive command is complete
          */
-        if (drive != null) {
+        if (drive != null || timer > time) {
             return;
         }
 
-        if (gamepad1.a) {
-            driveForward(500);
+        // Main state machine
+        switch (state) {
+            case INIT:
+                state = state.next();
+                break;
+            case DELAY:
+                timer = time + delay.seconds();
+                state = state.next();
+                break;
+            case DRIVE_FORWARD:
+                driveForward(distance.millimeters());
+                state = state.next();
+                break;
+            case DONE:
+                // Nothing
+                break;
         }
     }
 
@@ -117,5 +174,105 @@ public class SimpleAuto extends OpMode implements DriveToListener {
         int ticks = (int) ((float) -distance * ENCODER_PER_MM);
         param.lessThan(ticks + tank.getEncoder() - OVERRUN_ENCODER);
         drive = new DriveTo(new DriveToParams[]{param});
+    }
+
+    // Define the order of auto routine components
+    enum AUTO_STATE {
+        INIT,
+        DELAY,
+        DRIVE_FORWARD,
+        DONE;
+
+        // Private static copy to avoid repeated calls to values()
+        private static final AUTO_STATE[] values = values();
+
+        public AUTO_STATE prev() {
+            int i = ordinal() - 1;
+            if (i < 0) {
+                throw new NoSuchElementException();
+            }
+            return values[i];
+        }
+
+        public AUTO_STATE next() {
+            int i = ordinal() + 1;
+            if (i >= values.length) {
+                throw new NoSuchElementException();
+            }
+            return values[i];
+        }
+
+        public static final AUTO_STATE first = INIT;
+        public static final AUTO_STATE last = DONE;
+    }
+
+    // Configurable straight-line distance
+    enum DISTANCE {
+        SHORT(500),
+        LONG(1000);
+
+        private int millimeters;
+
+        DISTANCE(int millimeters) {
+            this.millimeters = millimeters;
+        }
+
+        public int millimeters() {
+            return millimeters;
+        }
+
+        // Bounded prev/next methods
+        public DISTANCE prev() {
+            int i = ordinal() + 1;
+            if (i < 0) {
+                i = 0;
+            }
+            return values()[i];
+        }
+
+        public DISTANCE next() {
+            int i = ordinal() + 1;
+            if (i >= values().length) {
+                i = values().length - 1;
+            }
+            return values()[i];
+        }
+    }
+
+    // Configurable delay
+    enum DELAY {
+        NONE(0),
+        LONG(3000);
+
+        private int milliseconds;
+
+        DELAY(int milliseconds) {
+            this.milliseconds = milliseconds;
+        }
+
+        public int milliseconds() {
+            return milliseconds;
+        }
+
+        public double seconds() {
+            return milliseconds / 1000.0d;
+        }
+
+        // Bounded prev/next methods
+        public DELAY prev() {
+            int i = ordinal() + 1;
+            if (i < 0) {
+                i = 0;
+            }
+            return values()[i];
+        }
+
+        public DELAY next() {
+            int i = ordinal() + 1;
+            if (i >= values().length) {
+                i = values().length - 1;
+            }
+            return values()[i];
+        }
     }
 }
