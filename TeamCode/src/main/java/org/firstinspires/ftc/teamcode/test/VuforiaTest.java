@@ -5,7 +5,6 @@ import android.os.Handler;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;

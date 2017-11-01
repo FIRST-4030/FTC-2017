@@ -21,7 +21,7 @@ public class TankDrive {
         this.encoderScale = scale;
         if (motors == null || motors.length < MIN_MOTORS) {
             throw new IllegalArgumentException("TankDrive must configure at least " +
-                    MIN_MOTORS + " motors: " + motors.length);
+                    MIN_MOTORS + " motors");
         }
         for (TankMotor motor : motors) {
             if (motor == null || motor.name == null) {
