@@ -14,7 +14,6 @@ public class SimpleAuto extends OpMode implements DriveToListener {
     // Driving constants
     private static final float ENCODER_PER_MM = 3.2f;
     private static final float SPEED_DRIVE = 1.0f;
-    private static final int ENCODER_INDEX = 0;
     private static final int OVERRUN_ENCODER = 10;
 
     // Devices and subsystems
@@ -66,8 +65,7 @@ public class SimpleAuto extends OpMode implements DriveToListener {
         }
 
         // Driver feedback
-        telemetry.addData("Encoder", tank.getEncoder(ENCODER_INDEX));
-        telemetry.addData("Drive", drive);
+        telemetry.addData("Encoder", tank.getEncoder());
         telemetry.update();
 
         /*
@@ -107,7 +105,7 @@ public class SimpleAuto extends OpMode implements DriveToListener {
         double value = 0;
         switch ((SENSOR_TYPE) param.reference) {
             case DRIVE_ENCODER:
-                value = tank.getEncoder(ENCODER_INDEX);
+                value = tank.getEncoder();
                 break;
         }
         return value;
@@ -117,7 +115,7 @@ public class SimpleAuto extends OpMode implements DriveToListener {
         tank.setTeleop(false);
         DriveToParams param = new DriveToParams(this, SENSOR_TYPE.DRIVE_ENCODER);
         int ticks = (int) ((float) -distance * ENCODER_PER_MM);
-        param.lessThan(ticks + tank.getEncoder(ENCODER_INDEX) - OVERRUN_ENCODER);
+        param.lessThan(ticks + tank.getEncoder() - OVERRUN_ENCODER);
         drive = new DriveTo(new DriveToParams[]{param});
     }
 }

@@ -14,7 +14,7 @@ public enum AutoState {
     HIT_JEWEL,
     PARSE_PICTOGRAM,
     DRIVE_TO_TOWER,
-    PLACE_BLOCK11,
+    PLACE_BLOCK1,
     PLACE_BLOCK2,
     //DRIVE_TO_PILE,
     //COLLECT_BLOCKS,

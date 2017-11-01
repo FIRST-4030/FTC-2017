@@ -14,7 +14,7 @@ public class WheelMotorConfigs {
         TankDrive tank = null;
         for (BOT i : BOT.values()) {
             bot = i;
-            tank = new TankDrive(map, config(), encoderIndex(), encoderScale());
+            tank = new TankDrive(map, config(), encoderIndex(), encoderScale(), telemetry);
             if (tank.isAvailable()) {
                 if (bot.ordinal() != 0) {
                     telemetry.log().add("NOTICE: Using wheel config: " + bot);
@@ -71,13 +71,20 @@ public class WheelMotorConfigs {
         return index;
     }
 
+    /*
+     *  Per-machine config follows.
+     *
+     *  Everything above is just syntax sugar.
+     *  No changes are needed above unless the enum BOT changes.
+     */
+
     private static final double CodeBotEncoderScale = 4.7 / 3;
-    public static final int CodeBotEncoder = 2;
+    private static final int CodeBotEncoder = 0;
 
     public static TankMotor[] CodeBot() {
-        TankMotor motors[] = new TankMotor[4];
+        TankMotor motors[] = new TankMotor[2];
         motors[0] = new TankMotor("L", MotorSide.LEFT);
-        motors[1] = new TankMotor("R", MotorSide.RIGHT);
+        motors[1] = new TankMotor("R", MotorSide.RIGHT, true);
         return motors;
     }
 
@@ -86,9 +93,9 @@ public class WheelMotorConfigs {
 
     private static TankMotor[] FinalBot() {
         TankMotor motors[] = new TankMotor[4];
-        motors[0] = new TankMotor("ML1", MotorSide.LEFT);
-        motors[1] = new TankMotor("ML2", MotorSide.LEFT);
-        motors[2] = new TankMotor("MR1", MotorSide.RIGHT);
+        motors[0] = new TankMotor("ML1", MotorSide.LEFT, true);
+        motors[1] = new TankMotor("MR1", MotorSide.RIGHT);
+        motors[2] = new TankMotor("ML2", MotorSide.LEFT, true);
         motors[3] = new TankMotor("MR2", MotorSide.RIGHT);
         return motors;
     }
