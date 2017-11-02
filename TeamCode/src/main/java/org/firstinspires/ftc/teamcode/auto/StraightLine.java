@@ -139,11 +139,14 @@ public class StraightLine extends OpMode implements DriveToListener {
         // Main state machine
         switch (state) {
             case INIT:
+                lift.setPower(1.0f);
+                clawTop.min();
+                clawBottom.min();
+                timer = time + 0.5;
                 state = state.next();
                 break;
-            case LIFT_INIT:
-                lift.setPower(1.0f);
-                timer = time + 0.5;
+            case READY:
+                lift.stop();
                 state = state.next();
                 break;
             case DELAY:
@@ -151,7 +154,6 @@ public class StraightLine extends OpMode implements DriveToListener {
                 state = state.next();
                 break;
             case DRIVE_FORWARD:
-                lift.stop();
                 driveForward(distance.millimeters());
                 state = state.next();
                 break;
@@ -202,7 +204,7 @@ public class StraightLine extends OpMode implements DriveToListener {
     // Define the order of auto routine components
     enum AUTO_STATE {
         INIT,
-        LIFT_INIT,
+        READY,
         DELAY,
         DRIVE_FORWARD,
         DONE;
@@ -266,7 +268,8 @@ public class StraightLine extends OpMode implements DriveToListener {
     // Configurable delay
     enum DELAY {
         NONE(0),
-        LONG(3000);
+        SHORT(5000),
+        LONG(10000);
 
         private int milliseconds;
 
