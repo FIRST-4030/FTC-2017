@@ -13,12 +13,17 @@ import org.firstinspires.ftc.teamcode.wheels.TankDrive;
  */
 public class DriveToMethods {
 
+    // Ratio of encoder ticks to millimeters driven
     public final static float ENCODER_PER_MM = 1.15f;
+    // An estimate of the number of ticks we continue on inertia after calling tank.stop()
     public final static int OVERRUN_ENCODER = 10;
 
     // Forward is toward the claws
     public final static float SPEED_FORWARD = 1.0f;
     public final static float SPEED_REVERSE = -SPEED_FORWARD;
+
+    public final static float LIFT_SPEED_UP = 1.0f;
+    public final static float LIFT_SPEED_DOWN = -LIFT_SPEED_UP;
 
     // Sensor reference types for our DriveTo callbacks
     public enum SENSOR_TYPE {

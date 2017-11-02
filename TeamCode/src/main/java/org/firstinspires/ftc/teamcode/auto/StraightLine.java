@@ -15,8 +15,13 @@ import org.firstinspires.ftc.teamcode.wheels.TankDrive;
 
 import java.util.NoSuchElementException;
 
+import static org.firstinspires.ftc.teamcode.auto.DriveToMethods.*;
+
 @com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "Straight Line", group = "Auto")
 public class StraightLine extends OpMode implements DriveToListener {
+
+    // Auto constants
+    private static final double LIFT_DELAY = 0.75;
 
     // Devices and subsystems
     private TankDrive tank = null;
@@ -133,10 +138,10 @@ public class StraightLine extends OpMode implements DriveToListener {
         // Main state machine
         switch (state) {
             case INIT:
-                lift.setPower(1.0f);
+                lift.setPower(LIFT_SPEED_UP);
                 clawTop.max();
                 clawBottom.max();
-                timer = time + 0.75;
+                timer = time + LIFT_DELAY;
                 state = state.next();
                 break;
             case READY:
@@ -148,7 +153,7 @@ public class StraightLine extends OpMode implements DriveToListener {
                 state = state.next();
                 break;
             case DRIVE_FORWARD:
-                drive = DriveToMethods.driveForward(this, tank, distance.millimeters());
+                drive = driveForward(this, tank, distance.millimeters());
                 state = state.next();
                 break;
             case DONE:
@@ -159,7 +164,7 @@ public class StraightLine extends OpMode implements DriveToListener {
 
     @Override
     public void driveToStop(DriveToParams param) {
-        switch ((DriveToMethods.SENSOR_TYPE) param.reference) {
+        switch ((SENSOR_TYPE) param.reference) {
             case DRIVE_ENCODER:
                 tank.stop();
                 break;
@@ -168,9 +173,9 @@ public class StraightLine extends OpMode implements DriveToListener {
 
     @Override
     public void driveToRun(DriveToParams param) {
-        switch ((DriveToMethods.SENSOR_TYPE) param.reference) {
+        switch ((SENSOR_TYPE) param.reference) {
             case DRIVE_ENCODER:
-                tank.setSpeed(DriveToMethods.SPEED_FORWARD);
+                tank.setSpeed(SPEED_FORWARD);
                 break;
         }
     }
@@ -178,7 +183,7 @@ public class StraightLine extends OpMode implements DriveToListener {
     @Override
     public double driveToSensor(DriveToParams param) {
         double value = 0;
-        switch ((DriveToMethods.SENSOR_TYPE) param.reference) {
+        switch ((SENSOR_TYPE) param.reference) {
             case DRIVE_ENCODER:
                 value = tank.getEncoder();
                 break;

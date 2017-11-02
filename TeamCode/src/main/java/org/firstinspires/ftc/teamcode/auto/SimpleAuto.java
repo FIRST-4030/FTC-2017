@@ -8,6 +8,8 @@ import org.firstinspires.ftc.teamcode.driveto.DriveToListener;
 import org.firstinspires.ftc.teamcode.driveto.DriveToParams;
 import org.firstinspires.ftc.teamcode.wheels.TankDrive;
 
+import static org.firstinspires.ftc.teamcode.auto.DriveToMethods.*;
+
 @com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "Simple Auto", group = "AutoTest")
 public class SimpleAuto extends OpMode implements DriveToListener {
 
@@ -67,13 +69,13 @@ public class SimpleAuto extends OpMode implements DriveToListener {
         }
 
         if (gamepad1.a) {
-            drive = DriveToMethods.driveForward(this, tank, 254);
+            drive = driveForward(this, tank, 254);
         }
     }
 
     @Override
     public void driveToStop(DriveToParams param) {
-        switch ((DriveToMethods.SENSOR_TYPE) param.reference) {
+        switch ((SENSOR_TYPE) param.reference) {
             case DRIVE_ENCODER:
                 tank.stop();
                 break;
@@ -82,10 +84,9 @@ public class SimpleAuto extends OpMode implements DriveToListener {
 
     @Override
     public void driveToRun(DriveToParams param) {
-        // Remember that "forward" is "negative" per the joystick conventions
-        switch ((DriveToMethods.SENSOR_TYPE) param.reference) {
+        switch ((SENSOR_TYPE) param.reference) {
             case DRIVE_ENCODER:
-                tank.setSpeed(DriveToMethods.SPEED_FORWARD);
+                tank.setSpeed(SPEED_FORWARD);
                 break;
         }
     }
@@ -93,7 +94,7 @@ public class SimpleAuto extends OpMode implements DriveToListener {
     @Override
     public double driveToSensor(DriveToParams param) {
         double value = 0;
-        switch ((DriveToMethods.SENSOR_TYPE) param.reference) {
+        switch ((SENSOR_TYPE) param.reference) {
             case DRIVE_ENCODER:
                 value = tank.getEncoder();
                 break;
