@@ -19,7 +19,7 @@ import java.util.NoSuchElementException;
 public class StraightLine extends OpMode implements DriveToListener {
 
     // Driving constants
-    private static final float ENCODER_PER_MM = 3.2f;
+    private static final float ENCODER_PER_MM = 1.2f;
     private static final float SPEED_DRIVE = 1.0f;
     private static final int OVERRUN_ENCODER = 10;
 
@@ -64,9 +64,9 @@ public class StraightLine extends OpMode implements DriveToListener {
 
         // Claws
         clawTop = new ServoConfigs().init(hardwareMap, telemetry, "CLAW-TOP");
-        clawTop.max();
+        clawTop.min();
         clawBottom = new ServoConfigs().init(hardwareMap, telemetry, "CLAW-BOTTOM");
-        clawBottom.max();
+        clawBottom.min();
 
         // Wait for the game to begin
         telemetry.addData(">", "Ready for game start");
@@ -75,6 +75,9 @@ public class StraightLine extends OpMode implements DriveToListener {
 
     @Override
     public void init_loop() {
+
+        // Zero the lift
+        // TODO: We almost certainly need something to zero the lift at init
 
         // Update the dpad buttons
         up.update(gamepad1.dpad_up);
@@ -125,6 +128,7 @@ public class StraightLine extends OpMode implements DriveToListener {
         }
 
         // Driver feedback
+        telemetry.addData("State", state);
         telemetry.addData("Encoder", tank.getEncoder());
         telemetry.update();
 
@@ -140,9 +144,9 @@ public class StraightLine extends OpMode implements DriveToListener {
         switch (state) {
             case INIT:
                 lift.setPower(1.0f);
-                clawTop.min();
-                clawBottom.min();
-                timer = time + 0.5;
+                clawTop.max();
+                clawBottom.max();
+                timer = time + 0.75;
                 state = state.next();
                 break;
             case READY:
@@ -177,7 +181,7 @@ public class StraightLine extends OpMode implements DriveToListener {
         // Remember that "forward" is "negative" per the joystick conventions
         switch ((SENSOR_TYPE) param.reference) {
             case DRIVE_ENCODER:
-                tank.setSpeed(-SPEED_DRIVE);
+                tank.setSpeed(SPEED_DRIVE);
                 break;
         }
     }
@@ -249,7 +253,7 @@ public class StraightLine extends OpMode implements DriveToListener {
 
         // Bounded prev/next methods
         public DISTANCE prev() {
-            int i = ordinal() + 1;
+            int i = ordinal() - 1;
             if (i < 0) {
                 i = 0;
             }
@@ -259,7 +263,7 @@ public class StraightLine extends OpMode implements DriveToListener {
         public DISTANCE next() {
             int i = ordinal() + 1;
             if (i >= values().length) {
-                i = values().length - 1;
+                i--;
             }
             return values()[i];
         }
@@ -287,7 +291,7 @@ public class StraightLine extends OpMode implements DriveToListener {
 
         // Bounded prev/next methods
         public DELAY prev() {
-            int i = ordinal() + 1;
+            int i = ordinal() - 1;
             if (i < 0) {
                 i = 0;
             }
@@ -297,7 +301,7 @@ public class StraightLine extends OpMode implements DriveToListener {
         public DELAY next() {
             int i = ordinal() + 1;
             if (i >= values().length) {
-                i = values().length - 1;
+                i--;
             }
             return values()[i];
         }
