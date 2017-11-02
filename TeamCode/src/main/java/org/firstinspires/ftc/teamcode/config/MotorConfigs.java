@@ -55,7 +55,7 @@ public class MotorConfigs {
         MotorConfig config = null;
         switch (name) {
             case "LIFT":
-                config = new MotorConfig("LM1", false);
+                config = new MotorConfig("LM1", true);
                 break;
         }
         return config;

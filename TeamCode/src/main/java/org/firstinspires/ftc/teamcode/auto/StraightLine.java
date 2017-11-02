@@ -2,8 +2,11 @@ package org.firstinspires.ftc.teamcode.auto;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
-import org.firstinspires.ftc.teamcode.WestCoastOpMode;
+import org.firstinspires.ftc.teamcode.actuators.Motor;
+import org.firstinspires.ftc.teamcode.actuators.ServoFTC;
 import org.firstinspires.ftc.teamcode.buttons.SinglePressButton;
+import org.firstinspires.ftc.teamcode.config.ServoConfigs;
+import org.firstinspires.ftc.teamcode.config.MotorConfigs;
 import org.firstinspires.ftc.teamcode.config.WheelMotorConfigs;
 import org.firstinspires.ftc.teamcode.driveto.DriveTo;
 import org.firstinspires.ftc.teamcode.driveto.DriveToListener;
@@ -13,7 +16,7 @@ import org.firstinspires.ftc.teamcode.wheels.TankDrive;
 import java.util.NoSuchElementException;
 
 @com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "Straight Line", group = "Auto")
-public class StraightLine extends WestCoastOpMode implements DriveToListener {
+public class StraightLine extends OpMode implements DriveToListener {
 
     // Driving constants
     private static final float ENCODER_PER_MM = 3.2f;
@@ -23,16 +26,19 @@ public class StraightLine extends WestCoastOpMode implements DriveToListener {
     // Devices and subsystems
     private TankDrive tank = null;
     private DriveTo drive = null;
+    private ServoFTC clawTop = null;
+    private ServoFTC clawBottom = null;
+    private Motor lift = null;
 
     // Runtime state
     private AUTO_STATE state = AUTO_STATE.INIT;
     private double timer = 0;
 
     // Init-time config
-    private SinglePressButton up;
-    private SinglePressButton down;
-    private SinglePressButton left;
-    private SinglePressButton right;
+    private SinglePressButton up = new SinglePressButton();
+    private SinglePressButton down = new SinglePressButton();
+    private SinglePressButton left = new SinglePressButton();
+    private SinglePressButton right = new SinglePressButton();
     private DISTANCE distance = DISTANCE.SHORT;
     private DELAY delay = DELAY.NONE;
 
@@ -51,6 +57,16 @@ public class StraightLine extends WestCoastOpMode implements DriveToListener {
         // Drive motors
         tank = new WheelMotorConfigs().init(hardwareMap, telemetry);
         tank.stop();
+
+        // Lift
+        lift = new MotorConfigs().init(hardwareMap, telemetry, "LIFT");
+        lift.stop();
+
+        // Claws
+        clawTop = new ServoConfigs().init(hardwareMap, telemetry, "CLAW-TOP");
+        clawTop.max();
+        clawBottom = new ServoConfigs().init(hardwareMap, telemetry, "CLAW-BOTTOM");
+        clawBottom.max();
 
         // Wait for the game to begin
         telemetry.addData(">", "Ready for game start");
@@ -125,20 +141,17 @@ public class StraightLine extends WestCoastOpMode implements DriveToListener {
             case INIT:
                 state = state.next();
                 break;
+            case LIFT_INIT:
+                lift.setPower(1.0f);
+                timer = time + 0.5;
+                state = state.next();
+                break;
             case DELAY:
                 timer = time + delay.seconds();
                 state = state.next();
                 break;
-            case LIFTSTUFF:
-                setServoPosition(TOP_CLAW, UPPER_CLAW_MAX);
-                setServoPosition(BOTTOM_CLAW, LOWER_CLAW_MAX);
-                setLiftPower(lift, -1);
-                timer = time + 1;
-                state = state.next();
-                break;
             case DRIVE_FORWARD:
-                driveForward(distance.millimeters());
-                setLiftPower(lift, 0);
+                lift.stop();
                 driveForward(distance.millimeters());
                 state = state.next();
                 break;
@@ -189,8 +202,8 @@ public class StraightLine extends WestCoastOpMode implements DriveToListener {
     // Define the order of auto routine components
     enum AUTO_STATE {
         INIT,
+        LIFT_INIT,
         DELAY,
-        LIFTSTUFF,
         DRIVE_FORWARD,
         DONE;
 
