@@ -18,11 +18,6 @@ import java.util.NoSuchElementException;
 @com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "Straight Line", group = "Auto")
 public class StraightLine extends OpMode implements DriveToListener {
 
-    // Driving constants
-    private static final float ENCODER_PER_MM = 1.2f;
-    private static final float SPEED_DRIVE = 1.0f;
-    private static final int OVERRUN_ENCODER = 10;
-
     // Devices and subsystems
     private TankDrive tank = null;
     private DriveTo drive = null;
@@ -41,11 +36,6 @@ public class StraightLine extends OpMode implements DriveToListener {
     private SinglePressButton right = new SinglePressButton();
     private DISTANCE distance = DISTANCE.SHORT;
     private DELAY delay = DELAY.NONE;
-
-    // Sensor reference types for our DriveTo callbacks
-    enum SENSOR_TYPE {
-        DRIVE_ENCODER
-    }
 
     @Override
     public void init() {
@@ -158,7 +148,7 @@ public class StraightLine extends OpMode implements DriveToListener {
                 state = state.next();
                 break;
             case DRIVE_FORWARD:
-                driveForward(distance.millimeters());
+                drive = DriveToMethods.driveForward(this, tank, distance.millimeters());
                 state = state.next();
                 break;
             case DONE:
@@ -169,7 +159,7 @@ public class StraightLine extends OpMode implements DriveToListener {
 
     @Override
     public void driveToStop(DriveToParams param) {
-        switch ((SENSOR_TYPE) param.reference) {
+        switch ((DriveToMethods.SENSOR_TYPE) param.reference) {
             case DRIVE_ENCODER:
                 tank.stop();
                 break;
@@ -178,10 +168,9 @@ public class StraightLine extends OpMode implements DriveToListener {
 
     @Override
     public void driveToRun(DriveToParams param) {
-        // Remember that "forward" is "negative" per the joystick conventions
-        switch ((SENSOR_TYPE) param.reference) {
+        switch ((DriveToMethods.SENSOR_TYPE) param.reference) {
             case DRIVE_ENCODER:
-                tank.setSpeed(SPEED_DRIVE);
+                tank.setSpeed(DriveToMethods.SPEED_FORWARD);
                 break;
         }
     }
@@ -189,20 +178,12 @@ public class StraightLine extends OpMode implements DriveToListener {
     @Override
     public double driveToSensor(DriveToParams param) {
         double value = 0;
-        switch ((SENSOR_TYPE) param.reference) {
+        switch ((DriveToMethods.SENSOR_TYPE) param.reference) {
             case DRIVE_ENCODER:
                 value = tank.getEncoder();
                 break;
         }
         return value;
-    }
-
-    private void driveForward(int distance) {
-        tank.setTeleop(false);
-        DriveToParams param = new DriveToParams(this, SENSOR_TYPE.DRIVE_ENCODER);
-        int ticks = (int) ((float) -distance * ENCODER_PER_MM);
-        param.lessThan(ticks + tank.getEncoder() - OVERRUN_ENCODER);
-        drive = new DriveTo(new DriveToParams[]{param});
     }
 
     // Define the order of auto routine components

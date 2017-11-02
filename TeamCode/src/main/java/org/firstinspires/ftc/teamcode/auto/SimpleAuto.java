@@ -11,19 +11,9 @@ import org.firstinspires.ftc.teamcode.wheels.TankDrive;
 @com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "Simple Auto", group = "AutoTest")
 public class SimpleAuto extends OpMode implements DriveToListener {
 
-    // Driving constants
-    private static final float ENCODER_PER_MM = 3.2f;
-    private static final float SPEED_DRIVE = 1.0f;
-    private static final int OVERRUN_ENCODER = 10;
-
     // Devices and subsystems
     private TankDrive tank;
     private DriveTo drive;
-
-    // Sensor reference types for our DriveTo callbacks
-    enum SENSOR_TYPE {
-        DRIVE_ENCODER
-    }
 
     @Override
     public void init() {
@@ -77,13 +67,13 @@ public class SimpleAuto extends OpMode implements DriveToListener {
         }
 
         if (gamepad1.a) {
-            driveForward(500);
+            drive = DriveToMethods.driveForward(this, tank, 254);
         }
     }
 
     @Override
     public void driveToStop(DriveToParams param) {
-        switch ((SENSOR_TYPE) param.reference) {
+        switch ((DriveToMethods.SENSOR_TYPE) param.reference) {
             case DRIVE_ENCODER:
                 tank.stop();
                 break;
@@ -93,9 +83,9 @@ public class SimpleAuto extends OpMode implements DriveToListener {
     @Override
     public void driveToRun(DriveToParams param) {
         // Remember that "forward" is "negative" per the joystick conventions
-        switch ((SENSOR_TYPE) param.reference) {
+        switch ((DriveToMethods.SENSOR_TYPE) param.reference) {
             case DRIVE_ENCODER:
-                tank.setSpeed(-SPEED_DRIVE);
+                tank.setSpeed(DriveToMethods.SPEED_FORWARD);
                 break;
         }
     }
@@ -103,19 +93,11 @@ public class SimpleAuto extends OpMode implements DriveToListener {
     @Override
     public double driveToSensor(DriveToParams param) {
         double value = 0;
-        switch ((SENSOR_TYPE) param.reference) {
+        switch ((DriveToMethods.SENSOR_TYPE) param.reference) {
             case DRIVE_ENCODER:
                 value = tank.getEncoder();
                 break;
         }
         return value;
-    }
-
-    private void driveForward(int distance) {
-        tank.setTeleop(false);
-        DriveToParams param = new DriveToParams(this, SENSOR_TYPE.DRIVE_ENCODER);
-        int ticks = (int) ((float) -distance * ENCODER_PER_MM);
-        param.lessThan(ticks + tank.getEncoder() - OVERRUN_ENCODER);
-        drive = new DriveTo(new DriveToParams[]{param});
     }
 }
