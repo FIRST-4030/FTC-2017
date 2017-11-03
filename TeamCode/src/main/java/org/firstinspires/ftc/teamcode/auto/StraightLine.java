@@ -35,6 +35,7 @@ public class StraightLine extends OpMode implements DriveToListener {
     // Runtime state
     private AUTO_STATE state = AUTO_STATE.INIT;
     private double timer = 0;
+    private boolean liftReady = false;
 
     // Init-time config
     private SinglePressButton up = new SinglePressButton();
@@ -66,7 +67,7 @@ public class StraightLine extends OpMode implements DriveToListener {
         clawBottom.min();
 
         // Wait for the game to begin
-        telemetry.addData(">", "Ready for game start");
+        telemetry.addData(">", "Init complete");
         telemetry.update();
     }
 
@@ -74,7 +75,10 @@ public class StraightLine extends OpMode implements DriveToListener {
     public void init_loop() {
 
         // Zero the lift
-        // TODO: We almost certainly need something to zero the lift at init
+        if (!liftReady) {
+            // TODO: We need to zero the lift, for now just pretend
+            liftReady = true;
+        }
 
         // Update the dpad buttons
         up.update(gamepad1.dpad_up);
@@ -99,12 +103,16 @@ public class StraightLine extends OpMode implements DriveToListener {
         // Driver feedback
         telemetry.addData("Delay", delay);
         telemetry.addData("Distance", distance);
+        telemetry.addData("Lift", liftReady ? "Ready" : "Zeroing");
         telemetry.update();
     }
 
     @Override
     public void start() {
         telemetry.clearAll();
+
+        // Disable the lift if it isn't ready
+        lift.setEnabled(liftReady);
 
         // Steady...
         state = AUTO_STATE.values()[0];

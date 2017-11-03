@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class Motor {
     private DcMotor motor;
+    private boolean enabled = true;
 
     public Motor(HardwareMap map, MotorConfig config) {
         try {
@@ -17,8 +18,15 @@ public class Motor {
         }
     }
 
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+        if (!enabled) {
+            this.stop();
+        }
+    }
+
     public boolean isAvailable() {
-        return motor != null;
+        return enabled & (motor != null);
     }
 
     public void setPower(double power) {
