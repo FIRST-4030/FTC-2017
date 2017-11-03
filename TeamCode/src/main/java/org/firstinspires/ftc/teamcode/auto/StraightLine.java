@@ -11,6 +11,8 @@ import org.firstinspires.ftc.teamcode.config.WheelMotorConfigs;
 import org.firstinspires.ftc.teamcode.driveto.DriveTo;
 import org.firstinspires.ftc.teamcode.driveto.DriveToListener;
 import org.firstinspires.ftc.teamcode.driveto.DriveToParams;
+import org.firstinspires.ftc.teamcode.utils.OrderedEnum;
+import org.firstinspires.ftc.teamcode.utils.OrderedEnumHelper;
 import org.firstinspires.ftc.teamcode.wheels.TankDrive;
 
 import java.util.NoSuchElementException;
@@ -105,7 +107,7 @@ public class StraightLine extends OpMode implements DriveToListener {
         telemetry.clearAll();
 
         // Steady...
-        state = AUTO_STATE.first;
+        state = AUTO_STATE.values()[0];
     }
 
     @Override
@@ -192,38 +194,24 @@ public class StraightLine extends OpMode implements DriveToListener {
     }
 
     // Define the order of auto routine components
-    enum AUTO_STATE {
+    enum AUTO_STATE implements OrderedEnum {
         INIT,
         READY,
         DELAY,
         DRIVE_FORWARD,
         DONE;
 
-        // Private static copy to avoid repeated calls to values()
-        private static final AUTO_STATE[] values = values();
-
         public AUTO_STATE prev() {
-            int i = ordinal() - 1;
-            if (i < 0) {
-                throw new NoSuchElementException();
-            }
-            return values[i];
+            return OrderedEnumHelper.prev(this);
         }
 
         public AUTO_STATE next() {
-            int i = ordinal() + 1;
-            if (i >= values.length) {
-                throw new NoSuchElementException();
-            }
-            return values[i];
+            return OrderedEnumHelper.next(this);
         }
-
-        public static final AUTO_STATE first = INIT;
-        public static final AUTO_STATE last = DONE;
     }
 
     // Configurable straight-line distance
-    enum DISTANCE {
+    enum DISTANCE implements OrderedEnum {
         SHORT(965),
         LONG(1016);
 
@@ -237,26 +225,17 @@ public class StraightLine extends OpMode implements DriveToListener {
             return millimeters;
         }
 
-        // Bounded prev/next methods
         public DISTANCE prev() {
-            int i = ordinal() - 1;
-            if (i < 0) {
-                i = 0;
-            }
-            return values()[i];
+            return OrderedEnumHelper.prev(this);
         }
 
         public DISTANCE next() {
-            int i = ordinal() + 1;
-            if (i >= values().length) {
-                i--;
-            }
-            return values()[i];
+            return OrderedEnumHelper.next(this);
         }
     }
 
     // Configurable delay
-    enum DELAY {
+    enum DELAY implements OrderedEnum {
         NONE(0),
         SHORT(5000),
         LONG(10000);
@@ -275,21 +254,12 @@ public class StraightLine extends OpMode implements DriveToListener {
             return milliseconds / 1000.0d;
         }
 
-        // Bounded prev/next methods
         public DELAY prev() {
-            int i = ordinal() - 1;
-            if (i < 0) {
-                i = 0;
-            }
-            return values()[i];
+            return OrderedEnumHelper.prev(this);
         }
 
         public DELAY next() {
-            int i = ordinal() + 1;
-            if (i >= values().length) {
-                i--;
-            }
-            return values()[i];
+            return OrderedEnumHelper.next(this);
         }
     }
 }
