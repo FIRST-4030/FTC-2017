@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.mechanum;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -31,8 +31,10 @@ public abstract class MechanumOpMode extends OpMode {
         // NOTE: THE BACK LEFT AND BACK RIGHT WHEELS ARE LABELED WRONG ON THE MECHANUM CONFIGURATION!
         // TO COMPENSATE, THE BACK WHEELS ARE SWITCHED IN THIS PIECE OF CODE, TO AVOID SCREWING WITH EXISTING CODE.
 
-        FLWheel = hardwareMap.dcMotor.get("FL");
-        FRWheel = hardwareMap.dcMotor.get("FR");
+        // NOW the front too?
+
+        FLWheel = hardwareMap.dcMotor.get("FR");
+        FRWheel = hardwareMap.dcMotor.get("FL");
         BLWheel = hardwareMap.dcMotor.get("BR");
         BRWheel = hardwareMap.dcMotor.get("BL");
     }
@@ -81,7 +83,7 @@ public abstract class MechanumOpMode extends OpMode {
         BR vm = (speed)(sin(moveAngle + (pi / 4))) - rotationSpeed
 
         vm is between -2 and 2 - needs to be between 1 and -1
-        DON'T JUST DIVIDE BY 2
+        DON'T JUST DIVIDE BY 2 (?????)
         DON'T JUST USE A PIECEWISE FUNCTION
 
         Find the largest |vm| of the 4 motors
@@ -90,23 +92,29 @@ public abstract class MechanumOpMode extends OpMode {
          */
 
         // Calculate the VMs
-        double fLVM = (speed * Math.sin(moveAngle + (Math.PI / 4))) + rotationSpeed;
+        double fLVM = (speed * Math.sin(moveAngle + (Math.PI / 4))) - rotationSpeed;
         double fRVM = (speed * Math.cos(moveAngle + (Math.PI / 4))) + rotationSpeed;
         double bLVM = (speed * Math.cos(moveAngle + (Math.PI / 4))) - rotationSpeed;
-        double bRVM = (speed * Math.sin(moveAngle + (Math.PI / 4))) - rotationSpeed;
+        double bRVM = (speed * Math.sin(moveAngle + (Math.PI / 4))) + rotationSpeed;
 
         // Account for the range of the VMs
-        double largestVM = Math.abs(fLVM);
-        if(Math.abs(fRVM) > largestVM) largestVM = Math.abs(fRVM);
-        if(Math.abs(bLVM) > largestVM) largestVM = Math.abs(bLVM);
-        if(Math.abs(bRVM) > largestVM) largestVM = Math.abs(bRVM);
+//        double largestVM = Math.abs(fLVM);
+//        if(Math.abs(fRVM) > largestVM) largestVM = Math.abs(fRVM);
+//        if(Math.abs(bLVM) > largestVM) largestVM = Math.abs(bLVM);
+//        if(Math.abs(bRVM) > largestVM) largestVM = Math.abs(bRVM);
+//
+//        if(largestVM != 0) {
+//            fLVM = fLVM / largestVM;
+//            fRVM = fRVM / largestVM;
+//            bLVM = bLVM / largestVM;
+//            bRVM = bRVM / largestVM;
+//        }
 
-        if(largestVM != 0) {
-            fLVM = fLVM / largestVM;
-            fRVM = fRVM / largestVM;
-            bLVM = bLVM / largestVM;
-            bRVM = bRVM / largestVM;
-        }
+        //temporary thingy that allows for slower speeds
+        fLVM = fLVM / 2;
+        fRVM = fRVM / 2;
+        bLVM = bLVM / 2;
+        bRVM = bRVM / 2;
 
         telemetry.addData("FL Speed", fLVM);
         telemetry.addData("FR Speed", fRVM);
@@ -115,13 +123,12 @@ public abstract class MechanumOpMode extends OpMode {
         telemetry.addData("netSpeed", speed);
         telemetry.addData("moveAngle", moveAngle);
         telemetry.addData("rotationSpeed", rotationSpeed);
-        telemetry.update();
 
         // Use the VMs as power values for the motors
-        turnMotor(FLWheel, -fLVM);
+        turnMotor(FLWheel, fLVM);
         turnMotor(FRWheel, -fRVM);
         turnMotor(BLWheel, bLVM);
-        turnMotor(BRWheel, bRVM);
+        turnMotor(BRWheel, -bRVM);
 
 
     }
