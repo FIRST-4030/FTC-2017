@@ -33,8 +33,8 @@ public abstract class WestCoastOpMode extends OpMode{
     public DcMotor lift;
    // public DcMotor lBumperM;
    // public DcMotor rBumperM;
-    public Servo lBumperS;
-    public Servo rBumperS;
+    //public Servo lBumperS;
+    //public Servo rBumperS;
     public Servo topClaw;
     public Servo bottomClaw;
     public AnalogInput liftSwitch;
@@ -53,8 +53,8 @@ public abstract class WestCoastOpMode extends OpMode{
         liftSwitch = hardwareMap.analogInput.get("LS1");
         //lBumperM = hardwareMap.dcMotor.get("lBumperM");
         //rBumperM = hardwareMap.dcMotor.get("rBumperM");
-        lBumperS = hardwareMap.servo.get("lBumperS");
-        rBumperS = hardwareMap.servo.get("rBumperS");
+        //lBumperS = hardwareMap.servo.get("lBumperS");
+        //rBumperS = hardwareMap.servo.get("rBumperS");
 
 
         topClaw.setDirection(Servo.Direction.REVERSE);
@@ -62,21 +62,21 @@ public abstract class WestCoastOpMode extends OpMode{
         setServoPosition(TOP_CLAW, UPPER_CLAW_MAX);
         setServoPosition(BOTTOM_CLAW, LOWER_CLAW_MAX);
 
-        while(!liftSwitchIsPressed()){
-            lift.setPower(1); // POSITIVE IS DOWN!!!
-        }
+        //while(!liftSwitchIsPressed()){
+        //    lift.setPower(1); // POSITIVE IS DOWN!!!
+        //}
 
-        liftMinimum = getLiftPosition();
-        lift.setPower(0);
+        //liftMinimum = getLiftPosition();
+        //lift.setPower(0);
 
         setServoPosition(TOP_CLAW, UPPER_CLAW_MIN);
         setServoPosition(BOTTOM_CLAW, LOWER_CLAW_MIN);
 
         //initialize bumper servos to be in and set limits
-        lBumperS.setPosition(BUMPER_SERVO_MIN);
-        rBumperS.setPosition(BUMPER_SERVO_MIN);
-        lBumperS.scaleRange(BUMPER_SERVO_MIN, BUMPER_SERVO_MAX);
-        rBumperS.scaleRange(BUMPER_SERVO_MIN, BUMPER_SERVO_MAX);
+        //lBumperS.setPosition(BUMPER_SERVO_MIN);
+        //rBumperS.setPosition(BUMPER_SERVO_MIN);
+        //lBumperS.scaleRange(BUMPER_SERVO_MIN, BUMPER_SERVO_MAX);
+        //rBumperS.scaleRange(BUMPER_SERVO_MIN, BUMPER_SERVO_MAX);
     }
 
     /**

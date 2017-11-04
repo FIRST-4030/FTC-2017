@@ -123,14 +123,14 @@ public class WestCoastTeleOpMode1 extends WestCoastOpMode{
         //retract the servos
         if(gamepad2.dpad_down)
         {
-            lBumperS.setPosition(BUMPER_SERVO_MIN);
-            rBumperS.setPosition(BUMPER_SERVO_MIN);
+            //lBumperS.setPosition(BUMPER_SERVO_MIN);
+            //rBumperS.setPosition(BUMPER_SERVO_MIN);
         }
 
         if(gamepad2.dpad_up)
         {
-            lBumperS.setPosition(BUMPER_SERVO_MAX);
-            rBumperS.setPosition(BUMPER_SERVO_MAX);
+            //lBumperS.setPosition(BUMPER_SERVO_MAX);
+            //rBumperS.setPosition(BUMPER_SERVO_MAX);
         }
 
     }
