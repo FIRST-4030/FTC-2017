@@ -45,11 +45,6 @@ public class StraightLine extends OpMode implements DriveToListener {
     private DISTANCE distance = DISTANCE.SHORT;
     private DELAY delay = DELAY.NONE;
 
-
-    // please figure out another way to do this
-    // this is really gross
-    private long driveBackwardsStartTime = 0;
-
     @Override
     public void init() {
 
