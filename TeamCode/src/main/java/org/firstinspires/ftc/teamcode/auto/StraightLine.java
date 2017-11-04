@@ -15,8 +15,6 @@ import org.firstinspires.ftc.teamcode.utils.OrderedEnum;
 import org.firstinspires.ftc.teamcode.utils.OrderedEnumHelper;
 import org.firstinspires.ftc.teamcode.wheels.TankDrive;
 
-import java.util.NoSuchElementException;
-
 import static org.firstinspires.ftc.teamcode.auto.DriveToMethods.*;
 
 @com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "Straight Line", group = "Auto")
@@ -171,17 +169,22 @@ public class StraightLine extends OpMode implements DriveToListener {
                 clawBottom.min();
                 state = state.next();
                 break;
-            case DELAY2: //new
+            case RELEASE_DELAY:
                 timer = time + 1;
                 state = state.next();
                 break;
-            case DRIVE_BACKWARD: //new
+            case DRIVE_BACKWARD:
                 timer = time + .15;
                 tank.setSpeed(-.5);
                 state = state.next();
                 break;
-            case DONE:
+            case DRIVE_STOP: // Only necessary until driveBackward is used
                 tank.stop();
+                state = state.next();
+                break;
+            case DONE:
+                // Exit the opmode
+                this.requestOpModeStop();
                 break;
         }
     }
@@ -199,7 +202,7 @@ public class StraightLine extends OpMode implements DriveToListener {
     public void driveToRun(DriveToParams param) {
         switch ((SENSOR_TYPE) param.reference) {
             case DRIVE_ENCODER:
-                tank.setSpeed(SLOWER_SPEED_FORWARD);
+                tank.setSpeed(SPEED_FORWARD_SLOW);
                 break;
         }
     }
@@ -222,8 +225,9 @@ public class StraightLine extends OpMode implements DriveToListener {
         DELAY,
         DRIVE_FORWARD,
         RELEASE,
-        DELAY2,
+        RELEASE_DELAY,
         DRIVE_BACKWARD,
+        DRIVE_STOP,
         DONE;
 
         public AUTO_STATE prev() {

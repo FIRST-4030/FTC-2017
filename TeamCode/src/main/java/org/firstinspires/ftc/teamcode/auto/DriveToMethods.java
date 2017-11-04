@@ -20,7 +20,7 @@ public class DriveToMethods {
 
     // Forward is toward the claws
     public final static float SPEED_FORWARD = 1.0f;
-    public final static float SLOWER_SPEED_FORWARD = .75f;
+    public final static float SPEED_FORWARD_SLOW = .75f;
     public final static float SPEED_REVERSE = -SPEED_FORWARD;
 
     public final static float LIFT_SPEED_UP = 1.0f;
