@@ -9,6 +9,7 @@ import org.firstinspires.ftc.teamcode.config.ServoConfigs;
 import org.firstinspires.ftc.teamcode.config.MotorConfigs;
 import org.firstinspires.ftc.teamcode.config.WheelMotorConfigs;
 import org.firstinspires.ftc.teamcode.driveto.DriveTo;
+import org.firstinspires.ftc.teamcode.driveto.DriveToComp;
 import org.firstinspires.ftc.teamcode.driveto.DriveToListener;
 import org.firstinspires.ftc.teamcode.driveto.DriveToParams;
 import org.firstinspires.ftc.teamcode.utils.OrderedEnum;
@@ -202,7 +203,11 @@ public class StraightLine extends OpMode implements DriveToListener {
     public void driveToRun(DriveToParams param) {
         switch ((SENSOR_TYPE) param.reference) {
             case DRIVE_ENCODER:
-                tank.setSpeed(SPEED_FORWARD_SLOW);
+                if (param.comparator == DriveToComp.GREATER) {
+                    tank.setSpeed(SPEED_FORWARD_SLOW);
+                } else {
+                    tank.setSpeed(SPEED_REVERSE);
+                }
                 break;
         }
     }
