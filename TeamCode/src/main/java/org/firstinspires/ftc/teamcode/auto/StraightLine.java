@@ -10,6 +10,7 @@ import org.firstinspires.ftc.teamcode.config.MotorConfigs;
 import org.firstinspires.ftc.teamcode.config.ServoConfigs;
 import org.firstinspires.ftc.teamcode.config.WheelMotorConfigs;
 import org.firstinspires.ftc.teamcode.driveto.DriveTo;
+import org.firstinspires.ftc.teamcode.driveto.DriveToComp;
 import org.firstinspires.ftc.teamcode.driveto.DriveToListener;
 import org.firstinspires.ftc.teamcode.driveto.DriveToParams;
 import org.firstinspires.ftc.teamcode.field.Field;
@@ -20,6 +21,7 @@ import org.firstinspires.ftc.teamcode.wheels.TankDrive;
 import static org.firstinspires.ftc.teamcode.auto.DriveToMethods.LIFT_SPEED_UP;
 import static org.firstinspires.ftc.teamcode.auto.DriveToMethods.SENSOR_TYPE;
 import static org.firstinspires.ftc.teamcode.auto.DriveToMethods.SPEED_FORWARD_SLOW;
+import static org.firstinspires.ftc.teamcode.auto.DriveToMethods.SPEED_REVERSE;
 import static org.firstinspires.ftc.teamcode.auto.DriveToMethods.driveForward;
 
 @com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "Straight Line", group = "Auto")
@@ -218,7 +220,11 @@ public class StraightLine extends OpMode implements DriveToListener {
     public void driveToRun(DriveToParams param) {
         switch ((SENSOR_TYPE) param.reference) {
             case DRIVE_ENCODER:
-                tank.setSpeed(SPEED_FORWARD_SLOW);
+                if (param.comparator == DriveToComp.GREATER) {
+                    tank.setSpeed(SPEED_FORWARD_SLOW);
+                } else {
+                    tank.setSpeed(SPEED_REVERSE);
+                }
                 break;
         }
     }
