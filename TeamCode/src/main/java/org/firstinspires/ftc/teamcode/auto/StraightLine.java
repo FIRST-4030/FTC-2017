@@ -23,6 +23,7 @@ public class StraightLine extends OpMode implements DriveToListener {
 
     // Auto constants
     private static final double LIFT_DELAY = 0.75;
+    private static final int RELEASE_REVERSE_MM = 50;
 
     // Devices and subsystems
     private TankDrive tank = null;
@@ -174,13 +175,8 @@ public class StraightLine extends OpMode implements DriveToListener {
                 timer = time + 1;
                 state = state.next();
                 break;
-            case DRIVE_BACKWARD:
-                timer = time + .15;
-                tank.setSpeed(-.5);
-                state = state.next();
-                break;
-            case DRIVE_STOP: // Only necessary until driveBackward is used
-                tank.stop();
+            case RELEASE_REVERSE:
+                drive = driveBackward(this, tank, RELEASE_REVERSE_MM);
                 state = state.next();
                 break;
             case DONE:
@@ -213,8 +209,7 @@ public class StraightLine extends OpMode implements DriveToListener {
         DRIVE_FORWARD,
         RELEASE,
         RELEASE_DELAY,
-        DRIVE_BACKWARD,
-        DRIVE_STOP,
+        RELEASE_REVERSE,
         DONE;
 
         public AUTO_STATE prev() {
