@@ -39,4 +39,13 @@ public class DriveToMethods {
         param.greaterThan(ticks + tank.getEncoder() - OVERRUN_ENCODER);
         return new DriveTo(new DriveToParams[]{param});
     }
+
+    public static DriveTo driveBackward(DriveToListener listener, TankDrive tank, int distance) {
+        tank.setTeleop(false);
+        DriveToParams param = new DriveToParams(listener, SENSOR_TYPE.DRIVE_ENCODER);
+        int ticks = (int) ((float) -distance * ENCODER_PER_MM);
+        param.lessThan(ticks - tank.getEncoder() - OVERRUN_ENCODER);
+        return new DriveTo(new DriveToParams[]{param});
+    }
+
 }
