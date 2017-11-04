@@ -166,6 +166,11 @@ public class StraightLine extends OpMode implements DriveToListener {
                 drive = driveForward(this, tank, distance.millimeters());
                 state = state.next();
                 break;
+            case RELEASE:
+                clawTop.min();
+                clawBottom.min();
+                state = state.next();
+                break;
             case DONE:
                 // Nothing
                 break;
@@ -185,7 +190,7 @@ public class StraightLine extends OpMode implements DriveToListener {
     public void driveToRun(DriveToParams param) {
         switch ((SENSOR_TYPE) param.reference) {
             case DRIVE_ENCODER:
-                tank.setSpeed(SPEED_FORWARD);
+                tank.setSpeed(SLOWER_SPEED_FORWARD);
                 break;
         }
     }
@@ -207,6 +212,7 @@ public class StraightLine extends OpMode implements DriveToListener {
         READY,
         DELAY,
         DRIVE_FORWARD,
+        RELEASE,
         DONE;
 
         public AUTO_STATE prev() {

@@ -55,7 +55,7 @@ public class ServoConfigs {
         ServoFTCConfig config = null;
         switch (name) {
             case "CLAW-TOP":
-                config = new ServoFTCConfig("CL1", false, 0.0, 0.48);
+                config = new ServoFTCConfig("CL1", true, 0.0, 0.48);
                 break;
             case "CLAW-BOTTOM":
                 config = new ServoFTCConfig("CL2", false, 0.09, 0.35);
