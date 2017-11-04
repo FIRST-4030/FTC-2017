@@ -11,6 +11,7 @@ import org.firstinspires.ftc.teamcode.config.WheelMotorConfigs;
 import org.firstinspires.ftc.teamcode.driveto.DriveTo;
 import org.firstinspires.ftc.teamcode.driveto.DriveToListener;
 import org.firstinspires.ftc.teamcode.driveto.DriveToParams;
+import org.firstinspires.ftc.teamcode.field.Field;
 import org.firstinspires.ftc.teamcode.utils.OrderedEnum;
 import org.firstinspires.ftc.teamcode.utils.OrderedEnumHelper;
 import org.firstinspires.ftc.teamcode.wheels.TankDrive;
@@ -36,10 +37,14 @@ public class StraightLine extends OpMode implements DriveToListener {
     private boolean liftReady = false;
 
     // Init-time config
+    // TODO: Add a handler to register and update all these at once
     private SinglePressButton up = new SinglePressButton();
     private SinglePressButton down = new SinglePressButton();
     private SinglePressButton left = new SinglePressButton();
     private SinglePressButton right = new SinglePressButton();
+    private SinglePressButton red = new SinglePressButton();
+    private SinglePressButton blue = new SinglePressButton();
+    private Field.AllianceColor alliance = Field.AllianceColor.BLUE;
     private DISTANCE distance = DISTANCE.SHORT;
     private DELAY delay = DELAY.NONE;
 
@@ -83,6 +88,8 @@ public class StraightLine extends OpMode implements DriveToListener {
         down.update(gamepad1.dpad_down);
         left.update(gamepad1.dpad_left);
         right.update(gamepad1.dpad_right);
+        red.update(gamepad1.b);
+        blue.update(gamepad1.x);
 
         // Adjust delay
         if (up.active()) {
@@ -98,9 +105,17 @@ public class StraightLine extends OpMode implements DriveToListener {
             distance = distance.prev();
         }
 
+        // Adjust alliance color
+        if (red.active()) {
+            alliance = Field.AllianceColor.RED;
+        } else if (blue.active()) {
+            alliance = Field.AllianceColor.BLUE;
+        }
+
         // Driver feedback
         telemetry.addData("Delay", delay);
         telemetry.addData("Distance", distance);
+        telemetry.addData("Alliance", alliance);
         telemetry.addData("Lift", liftReady ? "Ready" : "Zeroing");
         telemetry.update();
     }
