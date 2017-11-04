@@ -45,6 +45,11 @@ public class StraightLine extends OpMode implements DriveToListener {
     private DISTANCE distance = DISTANCE.SHORT;
     private DELAY delay = DELAY.NONE;
 
+
+    // please figure out another way to do this
+    // this is really gross
+    private long driveBackwardsStartTime = 0;
+
     @Override
     public void init() {
 
@@ -171,8 +176,17 @@ public class StraightLine extends OpMode implements DriveToListener {
                 clawBottom.min();
                 state = state.next();
                 break;
+            case DELAY2: //new
+                timer = time + 1;
+                state = state.next();
+                break;
+            case DRIVE_BACKWARD: //new
+                timer = time + .15;
+                tank.setSpeed(-.5);
+                state = state.next();
+                break;
             case DONE:
-                // Nothing
+                tank.stop();
                 break;
         }
     }
@@ -213,6 +227,8 @@ public class StraightLine extends OpMode implements DriveToListener {
         DELAY,
         DRIVE_FORWARD,
         RELEASE,
+        DELAY2,
+        DRIVE_BACKWARD,
         DONE;
 
         public AUTO_STATE prev() {
