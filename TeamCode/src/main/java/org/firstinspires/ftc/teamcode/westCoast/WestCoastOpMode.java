@@ -31,8 +31,8 @@ public abstract class WestCoastOpMode extends OpMode{
     public DcMotor rWheel1;
     public DcMotor rWheel2;
     public DcMotor lift;
-    public DcMotor lBumperM;
-    public DcMotor rBumperM;
+   // public DcMotor lBumperM;
+   // public DcMotor rBumperM;
     public Servo lBumperS;
     public Servo rBumperS;
     public Servo topClaw;
@@ -51,8 +51,8 @@ public abstract class WestCoastOpMode extends OpMode{
         topClaw = hardwareMap.servo.get("CL1");
         bottomClaw = hardwareMap.servo.get("CL2");
         liftSwitch = hardwareMap.analogInput.get("LS1");
-        lBumperM = hardwareMap.dcMotor.get("lBumperM");
-        rBumperM = hardwareMap.dcMotor.get("rBumperM");
+        //lBumperM = hardwareMap.dcMotor.get("lBumperM");
+        //rBumperM = hardwareMap.dcMotor.get("rBumperM");
         lBumperS = hardwareMap.servo.get("lBumperS");
         rBumperS = hardwareMap.servo.get("rBumperS");
 

@@ -116,8 +116,8 @@ public class WestCoastTeleOpMode1 extends WestCoastOpMode{
         //set bumper motor power equal to right stick y value is isBumperStickOn = ture
         if(isBumperStickOn)
         {
-            lBumperM.setPower(gamepad2.right_stick_y);
-            rBumperM.setPower(gamepad2.right_stick_y);
+            //lBumperM.setPower(gamepad2.right_stick_y);
+            //rBumperM.setPower(gamepad2.right_stick_y);
         }
 
         //retract the servos
