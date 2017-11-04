@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.auto;
 
 import org.firstinspires.ftc.teamcode.driveto.DriveTo;
+import org.firstinspires.ftc.teamcode.driveto.DriveToComp;
 import org.firstinspires.ftc.teamcode.driveto.DriveToListener;
 import org.firstinspires.ftc.teamcode.driveto.DriveToParams;
 import org.firstinspires.ftc.teamcode.wheels.TankDrive;
@@ -18,11 +19,13 @@ public class DriveToMethods {
     // An estimate of the number of ticks we continue on inertia after calling tank.stop()
     public final static int OVERRUN_ENCODER = 10;
 
-    // Forward is toward the claws
+    // Forward is toward the claws, motor positive, ticks increasing
+    public final static DriveToComp COMP_FORWARD = DriveToComp.GREATER;
     public final static float SPEED_FORWARD = 1.0f;
-    public final static float SPEED_FORWARD_SLOW = .75f;
+    public final static float SPEED_FORWARD_SLOW = SPEED_FORWARD * 0.75f;
     public final static float SPEED_REVERSE = -SPEED_FORWARD;
 
+    // Up is motor positive, ticks <unknown>
     public final static float LIFT_SPEED_UP = 1.0f;
     public final static float LIFT_SPEED_DOWN = -LIFT_SPEED_UP;
 
@@ -31,7 +34,6 @@ public class DriveToMethods {
         DRIVE_ENCODER
     }
 
-    // On the 2017 robot, forward (toward claws) is ticks increasing
     public static DriveTo driveForward(DriveToListener listener, TankDrive tank, int distance) {
         tank.setTeleop(false);
         DriveToParams param = new DriveToParams(listener, SENSOR_TYPE.DRIVE_ENCODER);
@@ -48,4 +50,33 @@ public class DriveToMethods {
         return new DriveTo(new DriveToParams[]{param});
     }
 
+    public static void stop(TankDrive tank, DriveToParams param) {
+        switch ((SENSOR_TYPE) param.reference) {
+            case DRIVE_ENCODER:
+                tank.stop();
+                break;
+        }
+    }
+
+    public static double sensor(TankDrive tank, DriveToParams param) {
+        double value = 0;
+        switch ((SENSOR_TYPE) param.reference) {
+            case DRIVE_ENCODER:
+                value = tank.getEncoder();
+                break;
+        }
+        return value;
+    }
+
+    public static void run(TankDrive tank, DriveToParams param) {
+        switch ((SENSOR_TYPE) param.reference) {
+            case DRIVE_ENCODER:
+                if (param.comparator == COMP_FORWARD) {
+                    tank.setSpeed(SPEED_FORWARD_SLOW);
+                } else {
+                    tank.setSpeed(SPEED_REVERSE);
+                }
+                break;
+        }
+    }
 }
