@@ -192,35 +192,17 @@ public class StraightLine extends OpMode implements DriveToListener {
 
     @Override
     public void driveToStop(DriveToParams param) {
-        switch ((SENSOR_TYPE) param.reference) {
-            case DRIVE_ENCODER:
-                tank.stop();
-                break;
-        }
+        DriveToMethods.stop(tank, param);
     }
 
     @Override
     public void driveToRun(DriveToParams param) {
-        switch ((SENSOR_TYPE) param.reference) {
-            case DRIVE_ENCODER:
-                if (param.comparator == DriveToComp.GREATER) {
-                    tank.setSpeed(SPEED_FORWARD_SLOW);
-                } else {
-                    tank.setSpeed(SPEED_REVERSE);
-                }
-                break;
-        }
+        DriveToMethods.run(tank, param);
     }
 
     @Override
     public double driveToSensor(DriveToParams param) {
-        double value = 0;
-        switch ((SENSOR_TYPE) param.reference) {
-            case DRIVE_ENCODER:
-                value = tank.getEncoder();
-                break;
-        }
-        return value;
+        return DriveToMethods.sensor(tank, param);
     }
 
     // Define the order of auto routine components
