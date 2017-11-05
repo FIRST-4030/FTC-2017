@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.buttons;
 
-public class ToggleButton {
+public class ToggleButton implements ButtonHandlerListener {
     private boolean active = false;
     private final SinglePressButton toggle = new SinglePressButton();
 

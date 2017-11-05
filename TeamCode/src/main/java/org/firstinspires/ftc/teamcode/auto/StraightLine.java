@@ -4,9 +4,10 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.actuators.Motor;
 import org.firstinspires.ftc.teamcode.actuators.ServoFTC;
-import org.firstinspires.ftc.teamcode.buttons.SinglePressButton;
-import org.firstinspires.ftc.teamcode.config.ServoConfigs;
+import org.firstinspires.ftc.teamcode.buttons.BUTTON;
+import org.firstinspires.ftc.teamcode.buttons.ButtonHandler;
 import org.firstinspires.ftc.teamcode.config.MotorConfigs;
+import org.firstinspires.ftc.teamcode.config.ServoConfigs;
 import org.firstinspires.ftc.teamcode.config.WheelMotorConfigs;
 import org.firstinspires.ftc.teamcode.driveto.DriveTo;
 import org.firstinspires.ftc.teamcode.driveto.DriveToListener;
@@ -16,7 +17,10 @@ import org.firstinspires.ftc.teamcode.utils.OrderedEnum;
 import org.firstinspires.ftc.teamcode.utils.OrderedEnumHelper;
 import org.firstinspires.ftc.teamcode.wheels.TankDrive;
 
-import static org.firstinspires.ftc.teamcode.auto.DriveToMethods.*;
+import static org.firstinspires.ftc.teamcode.auto.DriveToMethods.LIFT_SPEED_UP;
+import static org.firstinspires.ftc.teamcode.auto.DriveToMethods.SENSOR_TYPE;
+import static org.firstinspires.ftc.teamcode.auto.DriveToMethods.SPEED_FORWARD_SLOW;
+import static org.firstinspires.ftc.teamcode.auto.DriveToMethods.driveForward;
 
 @com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "Straight Line", group = "Auto")
 public class StraightLine extends OpMode implements DriveToListener {
@@ -37,13 +41,7 @@ public class StraightLine extends OpMode implements DriveToListener {
     private boolean liftReady = false;
 
     // Init-time config
-    // TODO: Add a handler to register and update all these at once
-    private SinglePressButton up = new SinglePressButton();
-    private SinglePressButton down = new SinglePressButton();
-    private SinglePressButton left = new SinglePressButton();
-    private SinglePressButton right = new SinglePressButton();
-    private SinglePressButton red = new SinglePressButton();
-    private SinglePressButton blue = new SinglePressButton();
+    private ButtonHandler buttons = new ButtonHandler();
     private Field.AllianceColor alliance = Field.AllianceColor.BLUE;
     private DISTANCE distance = DISTANCE.SHORT;
     private DELAY delay = DELAY.NONE;
@@ -69,6 +67,13 @@ public class StraightLine extends OpMode implements DriveToListener {
         clawBottom = new ServoConfigs().init(hardwareMap, telemetry, "CLAW-BOTTOM");
         clawBottom.min();
 
+        // Register buttons
+        buttons.register("DELAY-UP", gamepad1, BUTTON.dpad_up);
+        buttons.register("DELAY-DOWN", gamepad1, BUTTON.dpad_down);
+        buttons.register("DISTANCE-UP", gamepad1, BUTTON.dpad_right);
+        buttons.register("DISTANCE-DOWN", gamepad1, BUTTON.dpad_left);
+        buttons.register("ALLIANCE-RED", gamepad1, BUTTON.b);
+        buttons.register("ALLIANCE-BLUE", gamepad1, BUTTON.x);
         // Wait for the game to begin
         telemetry.addData(">", "Init complete");
         telemetry.update();
@@ -84,31 +89,26 @@ public class StraightLine extends OpMode implements DriveToListener {
         }
 
         // Update the dpad buttons
-        up.update(gamepad1.dpad_up);
-        down.update(gamepad1.dpad_down);
-        left.update(gamepad1.dpad_left);
-        right.update(gamepad1.dpad_right);
-        red.update(gamepad1.b);
-        blue.update(gamepad1.x);
+        buttons.update();
 
         // Adjust delay
-        if (up.active()) {
+        if (buttons.get("DELAY-UP")) {
             delay = delay.next();
-        } else if (down.active()) {
+        } else if (buttons.get("DELAY-DOWN")) {
             delay = delay.prev();
         }
 
         // Adjust distance
-        if (right.active()) {
+        if (buttons.get("DISANCE-UP")) {
             distance = distance.next();
-        } else if (left.active()) {
+        } else if (buttons.get("DISTANCE-DOWN")) {
             distance = distance.prev();
         }
 
         // Adjust alliance color
-        if (red.active()) {
+        if (buttons.get("ALLIANCE-RED")) {
             alliance = Field.AllianceColor.RED;
-        } else if (blue.active()) {
+        } else if (buttons.get("ALLIANCE-BLUE")) {
             alliance = Field.AllianceColor.BLUE;
         }
 

@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.buttons;
 
-public class SinglePressButton {
+public class SinglePressButton implements ButtonHandlerListener {
     private boolean active = false;
     private boolean released = true;
 
