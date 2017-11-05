@@ -22,6 +22,7 @@ import static org.firstinspires.ftc.teamcode.auto.DriveToMethods.LIFT_SPEED_UP;
 import static org.firstinspires.ftc.teamcode.auto.DriveToMethods.SENSOR_TYPE;
 import static org.firstinspires.ftc.teamcode.auto.DriveToMethods.SPEED_FORWARD_SLOW;
 import static org.firstinspires.ftc.teamcode.auto.DriveToMethods.SPEED_REVERSE;
+import static org.firstinspires.ftc.teamcode.auto.DriveToMethods.driveBackward;
 import static org.firstinspires.ftc.teamcode.auto.DriveToMethods.driveForward;
 
 @com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "Straight Line", group = "Auto")
