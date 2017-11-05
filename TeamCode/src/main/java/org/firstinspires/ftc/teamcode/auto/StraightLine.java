@@ -74,7 +74,7 @@ public class StraightLine extends OpMode implements DriveToListener {
         buttons.register("DISTANCE-DOWN", gamepad1, BUTTON.dpad_left);
         buttons.register("ALLIANCE-RED", gamepad1, BUTTON.b);
         buttons.register("ALLIANCE-BLUE", gamepad1, BUTTON.x);
-        
+
         // Wait for the game to begin
         telemetry.addData(">", "Init complete");
         telemetry.update();
@@ -100,7 +100,7 @@ public class StraightLine extends OpMode implements DriveToListener {
         }
 
         // Adjust distance
-        if (buttons.get("DISANCE-UP")) {
+        if (buttons.get("DISTANCE-UP")) {
             distance = distance.next();
         } else if (buttons.get("DISTANCE-DOWN")) {
             distance = distance.prev();
