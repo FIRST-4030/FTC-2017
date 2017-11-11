@@ -59,6 +59,9 @@ public class DriveToMethods {
 
     /**
      *
+     * This method presents a very serious problem - if you try to go to a heading that isn't
+     * in the range (-180, 180), it will rotate forever, as the desired heading isn't reachable.
+     *
      * @author Bryan Cook
      * @param listener
      * @param gyro
@@ -75,7 +78,9 @@ public class DriveToMethods {
         return new DriveTo(new DriveToParams[]{param});
     }
 
-    public static DriveTo 
+//    public static DriveTo turnToHeading(DriveToListener listener, Gyro gyro, int heading){
+//
+//    }
 
 
     public static void stop(TankDrive tank, DriveToParams param) {
