@@ -57,6 +57,12 @@ public class MotorConfigs {
             case "LIFT":
                 config = new MotorConfig("LM1", true);
                 break;
+            case "lBumperM":
+                config = new MotorConfig("lBumperM", false);
+                break;
+            case "rBumperM":
+                config = new MotorConfig("rBumperM", false);
+                break;
         }
         return config;
     }

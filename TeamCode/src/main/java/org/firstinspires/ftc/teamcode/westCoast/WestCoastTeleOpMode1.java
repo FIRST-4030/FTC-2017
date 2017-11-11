@@ -1,6 +1,9 @@
 package org.firstinspires.ftc.teamcode.westCoast;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+
+import org.firstinspires.ftc.teamcode.buttons.ButtonHandler;
+
 /**
  * Created by Alex Wang on 10/9/2017.
  */
@@ -13,12 +16,18 @@ public class WestCoastTeleOpMode1 extends WestCoastOpMode{
     public boolean rBumperPressed = false;
     public boolean lBumperPressed = false;
 
+    //used for spinner on-off switch
+    boolean isBumperStickOn = false;
+
+
     public boolean topClawOpen = false;
     public boolean bottomClawOpen = false;
 
     @Override
     public void loop()
     {
+        //update the buttons (at this point its only the intake control button)
+        buttons.update();
 
         moveBase(); // change to analogue
 
@@ -100,37 +109,34 @@ public class WestCoastTeleOpMode1 extends WestCoastOpMode{
 
     public void bumpers()
     {
-        //used for spinner on-off switch
-        boolean isBumperStickOn = false;
-
         //spinner on-off switch
-        if(gamepad2.a && isBumperStickOn == false)
+        if(buttons.get("INTAKE-PRESSED") && isBumperStickOn == false)
         {
             isBumperStickOn = true;
         }
-        else if (gamepad2.a && isBumperStickOn == true)
+        else if (buttons.get("INTAKE-PRESSED") && isBumperStickOn == true)
         {
             isBumperStickOn = false;
         }
 
-        //set bumper motor power equal to right stick y value is isBumperStickOn = ture
+        //set bumper motor power equal to right stick y value if isBumperStickOn = ture
         if(isBumperStickOn)
         {
-            //lBumperM.setPower(gamepad2.right_stick_y);
-            //rBumperM.setPower(gamepad2.right_stick_y);
+            lBumperM.setPower(gamepad2.right_stick_y);
+            rBumperM.setPower(gamepad2.right_stick_y);
         }
 
         //retract the servos
-        if(gamepad2.dpad_down)
+        if(buttons.get("INTAKE-IN"))
         {
-            //lBumperS.setPosition(BUMPER_SERVO_MIN);
-            //rBumperS.setPosition(BUMPER_SERVO_MIN);
+            lBumperS.setPosition(BUMPER_SERVO_MIN);
+            rBumperS.setPosition(BUMPER_SERVO_MIN);
         }
 
-        if(gamepad2.dpad_up)
+        if(buttons.get("INTAKE-OUT"))
         {
-            //lBumperS.setPosition(BUMPER_SERVO_MAX);
-            //rBumperS.setPosition(BUMPER_SERVO_MAX);
+            lBumperS.setPosition(BUMPER_SERVO_MAX);
+            rBumperS.setPosition(BUMPER_SERVO_MAX);
         }
 
     }

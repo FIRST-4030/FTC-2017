@@ -60,6 +60,12 @@ public class ServoConfigs {
             case "CLAW-BOTTOM":
                 config = new ServoFTCConfig("CL2", false, 0.09, 0.35);
                 break;
+            case "LEFT-INTAKE":
+                config = new ServoFTCConfig("lBumperS", false, .3, .7);
+                break;
+            case "RIGHT_INTAKE":
+                config = new ServoFTCConfig("rBumperS", false, .3, .7);
+                break;
         }
         return config;
     }
