@@ -3,17 +3,25 @@ package org.firstinspires.ftc.teamcode.actuators;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 public class Motor {
     private DcMotor motor;
     private boolean enabled = true;
 
-    public Motor(HardwareMap map, MotorConfig config) {
+    public Motor(HardwareMap map, MotorConfig config, Telemetry telemetry) {
+        if (config == null || config.name == null || config.name.isEmpty()) {
+            throw new IllegalArgumentException(this.getClass().getName() + ": Null config or null/empty name");
+        }
         try {
             motor = map.dcMotor.get(config.name);
             if (config.reverse) {
                 motor.setDirection(DcMotor.Direction.REVERSE);
             }
         } catch (Exception e) {
+            if (telemetry != null) {
+                telemetry.log().add(this.getClass().getName() + "No such device: " + config.name);
+            }
             motor = null;
         }
     }

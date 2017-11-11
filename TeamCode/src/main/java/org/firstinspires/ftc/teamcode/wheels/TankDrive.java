@@ -20,12 +20,12 @@ public class TankDrive {
         this.encoderIndex = index;
         this.encoderScale = scale;
         if (motors == null || motors.length < MIN_MOTORS) {
-            throw new IllegalArgumentException("TankDrive must configure at least " +
+            throw new IllegalArgumentException(this.getClass().getName() + " must configure at least " +
                     MIN_MOTORS + " motors");
         }
         for (TankMotor motor : motors) {
-            if (motor == null || motor.name == null) {
-                throw new IllegalArgumentException("TankDrive: Null motor or motor name");
+            if (motor == null || motor.name == null || motor.name.isEmpty()) {
+                throw new IllegalArgumentException(this.getClass().getName() + ": Null motor or null/empty motor name");
             }
             try {
                 motor.motor = map.dcMotor.get(motor.name);
@@ -34,7 +34,7 @@ public class TankDrive {
                 }
             } catch (Exception e) {
                 if (telemetry != null) {
-                    telemetry.log().add("No such motor: " + motor.name);
+                    telemetry.log().add(this.getClass().getName() + ": No such device: " + motor.name);
                 }
                 return;
             }
@@ -56,7 +56,7 @@ public class TankDrive {
             return 0;
         }
         if (index < 0 || index >= motors.length) {
-            throw new ArrayIndexOutOfBoundsException("Invalid TankMotors index: " + index);
+            throw new ArrayIndexOutOfBoundsException(this.getClass().getName() + ": Invalid index: " + index);
         }
         return (int) ((double) motors[index].motor.getCurrentPosition() * encoderScale);
     }

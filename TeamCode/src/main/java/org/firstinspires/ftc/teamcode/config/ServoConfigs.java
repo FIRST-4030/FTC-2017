@@ -13,7 +13,7 @@ public class ServoConfigs {
         ServoFTC servo = null;
         for (BOT i : BOT.values()) {
             bot = i;
-            servo = new ServoFTC(map, config(name));
+            servo = new ServoFTC(map, config(name), telemetry);
             if (servo.isAvailable()) {
                 if (bot.ordinal() != 0) {
                     telemetry.log().add("NOTICE: Using " + name + " servo config " + bot);

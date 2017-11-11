@@ -13,7 +13,7 @@ public class MotorConfigs {
         Motor motor = null;
         for (BOT i : BOT.values()) {
             bot = i;
-            motor = new Motor(map, config(name));
+            motor = new Motor(map, config(name), telemetry);
             if (motor.isAvailable()) {
                 if (bot.ordinal() != 0) {
                     telemetry.log().add("NOTICE: Using " + name + " motor config " + bot);

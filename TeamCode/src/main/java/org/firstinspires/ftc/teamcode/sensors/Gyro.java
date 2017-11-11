@@ -26,14 +26,14 @@ public class Gyro {
 
     public Gyro(HardwareMap map, String name, Telemetry telemetry) {
         if (name == null || name.isEmpty()) {
-            throw new IllegalArgumentException("Null or empty gyro name");
+            throw new IllegalArgumentException(this.getClass().getName() + ": Null/empty name");
         }
         try {
             gyro = (BNO055IMU) map.gyroSensor.get(name);
         } catch (Exception e) {
             gyro = null;
             if (telemetry != null) {
-                telemetry.log().add("No such gyro: " + name);
+                telemetry.log().add(this.getClass().getName() + "No such device: " + name);
             }
             return;
         }

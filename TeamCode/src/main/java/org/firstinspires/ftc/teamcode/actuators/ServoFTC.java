@@ -3,12 +3,17 @@ package org.firstinspires.ftc.teamcode.actuators;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 public class ServoFTC {
     private Servo servo;
     private Double min;
     private Double max;
 
-    public ServoFTC(HardwareMap map, ServoFTCConfig config) {
+    public ServoFTC(HardwareMap map, ServoFTCConfig config, Telemetry telemetry) {
+        if (config == null || config.name == null || config.name.isEmpty()) {
+            throw new IllegalArgumentException(this.getClass().getName() + ": Null config or null/empty name");
+        }
         try {
             servo = map.servo.get(config.name);
             if (config.reverse) {
@@ -18,6 +23,9 @@ public class ServoFTC {
             this.max = config.max;
         } catch (Exception e) {
             servo = null;
+            if (telemetry != null) {
+                telemetry.log().add(this.getClass().getName() + "No such device: " + config.name);
+            }
         }
     }
 
