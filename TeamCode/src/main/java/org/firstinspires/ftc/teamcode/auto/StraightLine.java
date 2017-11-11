@@ -30,6 +30,7 @@ public class StraightLine extends OpMode implements DriveToListener {
 
     // Auto constants
     private static final double LIFT_DELAY = 0.75;
+    private static final double CLAW_DELAY = 0.25;
     private static final int RELEASE_REVERSE_MM = 50;
 
     // Devices and subsystems
@@ -40,7 +41,7 @@ public class StraightLine extends OpMode implements DriveToListener {
     private Motor lift = null;
 
     // Runtime state
-    private AUTO_STATE state = AUTO_STATE.INIT;
+    private AUTO_STATE state = AUTO_STATE.CLAW_INIT;
     private double timer = 0;
     private boolean liftReady = false;
 
@@ -165,10 +166,14 @@ public class StraightLine extends OpMode implements DriveToListener {
 
         // Main state machine
         switch (state) {
-            case INIT:
-                lift.setPower(LIFT_SPEED_UP);
+            case CLAW_INIT:
                 clawTop.max();
-                clawBottom.max();
+                clawBottom.min();
+                timer = time + CLAW_DELAY;
+                state = state.next();
+                break;
+            case LIFT_INIT:
+                lift.setPower(LIFT_SPEED_UP);
                 timer = time + LIFT_DELAY;
                 state = state.next();
                 break;
@@ -221,7 +226,8 @@ public class StraightLine extends OpMode implements DriveToListener {
 
     // Define the order of auto routine components
     enum AUTO_STATE implements OrderedEnum {
-        INIT,
+        CLAW_INIT,
+        LIFT_INIT,
         READY,
         DELAY,
         DRIVE_FORWARD,
@@ -240,21 +246,21 @@ public class StraightLine extends OpMode implements DriveToListener {
     }
 
     // Configurable straight-line distance
-    enum DISTANCE implements OrderedEnum {
-        SHORT(965),
-        LONG(1016);
+        enum DISTANCE implements OrderedEnum {
+            SHORT(965),
+            LONG(1016);
 
-        private int millimeters;
+            private int millimeters;
 
-        DISTANCE(int millimeters) {
-            this.millimeters = millimeters;
-        }
+            DISTANCE(int millimeters) {
+                this.millimeters = millimeters;
+            }
 
-        public int millimeters() {
-            return millimeters;
-        }
+            public int millimeters() {
+                return millimeters;
+            }
 
-        public DISTANCE prev() {
+            public DISTANCE prev() {
             return OrderedEnumHelper.prev(this);
         }
 
