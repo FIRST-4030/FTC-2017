@@ -35,6 +35,7 @@ public class Gyro {
             gyro.startAccelerationIntegration(new Position(), new Velocity(), 1000);
         } catch (Exception e) {
             gyro = null;
+            throw e;
         }
     }
 

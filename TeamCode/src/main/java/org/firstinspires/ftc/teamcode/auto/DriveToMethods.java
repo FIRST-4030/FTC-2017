@@ -4,6 +4,7 @@ import org.firstinspires.ftc.teamcode.driveto.DriveTo;
 import org.firstinspires.ftc.teamcode.driveto.DriveToComp;
 import org.firstinspires.ftc.teamcode.driveto.DriveToListener;
 import org.firstinspires.ftc.teamcode.driveto.DriveToParams;
+import org.firstinspires.ftc.teamcode.sensors.Gyro;
 import org.firstinspires.ftc.teamcode.wheels.TankDrive;
 
 /*
@@ -31,7 +32,8 @@ public class DriveToMethods {
 
     // Sensor reference types for our DriveTo callbacks
     public enum SENSOR_TYPE {
-        DRIVE_ENCODER
+        DRIVE_ENCODER,
+        GYROSCOPE
     }
 
     public static DriveTo driveForward(DriveToListener listener, TankDrive tank, int distance) {
@@ -49,6 +51,20 @@ public class DriveToMethods {
         param.lessThan(ticks - tank.getEncoder() - OVERRUN_ENCODER);
         return new DriveTo(new DriveToParams[]{param});
     }
+
+//    /**
+//     *
+//     * @param listener
+//     * @param tank
+//     * @param degrees Positive degerees indicate turning clockwise
+//     * @return
+//     */
+//    public static DriveTo turnDegrees(DriveToListener listener, TankDrive tank, double degrees) {
+//
+//        tank.setTeleop(false);
+//
+//
+//    }
 
     public static void stop(TankDrive tank, DriveToParams param) {
         switch ((SENSOR_TYPE) param.reference) {

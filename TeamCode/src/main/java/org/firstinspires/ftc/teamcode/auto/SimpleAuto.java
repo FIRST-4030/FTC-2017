@@ -7,11 +7,12 @@ import org.firstinspires.ftc.teamcode.config.WheelMotorConfigs;
 import org.firstinspires.ftc.teamcode.driveto.DriveTo;
 import org.firstinspires.ftc.teamcode.driveto.DriveToListener;
 import org.firstinspires.ftc.teamcode.driveto.DriveToParams;
+import org.firstinspires.ftc.teamcode.sensors.Gyro;
 import org.firstinspires.ftc.teamcode.wheels.TankDrive;
 
 import static org.firstinspires.ftc.teamcode.auto.DriveToMethods.*;
 
-@Disabled
+
 @com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "Simple Auto", group = "AutoTest")
 public class SimpleAuto extends OpMode implements DriveToListener {
 
@@ -19,8 +20,13 @@ public class SimpleAuto extends OpMode implements DriveToListener {
     private TankDrive tank;
     private DriveTo drive;
 
+    private Gyro gyro;
+
     @Override
     public void init() {
+
+
+        gyro = new Gyro(hardwareMap, "imu");
 
         // Placate drivers; sometimes VuforiaFTC is slow to init
         telemetry.addData(">", "Initializing...");
@@ -46,6 +52,11 @@ public class SimpleAuto extends OpMode implements DriveToListener {
 
     @Override
     public void loop() {
+
+        telemetry.addData("Gyro is ready", gyro.isReady());
+        telemetry.addData("Gyro is available", gyro.isAvailable());
+        telemetry.addData("Gyro Heading", gyro.getHeading());
+
         // Handle DriveTo driving
         if (drive != null) {
             // DriveTo
