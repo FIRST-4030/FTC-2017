@@ -25,9 +25,6 @@ public class SimpleAuto extends OpMode implements DriveToListener {
     @Override
     public void init() {
 
-
-        gyro = new Gyro(hardwareMap, "imu");
-
         // Placate drivers; sometimes VuforiaFTC is slow to init
         telemetry.addData(">", "Initializing...");
         telemetry.update();
@@ -35,6 +32,9 @@ public class SimpleAuto extends OpMode implements DriveToListener {
         // Drive motors
         tank = new WheelMotorConfigs().init(hardwareMap, telemetry);
         tank.stop();
+
+        // Gyro
+        gyro = new Gyro(hardwareMap, "imu", telemetry);
 
         // Wait for the game to begin
         telemetry.addData(">", "Ready for game start");
@@ -53,10 +53,6 @@ public class SimpleAuto extends OpMode implements DriveToListener {
     @Override
     public void loop() {
 
-        telemetry.addData("Gyro is ready", gyro.isReady());
-        telemetry.addData("Gyro is available", gyro.isAvailable());
-        telemetry.addData("Gyro Heading", gyro.getHeading());
-
         // Handle DriveTo driving
         if (drive != null) {
             // DriveTo
@@ -70,6 +66,9 @@ public class SimpleAuto extends OpMode implements DriveToListener {
         }
 
         // Driver feedback
+        telemetry.addData("Gyro Available", gyro.isAvailable());
+        telemetry.addData("Gyro Ready", gyro.isReady());
+        telemetry.addData("Heading", gyro.getHeading());
         telemetry.addData("Encoder", tank.getEncoder());
         telemetry.update();
 
