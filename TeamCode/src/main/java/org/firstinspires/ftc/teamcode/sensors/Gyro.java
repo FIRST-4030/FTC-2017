@@ -29,7 +29,7 @@ public class Gyro {
             throw new IllegalArgumentException(this.getClass().getName() + ": Null/empty name");
         }
         try {
-            gyro = (BNO055IMU) map.gyroSensor.get(name);
+            gyro = map.get(BNO055IMU.class, name);
         } catch (Exception e) {
             gyro = null;
             if (telemetry != null) {
