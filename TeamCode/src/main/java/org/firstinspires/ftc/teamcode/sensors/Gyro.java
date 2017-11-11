@@ -1,8 +1,14 @@
 package org.firstinspires.ftc.teamcode.sensors;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 public class Gyro {
     private static final int FULL_CIRCLE = 360;
@@ -16,8 +22,12 @@ public class Gyro {
         offset = 0;
         try {
             gyro = (BNO055IMU) map.gyroSensor.get(name);
-            gyro.resetDeviceConfigurationForOpMode();
-            gyro.calibrate();
+            BNO055IMU.Parameters params = new BNO055IMU.Parameters();
+            params.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
+            params.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+            //params.calibrationDataFile = "BNO055IMUCalibration.json";
+            params.loggingEnabled      = false;
+            gyro.initialize(params);
         } catch (Exception e) {
             gyro = null;
         }
@@ -33,17 +43,10 @@ public class Gyro {
     }
 
     public boolean isReady() {
-        if (!ready && isAvailable() && !gyro.isCalibrating()) {
+        if (!ready && isAvailable() && gyro.isGyroCalibrated()) {
             ready = true;
         }
         return ready;
-    }
-
-    public void reset() {
-        if (!isAvailable()) {
-            return;
-        }
-        gyro.resetZAxisIntegrator();
     }
 
     public void setHeading(int heading) {
@@ -66,7 +69,7 @@ public class Gyro {
         }
 
         // Invert to make CW rotation increase the heading
-        return -gyro.getIntegratedZValue();
+        return (int)-gyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
     }
 
     public int getHeading() {
