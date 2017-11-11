@@ -9,6 +9,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.robotcore.external.navigation.Position;
+import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 
 public class Gyro {
     private static final int FULL_CIRCLE = 360;
@@ -21,13 +23,16 @@ public class Gyro {
         ready = false;
         offset = 0;
         try {
-            gyro = (BNO055IMU) map.gyroSensor.get(name);
             BNO055IMU.Parameters params = new BNO055IMU.Parameters();
             params.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
             params.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
             //params.calibrationDataFile = "BNO055IMUCalibration.json";
+            params.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
             params.loggingEnabled      = false;
             gyro.initialize(params);
+
+            gyro = (BNO055IMU) map.gyroSensor.get(name);
+            gyro.startAccelerationIntegration(new Position(), new Velocity(), 1000);
         } catch (Exception e) {
             gyro = null;
         }
