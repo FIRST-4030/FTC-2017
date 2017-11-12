@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.sensors;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.hardware.bosch.BNO055IMUImpl;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -82,8 +81,8 @@ public class Gyro {
 
     public void setHeading(int heading) {
         // Normalize heading and offset
-        heading = (heading + FULL_CIRCLE) % FULL_CIRCLE;
-        int offset = (heading - getHeadingBasic(true)) % FULL_CIRCLE;
+        heading = normalizeHeading(heading);
+        int offset = (heading - getHeadingNormalized(true)) % FULL_CIRCLE;
         if (offset > FULL_CIRCLE / 2) {
             offset -= FULL_CIRCLE;
         }
@@ -107,17 +106,26 @@ public class Gyro {
         return (getHeadingRaw() + offset);
     }
 
-    public int getHeadingBasic() {
-        return getHeadingBasic(false);
+    public int getHeadingNormalized() {
+        return getHeadingNormalized(false);
     }
 
-    private int getHeadingBasic(boolean raw) {
+    private int getHeadingNormalized(boolean raw) {
         int heading;
         if (raw) {
             heading = getHeadingRaw();
         } else {
             heading = getHeading();
         }
+        return normalizeHeading(heading);
+    }
+
+    /**
+     *
+     * @param heading Any heading
+     * @return The same heading projected into the space between 0 and 359, inclusively
+     */
+    public static int normalizeHeading(int heading) {
         return ((heading % FULL_CIRCLE) + FULL_CIRCLE) % FULL_CIRCLE;
     }
 }
