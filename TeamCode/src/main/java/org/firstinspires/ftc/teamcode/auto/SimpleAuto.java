@@ -87,30 +87,16 @@ public class SimpleAuto extends OpMode implements DriveToListener {
 
     @Override
     public void driveToStop(DriveToParams param) {
-        switch ((SENSOR_TYPE) param.reference) {
-            case DRIVE_ENCODER:
-                tank.stop();
-                break;
-        }
+        DriveToMethods.stop(tank, param);
     }
 
     @Override
     public void driveToRun(DriveToParams param) {
-        switch ((SENSOR_TYPE) param.reference) {
-            case DRIVE_ENCODER:
-                tank.setSpeed(SPEED_FORWARD);
-                break;
-        }
+        DriveToMethods.run(tank, param);
     }
 
     @Override
     public double driveToSensor(DriveToParams param) {
-        double value = 0;
-        switch ((SENSOR_TYPE) param.reference) {
-            case DRIVE_ENCODER:
-                value = tank.getEncoder();
-                break;
-        }
-        return value;
+        return DriveToMethods.sensor(tank, param);
     }
 }

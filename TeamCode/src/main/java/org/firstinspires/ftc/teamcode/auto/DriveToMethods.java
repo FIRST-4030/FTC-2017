@@ -15,10 +15,10 @@ import org.firstinspires.ftc.teamcode.wheels.TankDrive;
  */
 public class DriveToMethods {
 
-    // Ratio of gyro ticks to degrees turned
-    public final static float GYRO_PER_DEGREE = 1;
     // An Estimate of the number of ticks we continue on inertia after stopping
     public final static int OVERRUN_GYRO = 10; // TBD
+    // Degrees in a circle, for use in MOD math
+    public final static int FULL_CIRCLE = 360;
 
     // Ratio of encoder ticks to millimeters driven
     public final static float ENCODER_PER_MM = 1.15f;
@@ -58,24 +58,41 @@ public class DriveToMethods {
     }
 
     /**
+     * This method presents a very serious problem - if you try to go to a heading that isn't
+     * in the range (-180, 180), it will rotate forever, as the desired heading isn't reachable.
      *
-     * @author Bryan Cook
      * @param listener
      * @param gyro
-     * @param degrees Positive degerees indicate turning clockwise
+     * @param degrees  Positive degerees indicate turning clockwise
      * @return
+     * @author Bryan Cook
      */
-    public static DriveTo turnDegrees(DriveToListener listener, Gyro gyro, double degrees) {
-        DriveToParams param = new DriveToParams(listener, SENSOR_TYPE.GYROSCOPE);
-        int ticks = (int) ((float) degrees * GYRO_PER_DEGREE);
+    public static DriveTo turnDegrees(DriveToListener listener, Gyro gyro, int degrees) {
+        DriveToParams[] params = new DriveToParams[2];
+        params[0] = new DriveToParams(listener, SENSOR_TYPE.GYROSCOPE);
+        params[1] = new DriveToParams(listener, SENSOR_TYPE.GYROSCOPE);
 
-        if(ticks > 0) param.greaterThan(ticks + gyro.getHeading() - OVERRUN_GYRO);
-        else param.lessThan(ticks - gyro.getHeading() + OVERRUN_GYRO);
+        // Current and target heading in normalized degrees
+        int heading = gyro.getHeading();
+        int target = Gyro.normalizeHeading(heading + degrees);
+        int opposite = Gyro.normalizeHeading(target + (FULL_CIRCLE / 2));
 
-        return new DriveTo(new DriveToParams[]{param});
+        // Match both the target and its opposite to ensure we can turn through 0 degrees
+        if (degrees > 0) {
+            params[0].lessThan(opposite);
+            params[1].greaterThan(target - OVERRUN_GYRO);
+        } else {
+            params[0].greaterThan(opposite);
+            params[1].lessThan(target + OVERRUN_GYRO);
+        }
+
+        // Default match mdoe is "all", so both parameters must match as the same time
+        return new DriveTo(params);
     }
 
-    public static DriveTo 
+//    public static DriveTo turnToHeading(DriveToListener listener, Gyro gyro, int heading){
+//
+//    }
 
 
     public static void stop(TankDrive tank, DriveToParams param) {
