@@ -113,12 +113,7 @@ public class SimpleAuto extends OpMode implements DriveToListener {
             return;
         }
 
-        if (gamepad1.a) {
-            drive = driveForward(this, tank, 254);
-        } else if (gamepad1.b) {
-            liftReady = false;
-        }
-
+        // Test lift zero, with persistent timeout
         if (!liftReady) {
             switch (liftState) {
                 case INIT:
@@ -143,6 +138,12 @@ public class SimpleAuto extends OpMode implements DriveToListener {
                     liftReady = true;
                     break;
             }
+        }
+
+        if (gamepad1.a) {
+            drive = driveForward(this, tank, 254);
+        } else if (gamepad1.b) {
+            liftReady = false;
         }
     }
 
