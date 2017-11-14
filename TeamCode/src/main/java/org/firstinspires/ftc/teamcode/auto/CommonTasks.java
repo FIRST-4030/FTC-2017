@@ -15,8 +15,72 @@ import org.firstinspires.ftc.teamcode.wheels.TankDrive;
 import static org.firstinspires.ftc.teamcode.auto.DriveToMethods.LIFT_SPEED_UP;
 
 public class CommonTasks {
+    enum CLAWS {TOP, BOTTOM;}
+
     private static final double LIFT_DELAY = 0.75;
     private static final double CLAW_DELAY = 0.25;
+
+    private HardwareMap map = null;
+    private Telemetry telemetry = null;
+    private LIFT_STATE liftState = LIFT_STATE.INIT;
+
+    public CommonTasks(HardwareMap map, Telemetry telemetry) {
+        this.map = map;
+        this.telemetry = telemetry;
+    }
+
+    public TankDrive initDrive() {
+        TankDrive tank = new WheelMotorConfigs().init(map, telemetry);
+        tank.stop();
+        return tank;
+    }
+
+    public Motor initLift() {
+        Motor lift = new MotorConfigs().init(map, telemetry, "LIFT");
+        lift.stop();
+        return lift;
+    }
+
+    public ServoFTC[] initClaws() {
+        ServoFTC[] claws = new ServoFTC[CLAWS.values().length];
+        claws[CLAWS.TOP.ordinal()] = new ServoConfigs().init(map, telemetry, "CLAW-TOP");
+        claws[CLAWS.BOTTOM.ordinal()] = new ServoConfigs().init(map, telemetry, "CLAW-BOTTOM");
+        for (ServoFTC claw : claws) {
+            claw.min();
+        }
+        return claws;
+    }
+
+    public AutoDriver liftAutoStart(Motor lift, ServoFTC[] claws) {
+        AutoDriver driver = new AutoDriver();
+
+        switch (liftState) {
+            case INIT:
+                liftState = liftState.next();
+                break;
+            case GRAB:
+                claws[CLAWS.TOP.ordinal()].max();
+                claws[CLAWS.BOTTOM.ordinal()].min();
+                driver.interval = CLAW_DELAY;
+                liftState = liftState.next();
+                break;
+            case LIFT:
+                lift.setPower(LIFT_SPEED_UP);
+                driver.interval = LIFT_DELAY;
+                liftState = liftState.next();
+                break;
+            case READY:
+                lift.stop();
+                liftState = liftState.next();
+                break;
+            case DONE:
+                driver.done = true;
+                break;
+        }
+
+        return driver;
+    }
+
     enum LIFT_STATE implements OrderedEnum {
         INIT,
         GRAB,
@@ -31,65 +95,5 @@ public class CommonTasks {
         public LIFT_STATE next() {
             return OrderedEnumHelper.next(this);
         }
-    }
-
-    private HardwareMap map = null;
-    private Telemetry telemetry = null;
-    private LIFT_STATE liftState = LIFT_STATE.INIT;
-
-    public CommonTasks(HardwareMap map, Telemetry telemetry) {
-        this.map = map;
-        this.telemetry = telemetry;
-    }
-
-    public void initDrive(TankDrive tank) {
-        tank = new WheelMotorConfigs().init(map, telemetry);
-        tank.stop();
-    }
-
-    public void initLift(Motor lift) {
-        lift = new MotorConfigs().init(map, telemetry, "LIFT");
-        lift.stop();
-    }
-
-    public void initClaws(ServoFTC top, ServoFTC bottom) {
-        top = new ServoConfigs().init(map, telemetry, "CLAW-TOP");
-        top.min();
-        bottom = new ServoConfigs().init(map, telemetry, "CLAW-BOTTOM");
-        bottom.min();
-    }
-
-    public void liftZero(Motor lift) {
-
-    }
-
-    public AutoTracker liftAutoStart(Motor lift, ServoFTC top, ServoFTC bottom) {
-        AutoTracker auto = new AutoTracker();
-
-        switch (liftState) {
-            case INIT:
-                liftState = liftState.next();
-                break;
-            case GRAB:
-                top.max();
-                bottom.min();
-                auto.interval = CLAW_DELAY;
-                liftState = liftState.next();
-                break;
-            case LIFT:
-                lift.setPower(LIFT_SPEED_UP);
-                auto.interval = LIFT_DELAY;
-                liftState = liftState.next();
-                break;
-            case READY:
-                lift.stop();
-                liftState = liftState.next();
-                break;
-            case DONE:
-                auto.done = true;
-                break;
-        }
-
-        return auto;
     }
 }

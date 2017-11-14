@@ -6,7 +6,6 @@ import org.firstinspires.ftc.teamcode.actuators.Motor;
 import org.firstinspires.ftc.teamcode.actuators.ServoFTC;
 import org.firstinspires.ftc.teamcode.buttons.BUTTON;
 import org.firstinspires.ftc.teamcode.buttons.ButtonHandler;
-import org.firstinspires.ftc.teamcode.driveto.DriveTo;
 import org.firstinspires.ftc.teamcode.driveto.DriveToListener;
 import org.firstinspires.ftc.teamcode.driveto.DriveToParams;
 import org.firstinspires.ftc.teamcode.field.Field;
@@ -22,16 +21,16 @@ public class StraightLine extends OpMode implements DriveToListener {
 
     // Auto constants
     private static final int RELEASE_REVERSE_MM = 50;
+    private static final double RELEASE_DELAY = 0.5d;
 
     // Devices and subsystems
     private CommonTasks common = null;
     private TankDrive tank = null;
-    private ServoFTC clawTop = null;
-    private ServoFTC clawBottom = null;
+    private ServoFTC[] claws = null;
     private Motor lift = null;
 
     // Runtime state
-    private AutoTracker autoTracker = new AutoTracker();
+    private AutoDriver driver = new AutoDriver();
     private AUTO_STATE state = AUTO_STATE.LIFT_INIT;
     private boolean liftReady = false;
 
@@ -50,9 +49,9 @@ public class StraightLine extends OpMode implements DriveToListener {
 
         // Init the common tasks elements
         common = new CommonTasks(hardwareMap, telemetry);
-        common.initDrive(tank);
-        common.initLift(lift);
-        common.initClaws(clawTop, clawBottom);
+        tank = common.initDrive();
+        lift = common.initLift();
+        claws = common.initClaws();
 
         // Register buttons
         buttons.register("DELAY-UP", gamepad1, BUTTON.dpad_up);
@@ -121,17 +120,14 @@ public class StraightLine extends OpMode implements DriveToListener {
 
     @Override
     public void loop() {
-        // Convert intervals to times each loop
-        autoTracker.setTimer(time);
-
-        // Handle DriveTo driving
-        if (autoTracker.drive != null) {
+        // Handle AutoDriver driving
+        if (driver.drive != null) {
             // DriveTo
-            autoTracker.drive.drive();
+            driver.drive.drive();
 
             // Return to teleop when complete
-            if (autoTracker.drive.isDone()) {
-                autoTracker.drive = null;
+            if (driver.drive.isDone()) {
+                driver.drive = null;
                 tank.setTeleop(true);
             }
         }
@@ -142,52 +138,49 @@ public class StraightLine extends OpMode implements DriveToListener {
         telemetry.update();
 
         /*
-         * Cut the loop short when we are auto-driving or waiting on a timer
-         * This keeps us out of the state machine until the preceding auto-drive command is complete
+         * Cut the loop short when we are AutoDriver'ing
+         * This keeps us out of the state machine until the preceding command is complete
          */
-        if (autoTracker.drive != null || autoTracker.timer > time) {
+        if (driver.isRunning(time)) {
             return;
         }
 
         // Main state machine
         switch (state) {
             case INIT:
-                autoTracker.done = false;
+                driver.done = false;
                 state = state.next();
                 break;
             case LIFT_INIT:
                 // Delegate control to liftAutoStart
-                autoTracker = common.liftAutoStart(lift, clawTop, clawBottom);
-
-                // Stay in LIFT_INIT until all the liftAutoStart operations are complete
-                if (autoTracker.done) {
+                driver = common.liftAutoStart(lift, claws);
+                if (driver.isDone()) {
                     state = state.next();
-                    autoTracker.done = false;
+                    driver.done = false;
                 }
                 break;
             case DELAY:
-                autoTracker.timer = time + delay.seconds();
+                driver.interval = delay.seconds();
                 state = state.next();
                 break;
             case DRIVE_FORWARD:
-                autoTracker.drive = driveForward(this, tank, distance.millimeters());
+                driver.drive = driveForward(this, tank, distance.millimeters());
                 state = state.next();
                 break;
             case RELEASE:
-                clawTop.min();
-                clawBottom.min();
-                state = state.next();
-                break;
-            case RELEASE_DELAY:
-                autoTracker.timer = time + 1;
+                for (ServoFTC claw : claws) {
+                    claw.min();
+                }
+                driver.interval = RELEASE_DELAY;
                 state = state.next();
                 break;
             case RELEASE_REVERSE:
-                autoTracker.drive = driveBackward(this, tank, RELEASE_REVERSE_MM);
+                driver.drive = driveBackward(this, tank, RELEASE_REVERSE_MM);
                 state = state.next();
                 break;
             case DONE:
                 // Exit the opmode
+                driver.done = true;
                 this.requestOpModeStop();
                 break;
         }
@@ -215,7 +208,6 @@ public class StraightLine extends OpMode implements DriveToListener {
         DELAY,
         DRIVE_FORWARD,
         RELEASE,
-        RELEASE_DELAY,
         RELEASE_REVERSE,
         DONE;
 
