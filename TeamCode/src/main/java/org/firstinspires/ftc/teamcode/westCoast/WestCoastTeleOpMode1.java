@@ -16,7 +16,7 @@ public class WestCoastTeleOpMode1 extends WestCoastOpMode{
     public boolean rBumperPressed = false;
     public boolean lBumperPressed = false;
 
-    //used for spinner on-off switch
+    //used for intake on-off switch telemetry
     boolean isBumperStickOn = false;
 
 
@@ -43,7 +43,10 @@ public class WestCoastTeleOpMode1 extends WestCoastOpMode{
         telemetry.addData("Bottom Claw", bottomClaw.getPosition());
         // Actually, this IS what we want. The list motor encoder is just bad (sigh)
         telemetry.addData("Lift.getCurrentPosition", getLiftPosition());
-        telemetry.addData("switch voltage", liftSwitch.getVoltage());
+//        telemetry.addData("switch voltage", liftSwitch.getVoltage());
+        telemetry.addData("Intake switch",isBumperStickOn);
+        telemetry.addData("INTAKE-IN", buttons.get("INTAKE-IN"));
+        telemetry.addData("INTAKE-OUT", buttons.get("INTAKE-OUT"));
 //        telemetry.addData("switch value", liftSwitch.getValue());
         telemetry.update();
 
@@ -76,7 +79,6 @@ public class WestCoastTeleOpMode1 extends WestCoastOpMode{
         } else if(!gamepad2.left_bumper){
             lBumperPressed = false;
         }
-
 //        if(gamepad2.right_bumper){
 //
 //            setServoPosition(TOP_CLAW, (topClawOpen ? UPPER_CLAW_MIN : UPPER_CLAW_MAX));
@@ -123,17 +125,17 @@ public class WestCoastTeleOpMode1 extends WestCoastOpMode{
         if(isBumperStickOn)
         {
             lBumperM.setPower(gamepad2.right_stick_y);
-            rBumperM.setPower(gamepad2.right_stick_y);
+            rBumperM.setPower(-gamepad2.right_stick_y);
         }
 
         //retract the servos
-        if(buttons.get("INTAKE-IN"))
+        if(buttons.get("INTAKE-IN") && isBumperStickOn)
         {
             lBumperS.setPosition(BUMPER_SERVO_MIN);
             rBumperS.setPosition(BUMPER_SERVO_MIN);
         }
 
-        if(buttons.get("INTAKE-OUT"))
+        if(buttons.get("INTAKE-OUT") && isBumperStickOn)
         {
             lBumperS.setPosition(BUMPER_SERVO_MAX);
             rBumperS.setPosition(BUMPER_SERVO_MAX);

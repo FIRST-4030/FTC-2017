@@ -27,8 +27,8 @@ public abstract class WestCoastOpMode extends OpMode{
     public final double UPPER_CLAW_MIN = .06;
     public final double LOWER_CLAW_MAX = .35;
     public final double LOWER_CLAW_MIN = .09;
-    public final double BUMPER_SERVO_MIN = .3;
-    public final double BUMPER_SERVO_MAX = .7;
+    public final double BUMPER_SERVO_MIN = .8;
+    public final double BUMPER_SERVO_MAX = 1;
 
     public DcMotor lWheel1;
     public DcMotor lWheel2;
@@ -57,7 +57,7 @@ public abstract class WestCoastOpMode extends OpMode{
         lift = hardwareMap.dcMotor.get("LM1");
         topClaw = hardwareMap.servo.get("CL1");
         bottomClaw = hardwareMap.servo.get("CL2");
-        liftSwitch = hardwareMap.analogInput.get("LS1");
+        //liftSwitch = hardwareMap.analogInput.get("LS1");
         lBumperM = hardwareMap.dcMotor.get("lBumperM");
         rBumperM = hardwareMap.dcMotor.get("rBumperM");
         lBumperS = hardwareMap.servo.get("lBumperS");
@@ -65,9 +65,9 @@ public abstract class WestCoastOpMode extends OpMode{
 
 
         topClaw.setDirection(Servo.Direction.REVERSE);
+//        lBumperS.setDirection(Servo.Direction.REVERSE);
+//        rBumperS.setDirection(Servo.Direction.REVERSE);
 
-        setServoPosition(TOP_CLAW, UPPER_CLAW_MAX);
-        setServoPosition(BOTTOM_CLAW, LOWER_CLAW_MAX);
 
         //register buttons
         buttons.register("INTAKE-PRESSED", gamepad2, BUTTON.a);
@@ -81,14 +81,16 @@ public abstract class WestCoastOpMode extends OpMode{
         //liftMinimum = getLiftPosition();
         //lift.setPower(0);
 
-        setServoPosition(TOP_CLAW, UPPER_CLAW_MIN);
-        setServoPosition(BOTTOM_CLAW, LOWER_CLAW_MIN);
+        //intialize servos.
+//        setServoPosition(TOP_CLAW, UPPER_CLAW_MIN);
+//        setServoPosition(BOTTOM_CLAW, LOWER_CLAW_MIN);
 
         //initialize bumper servos to be in and set limits
-        lBumperS.setPosition(BUMPER_SERVO_MIN);
-        rBumperS.setPosition(BUMPER_SERVO_MIN);
         lBumperS.scaleRange(BUMPER_SERVO_MIN, BUMPER_SERVO_MAX);
         rBumperS.scaleRange(BUMPER_SERVO_MIN, BUMPER_SERVO_MAX);
+        lBumperS.setPosition(BUMPER_SERVO_MIN);
+        rBumperS.setPosition(BUMPER_SERVO_MIN);
+
     }
 
     /**
@@ -156,7 +158,7 @@ public abstract class WestCoastOpMode extends OpMode{
     }
 
     public int getLiftPosition(){
-        return lWheel2.getCurrentPosition();
+        return lift.getCurrentPosition();
     }
 
 }
