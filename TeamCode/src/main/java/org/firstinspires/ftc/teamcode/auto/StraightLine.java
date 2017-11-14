@@ -6,11 +6,7 @@ import org.firstinspires.ftc.teamcode.actuators.Motor;
 import org.firstinspires.ftc.teamcode.actuators.ServoFTC;
 import org.firstinspires.ftc.teamcode.buttons.BUTTON;
 import org.firstinspires.ftc.teamcode.buttons.ButtonHandler;
-import org.firstinspires.ftc.teamcode.config.MotorConfigs;
-import org.firstinspires.ftc.teamcode.config.ServoConfigs;
-import org.firstinspires.ftc.teamcode.config.WheelMotorConfigs;
 import org.firstinspires.ftc.teamcode.driveto.DriveTo;
-import org.firstinspires.ftc.teamcode.driveto.DriveToComp;
 import org.firstinspires.ftc.teamcode.driveto.DriveToListener;
 import org.firstinspires.ftc.teamcode.driveto.DriveToParams;
 import org.firstinspires.ftc.teamcode.field.Field;
@@ -18,10 +14,6 @@ import org.firstinspires.ftc.teamcode.utils.OrderedEnum;
 import org.firstinspires.ftc.teamcode.utils.OrderedEnumHelper;
 import org.firstinspires.ftc.teamcode.wheels.TankDrive;
 
-import static org.firstinspires.ftc.teamcode.auto.DriveToMethods.LIFT_SPEED_UP;
-import static org.firstinspires.ftc.teamcode.auto.DriveToMethods.SENSOR_TYPE;
-import static org.firstinspires.ftc.teamcode.auto.DriveToMethods.SPEED_FORWARD_SLOW;
-import static org.firstinspires.ftc.teamcode.auto.DriveToMethods.SPEED_REVERSE;
 import static org.firstinspires.ftc.teamcode.auto.DriveToMethods.driveBackward;
 import static org.firstinspires.ftc.teamcode.auto.DriveToMethods.driveForward;
 
@@ -29,20 +21,18 @@ import static org.firstinspires.ftc.teamcode.auto.DriveToMethods.driveForward;
 public class StraightLine extends OpMode implements DriveToListener {
 
     // Auto constants
-    private static final double LIFT_DELAY = 0.75;
-    private static final double CLAW_DELAY = 0.25;
     private static final int RELEASE_REVERSE_MM = 50;
 
     // Devices and subsystems
+    private CommonTasks common = null;
     private TankDrive tank = null;
-    private DriveTo drive = null;
     private ServoFTC clawTop = null;
     private ServoFTC clawBottom = null;
     private Motor lift = null;
 
     // Runtime state
-    private AUTO_STATE state = AUTO_STATE.CLAW_INIT;
-    private double timer = 0;
+    private AutoTracker autoTracker = new AutoTracker();
+    private AUTO_STATE state = AUTO_STATE.LIFT_INIT;
     private boolean liftReady = false;
 
     // Init-time config
@@ -54,23 +44,15 @@ public class StraightLine extends OpMode implements DriveToListener {
     @Override
     public void init() {
 
-        // Placate drivers; sometimes VuforiaFTC is slow to init
+        // Placate drivers
         telemetry.addData(">", "Initializing...");
         telemetry.update();
 
-        // Drive motors
-        tank = new WheelMotorConfigs().init(hardwareMap, telemetry);
-        tank.stop();
-
-        // Lift
-        lift = new MotorConfigs().init(hardwareMap, telemetry, "LIFT");
-        lift.stop();
-
-        // Claws
-        clawTop = new ServoConfigs().init(hardwareMap, telemetry, "CLAW-TOP");
-        clawTop.min();
-        clawBottom = new ServoConfigs().init(hardwareMap, telemetry, "CLAW-BOTTOM");
-        clawBottom.min();
+        // Init the common tasks elements
+        common = new CommonTasks(hardwareMap, telemetry);
+        common.initDrive(tank);
+        common.initLift(lift);
+        common.initClaws(clawTop, clawBottom);
 
         // Register buttons
         buttons.register("DELAY-UP", gamepad1, BUTTON.dpad_up);
@@ -139,14 +121,17 @@ public class StraightLine extends OpMode implements DriveToListener {
 
     @Override
     public void loop() {
+        // Convert intervals to times each loop
+        autoTracker.setTimer(time);
+
         // Handle DriveTo driving
-        if (drive != null) {
+        if (autoTracker.drive != null) {
             // DriveTo
-            drive.drive();
+            autoTracker.drive.drive();
 
             // Return to teleop when complete
-            if (drive.isDone()) {
-                drive = null;
+            if (autoTracker.drive.isDone()) {
+                autoTracker.drive = null;
                 tank.setTeleop(true);
             }
         }
@@ -160,33 +145,32 @@ public class StraightLine extends OpMode implements DriveToListener {
          * Cut the loop short when we are auto-driving or waiting on a timer
          * This keeps us out of the state machine until the preceding auto-drive command is complete
          */
-        if (drive != null || timer > time) {
+        if (autoTracker.drive != null || autoTracker.timer > time) {
             return;
         }
 
         // Main state machine
         switch (state) {
-            case CLAW_INIT:
-                clawTop.max();
-                clawBottom.min();
-                timer = time + CLAW_DELAY;
+            case INIT:
+                autoTracker.done = false;
                 state = state.next();
                 break;
             case LIFT_INIT:
-                lift.setPower(LIFT_SPEED_UP);
-                timer = time + LIFT_DELAY;
-                state = state.next();
-                break;
-            case READY:
-                lift.stop();
-                state = state.next();
+                // Delegate control to liftAutoStart
+                autoTracker = common.liftAutoStart(lift, clawTop, clawBottom);
+
+                // Stay in LIFT_INIT until all the liftAutoStart operations are complete
+                if (autoTracker.done) {
+                    state = state.next();
+                    autoTracker.done = false;
+                }
                 break;
             case DELAY:
-                timer = time + delay.seconds();
+                autoTracker.timer = time + delay.seconds();
                 state = state.next();
                 break;
             case DRIVE_FORWARD:
-                drive = driveForward(this, tank, distance.millimeters());
+                autoTracker.drive = driveForward(this, tank, distance.millimeters());
                 state = state.next();
                 break;
             case RELEASE:
@@ -195,11 +179,11 @@ public class StraightLine extends OpMode implements DriveToListener {
                 state = state.next();
                 break;
             case RELEASE_DELAY:
-                timer = time + 1;
+                autoTracker.timer = time + 1;
                 state = state.next();
                 break;
             case RELEASE_REVERSE:
-                drive = driveBackward(this, tank, RELEASE_REVERSE_MM);
+                autoTracker.drive = driveBackward(this, tank, RELEASE_REVERSE_MM);
                 state = state.next();
                 break;
             case DONE:
@@ -226,9 +210,8 @@ public class StraightLine extends OpMode implements DriveToListener {
 
     // Define the order of auto routine components
     enum AUTO_STATE implements OrderedEnum {
-        CLAW_INIT,
+        INIT,
         LIFT_INIT,
-        READY,
         DELAY,
         DRIVE_FORWARD,
         RELEASE,
@@ -246,21 +229,21 @@ public class StraightLine extends OpMode implements DriveToListener {
     }
 
     // Configurable straight-line distance
-        enum DISTANCE implements OrderedEnum {
-            SHORT(965),
-            LONG(1016);
+    enum DISTANCE implements OrderedEnum {
+        SHORT(965),
+        LONG(1016);
 
-            private int millimeters;
+        private int millimeters;
 
-            DISTANCE(int millimeters) {
-                this.millimeters = millimeters;
-            }
+        DISTANCE(int millimeters) {
+            this.millimeters = millimeters;
+        }
 
-            public int millimeters() {
-                return millimeters;
-            }
+        public int millimeters() {
+            return millimeters;
+        }
 
-            public DISTANCE prev() {
+        public DISTANCE prev() {
             return OrderedEnumHelper.prev(this);
         }
 
