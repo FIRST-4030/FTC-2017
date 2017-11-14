@@ -3,11 +3,15 @@ package org.firstinspires.ftc.teamcode.auto;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
+import org.firstinspires.ftc.teamcode.actuators.Motor;
+import org.firstinspires.ftc.teamcode.config.MotorConfigs;
 import org.firstinspires.ftc.teamcode.config.WheelMotorConfigs;
 import org.firstinspires.ftc.teamcode.driveto.DriveTo;
 import org.firstinspires.ftc.teamcode.driveto.DriveToListener;
 import org.firstinspires.ftc.teamcode.driveto.DriveToParams;
 import org.firstinspires.ftc.teamcode.sensors.Gyro;
+import org.firstinspires.ftc.teamcode.utils.OrderedEnum;
+import org.firstinspires.ftc.teamcode.utils.OrderedEnumHelper;
 import org.firstinspires.ftc.teamcode.wheels.TankDrive;
 
 import static org.firstinspires.ftc.teamcode.auto.DriveToMethods.*;
@@ -19,8 +23,33 @@ public class SimpleAuto extends OpMode implements DriveToListener {
     // Devices and subsystems
     private TankDrive tank;
     private DriveTo drive;
-
+    private Motor lift;
     private Gyro gyro;
+
+    // Lift zero testing
+    enum LIFT_STATE implements OrderedEnum {
+        TIMEOUT,
+        INIT,
+        RETRACT,
+        READY,
+        DONE;
+
+        public LIFT_STATE prev() {
+            return OrderedEnumHelper.prev(this);
+        }
+
+        public LIFT_STATE next() {
+            return OrderedEnumHelper.next(this);
+        }
+    }
+
+    private LIFT_STATE liftState = LIFT_STATE.INIT;
+    private static final int LIFT_TIMEOUT = 500;
+    // In general you should init false, but for testing start with nothing
+    private boolean liftReady = true;
+    private boolean liftButton = false;
+    private double liftTimeout = 0;
+
 
     @Override
     public void init() {
@@ -32,6 +61,10 @@ public class SimpleAuto extends OpMode implements DriveToListener {
         // Drive motors
         tank = new WheelMotorConfigs().init(hardwareMap, telemetry);
         tank.stop();
+
+        // Lift
+        lift = new MotorConfigs().init(hardwareMap, telemetry, "LIFT");
+        lift.stop();
 
         // Gyro
         gyro = new Gyro(hardwareMap, "imu", telemetry);
@@ -66,10 +99,11 @@ public class SimpleAuto extends OpMode implements DriveToListener {
         }
 
         // Driver feedback
-        telemetry.addData("Gyro Available", gyro.isAvailable());
         telemetry.addData("Gyro Ready", gyro.isReady());
         telemetry.addData("Heading", gyro.getHeading());
         telemetry.addData("Encoder", tank.getEncoder());
+        telemetry.addData("Lift", lift.getEncoder());
+        telemetry.addData("LiftZero", liftState);
         telemetry.update();
 
         /*
@@ -82,6 +116,34 @@ public class SimpleAuto extends OpMode implements DriveToListener {
 
         if (gamepad1.a) {
             drive = driveForward(this, tank, 254);
+        } else if (gamepad1.b) {
+            liftReady = false;
+        }
+
+        if (!liftReady) {
+            switch (liftState) {
+                case INIT:
+                    liftTimeout = time + (LIFT_TIMEOUT / 1000);
+                    liftState = liftState.next();
+                    break;
+                case RETRACT:
+                    if (liftButton) {
+                        liftState = liftState.next();
+                    } else if (liftTimeout > time) {
+                        liftState = LIFT_STATE.TIMEOUT;
+                    } else {
+                        lift.setPower(LIFT_SPEED_DOWN);
+                    }
+                    break;
+                case READY:
+                    lift.stop();
+                    lift.resetEncoder();
+                    liftState = liftState.next();
+                    break;
+                case DONE:
+                    liftReady = true;
+                    break;
+            }
         }
     }
 
