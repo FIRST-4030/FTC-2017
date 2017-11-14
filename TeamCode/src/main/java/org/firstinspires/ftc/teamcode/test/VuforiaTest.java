@@ -1,23 +1,15 @@
 package org.firstinspires.ftc.teamcode.test;
 
 import android.graphics.Color;
-import android.os.Handler;
-import android.view.Gravity;
-import android.view.View;
-import android.widget.FrameLayout;
-import android.widget.TextView;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
-import org.firstinspires.ftc.teamcode.R;
 import org.firstinspires.ftc.teamcode.config.VuforiaConfigs;
 import org.firstinspires.ftc.teamcode.vuforia.ImageFTC;
 import org.firstinspires.ftc.teamcode.vuforia.VuforiaFTC;
 
-@Disabled
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "Vuforia Test", group = "Test")
 public class VuforiaTest extends OpMode {
     private final static int COLOR_SLICES = 5;
@@ -31,15 +23,9 @@ public class VuforiaTest extends OpMode {
     private int lastBearing = 0;
     private int lastDistance = 0;
     private String lastTarget = "<None>";
-    private String lastMark = "<None>";
+    private RelicRecoveryVuMark lastMark = RelicRecoveryVuMark.UNKNOWN;
     private String lastImage = "<None>";
     private String lastRGB = "<None>";
-    private boolean added = false;
-
-    // Sensor reference types for our DriveTo callbacks
-    enum SENSOR_TYPE {
-        GYRO, ENCODER
-    }
 
     @Override
     public void init() {
@@ -87,7 +73,6 @@ public class VuforiaTest extends OpMode {
         vuforia.track();
 
         // Collect data about the first visible target
-        boolean valid = false;
         String target = null;
         int bearing = 0;
         int distance = 0;
@@ -98,7 +83,6 @@ public class VuforiaTest extends OpMode {
                     int index = vuforia.getTargetIndex(t);
                     bearing = vuforia.bearing(index);
                     distance = vuforia.distance(index);
-                    valid = true;
                     break;
                 }
             }
@@ -108,29 +92,18 @@ public class VuforiaTest extends OpMode {
         }
 
         // Read the VuMark
-        RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.from(mark);
-        switch (vuMark) {
-            case UNKNOWN:
-                break;
-            case LEFT:
-                lastMark = "Left";
-                break;
-            case CENTER:
-                lastMark = "Center";
-                break;
-            case RIGHT:
-                lastMark = "Right";
-                break;
-        }
+        RelicRecoveryVuMark lastMark = RelicRecoveryVuMark.from(mark);
 
         // Grab and optionally save an image
         vuforia.capture();
         ImageFTC image = vuforia.getImage();
         if (image != null && gamepad1.a) {
-            image.savePNG("capture.png");
+            image.savePNG("vuforia-" + image.getTimestamp() + ".png");
         }
 
-        // RGB analysis of the upper-left-most pixel
+        // RGB analysis of each of COLOR_SLICES number of equal slices of the image
+        // image.rgb() takes an upper-left and lower-right pixel location and returns the
+        // average color of all pixels in that rectangle.
         if (image != null) {
             lastImage = "(" + image.getWidth() + "," + image.getHeight() + ") " + image.getTimestamp();
             int slice = image.getWidth() / COLOR_SLICES;
@@ -141,46 +114,6 @@ public class VuforiaTest extends OpMode {
                         new int[]{((i + 1) * slice) - 1, image.getHeight() - 1});
                 lastRGB += " (" + Color.red(rgb) + "," + Color.green(rgb) + "," + Color.blue(rgb) + ")";
             }
-        }
-
-        // Add UI elements to the video view
-        if (!added) {
-            added = true;
-            Handler ui = new Handler(hardwareMap.appContext.getMainLooper());
-            ui.post(new Runnable() {
-                @Override
-                public void run() {
-                    View layout = View.inflate(hardwareMap.appContext, R.layout.activity_ftc_controller, null);
-                    View view = layout.findViewById(R.id.cameraMonitorViewId);
-                    TextView text = new TextView(hardwareMap.appContext);
-                    text.setId(View.generateViewId());
-                    text.setText("ZValue");
-                    text.setTextColor(0);
-                    text.setTextSize(36);
-                    text.setBackgroundColor(128);
-                    FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
-                            FrameLayout.LayoutParams.MATCH_PARENT,
-                            FrameLayout.LayoutParams.WRAP_CONTENT,
-                            Gravity.CENTER);
-                    ((FrameLayout) view.getParent()).addView(text, params);
-                    System.err.println(text.getText());
-                }
-            });
-        }
-
-        /*
-         * It's always safe to return after this; it should be nothing but auto-drive modes
-         *
-         * Typically you only want to trigger a single auto-drive mode at any given time so
-         * be sure to return after selecting one
-         */
-
-        /*
-         * Cut the loop short when we don't have a vision fix
-         */
-        if (!valid) {
-            //noinspection UnnecessaryReturnStatement
-            return;
         }
     }
 }

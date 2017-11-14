@@ -1,9 +1,9 @@
-package org.firstinspires.ftc.teamcode.auto;
+package org.firstinspires.ftc.teamcode.test;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.actuators.Motor;
+import org.firstinspires.ftc.teamcode.auto.DriveToMethods;
 import org.firstinspires.ftc.teamcode.config.MotorConfigs;
 import org.firstinspires.ftc.teamcode.config.WheelMotorConfigs;
 import org.firstinspires.ftc.teamcode.driveto.DriveTo;
@@ -16,8 +16,7 @@ import org.firstinspires.ftc.teamcode.wheels.TankDrive;
 
 import static org.firstinspires.ftc.teamcode.auto.DriveToMethods.*;
 
-
-@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "Simple Auto", group = "AutoTest")
+@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "Simple Auto", group = "Test")
 public class SimpleAuto extends OpMode implements DriveToListener {
 
     // Devices and subsystems
