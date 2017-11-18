@@ -74,10 +74,10 @@ public class MotorConfigs {
             case "LIFT":
                 config = new MotorConfig("LM1", false);
                 break;
-            case "lBumperM":
+            case "LEFT-INTAKE":
                 config = new MotorConfig("lBumperM", false);
                 break;
-            case "rBumperM":
+            case "RIGHT-INTAKE":
                 config = new MotorConfig("rBumperM", false);
                 break;
         }

@@ -93,16 +93,16 @@ public class ServoConfigs {
         ServoFTCConfig config = null;
         switch (name) {
             case "CLAW-TOP":
-                config = new ServoFTCConfig("CL1", true, calMin(cal, 0.0d), calMax(cal, 0.48d));
+                config = new ServoFTCConfig("CL1", true, calMin(cal, 0.67d), calMax(cal, 0.96d));
                 break;
             case "CLAW-BOTTOM":
-                config = new ServoFTCConfig("CL2", false, calMin(cal, 0.09d), calMax(cal, 0.35d));
+                config = new ServoFTCConfig("CL2", true, calMin(cal, 0.11d), calMax(cal, 0.41d));
                 break;
             case "LEFT-INTAKE":
-                config = new ServoFTCConfig("lBumperS", false, calMin(cal, 0.3d), calMax(cal, 0.7d));
+                config = new ServoFTCConfig("lBumperS", true, calMin(cal, 0.44d), calMax(cal, 0.61d));
                 break;
-            case "RIGHT_INTAKE":
-                config = new ServoFTCConfig("rBumperS", false, calMin(cal, 0.3d), calMax(cal, 0.7d));
+            case "RIGHT-INTAKE":
+                config = new ServoFTCConfig("rBumperS", true, calMin(cal, 0.59d), calMax(cal, 0.83d));
                 break;
         }
         return config;

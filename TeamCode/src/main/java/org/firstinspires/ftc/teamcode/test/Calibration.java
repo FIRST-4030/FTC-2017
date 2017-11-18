@@ -24,6 +24,8 @@ public class Calibration extends OpMode {
     private TankDrive tank = null;
     private ServoFTC[] claws = null;
     private Motor lift = null;
+    private ServoFTC[] intakeServos = null;
+    private Motor[] intakeMotors = null;
 
     // Driving
     private double servoInterval = 0.01;
@@ -37,6 +39,8 @@ public class Calibration extends OpMode {
         tank = common.initDrive();
         lift = common.initLift();
         claws = common.initClaws();
+        intakeServos = common.initIntakeServos();
+        intakeMotors = common.initIntakeMotors(); // not used right now
 
         // Register buttons
         buttons.register("CLAW0-UP", gamepad1, BUTTON.dpad_up);
@@ -45,6 +49,11 @@ public class Calibration extends OpMode {
         buttons.register("CLAW1-DOWN", gamepad1, BUTTON.dpad_left);
         buttons.register("INTERVAL-UP", gamepad1, BUTTON.right_stick_button);
         buttons.register("INTERVAL-DOWN", gamepad1, BUTTON.left_stick_button);
+        buttons.register("INTAKE-R-UP", gamepad1, BUTTON.b);
+        buttons.register("INTAKE-R-DOWN", gamepad1, BUTTON.a);
+        buttons.register("INTAKE-L-UP", gamepad1, BUTTON.y);
+        buttons.register("INTAKE-L-DOWN", gamepad1, BUTTON.x);
+
     }
 
     @Override
@@ -68,15 +77,30 @@ public class Calibration extends OpMode {
         for (int i = 0; i < claws.length; i++) {
             if (buttons.get("CLAW" + i + "-UP")) {
                 claws[i].setPosition(claws[i].getPostion() + servoInterval);
-            } else if (buttons.get("CLAW" + i + "DOWN")) {
+            } else if (buttons.get("CLAW" + i + "-DOWN")) {
                 claws[i].setPosition(claws[i].getPostion() - servoInterval);
             }
+
         }
+
+        // Adjust the bumper servos
+        if(buttons.get("INTAKE-R-UP")) {
+            intakeServos[0].setPosition(intakeServos[0].getPostion() + servoInterval);
+        } else if(buttons.get("INTAKE-R-DOWN")) {
+            intakeServos[0].setPosition(intakeServos[0].getPostion() - servoInterval);
+        }
+        if(buttons.get("INTAKE-L-UP")) {
+            intakeServos[1].setPosition(intakeServos[1].getPostion() + servoInterval);
+        } else if(buttons.get("INTAKE-L-DOWN")) {
+            intakeServos[1].setPosition(intakeServos[1].getPostion() - servoInterval);
+        }
+
 
         // Adjust the servo adjustment rate
         if (buttons.get("INTERVAL-UP")) {
             servoInterval += SERVO_INTERVAL_INTERVAL;
-        } else if (buttons.get("INTERVAL-DOWN")) {
+        }
+        if (buttons.get("INTERVAL-DOWN")) {
             servoInterval -= SERVO_INTERVAL_INTERVAL;
         }
 
@@ -86,6 +110,8 @@ public class Calibration extends OpMode {
         for (int i = 0; i < claws.length; i++) {
             telemetry.addData("Claw " + i, claws[i].getPostion());
         }
+        telemetry.addData("Intake R", intakeServos[0].getPostion());
+        telemetry.addData("Intake L", intakeServos[1].getPostion());
         telemetry.addData("Servo Interval", servoInterval);
         telemetry.update();
     }
