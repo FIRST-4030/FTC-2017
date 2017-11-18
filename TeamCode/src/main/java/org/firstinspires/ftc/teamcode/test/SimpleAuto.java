@@ -43,12 +43,11 @@ public class SimpleAuto extends OpMode implements DriveToListener {
     }
 
     private LIFT_STATE liftState = LIFT_STATE.INIT;
-    private static final int LIFT_TIMEOUT = 500;
+    private static final int LIFT_TIMEOUT = 1500;
     // In general you should init false, but for testing start with nothing
     private boolean liftReady = true;
     private boolean liftButton = false;
     private double liftTimeout = 0;
-
 
     @Override
     public void init() {
@@ -98,11 +97,14 @@ public class SimpleAuto extends OpMode implements DriveToListener {
         }
 
         // Driver feedback
+        telemetry.addData("Drive", drive);
         telemetry.addData("Heading", gyro.getHeading());
         telemetry.addData("Encoder", tank.getEncoder());
         telemetry.addData("Lift", lift.getEncoder());
         telemetry.addData("LiftZero", liftState);
         telemetry.addData("Gyro Ready", gyro.isReady());
+        telemetry.addData("Time", (float)((int)(time * 1000)) / 1000.0f);
+        telemetry.addData("Lift Timeout", (float)((int)(liftTimeout * 1000)) / 1000.0f);
         telemetry.update();
 
         /*
@@ -123,7 +125,8 @@ public class SimpleAuto extends OpMode implements DriveToListener {
                 case RETRACT:
                     if (liftButton) {
                         liftState = liftState.next();
-                    } else if (liftTimeout > time) {
+                    } else if (time > liftTimeout) {
+                        lift.stop();
                         liftState = LIFT_STATE.TIMEOUT;
                     } else {
                         lift.setPower(LIFT_SPEED_DOWN);
@@ -144,6 +147,7 @@ public class SimpleAuto extends OpMode implements DriveToListener {
             drive = driveForward(this, tank, 254);
         } else if (gamepad1.b) {
             liftReady = false;
+            liftState = LIFT_STATE.INIT;
         } else if (gamepad1.dpad_left) {
             drive = turnDegrees(this, gyro, -30);
         } else if (gamepad1.dpad_right) {
