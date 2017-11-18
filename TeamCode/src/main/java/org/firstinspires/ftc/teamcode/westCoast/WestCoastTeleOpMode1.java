@@ -44,7 +44,7 @@ public class WestCoastTeleOpMode1 extends WestCoastOpMode{
         // Actually, this IS what we want. The list motor encoder is just bad (sigh)
         telemetry.addData("Lift.getCurrentPosition", getLiftPosition());
 //        telemetry.addData("switch voltage", liftSwitch.getVoltage());
-        telemetry.addData("Intake switch",isBumperStickOn);
+        telemetry.addData("Intake switch",buttons.get("INTAKE-PRESSED"));
         telemetry.addData("INTAKE-IN", buttons.get("INTAKE-IN"));
         telemetry.addData("INTAKE-OUT", buttons.get("INTAKE-OUT"));
 //        telemetry.addData("switch value", liftSwitch.getValue());
@@ -112,11 +112,11 @@ public class WestCoastTeleOpMode1 extends WestCoastOpMode{
     public void bumpers()
     {
         //spinner on-off switch
-        if(buttons.get("INTAKE-PRESSED") && isBumperStickOn == false)
+        if(buttons.get("INTAKE-PRESSED"))
         {
             isBumperStickOn = true;
         }
-        else if (buttons.get("INTAKE-PRESSED") && isBumperStickOn == true)
+        else if (buttons.get("INTAKE-PRESSED"))
         {
             isBumperStickOn = false;
         }
@@ -129,13 +129,13 @@ public class WestCoastTeleOpMode1 extends WestCoastOpMode{
         }
 
         //retract the servos
-        if(buttons.get("INTAKE-IN") && isBumperStickOn)
+        if(buttons.get("INTAKE-IN"))
         {
             lBumperS.setPosition(BUMPER_SERVO_MIN);
             rBumperS.setPosition(BUMPER_SERVO_MIN);
         }
 
-        if(buttons.get("INTAKE-OUT") && isBumperStickOn)
+        if(buttons.get("INTAKE-OUT"))
         {
             lBumperS.setPosition(BUMPER_SERVO_MAX);
             rBumperS.setPosition(BUMPER_SERVO_MAX);

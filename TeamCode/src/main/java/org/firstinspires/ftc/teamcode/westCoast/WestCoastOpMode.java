@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.*;
 
 import org.firstinspires.ftc.teamcode.buttons.BUTTON;
+import org.firstinspires.ftc.teamcode.buttons.BUTTON_TYPE;
 import org.firstinspires.ftc.teamcode.buttons.ButtonHandler;
 
 /**
@@ -70,9 +71,9 @@ public abstract class WestCoastOpMode extends OpMode{
 
 
         //register buttons
-        buttons.register("INTAKE-PRESSED", gamepad2, BUTTON.a);
-        buttons.register("INTAKE-IN", gamepad2, BUTTON.dpad_down);
-        buttons.register("INTAKE-OUT", gamepad2, BUTTON.dpad_up);
+        buttons.register("INTAKE-PRESSED", gamepad2, BUTTON.a, BUTTON_TYPE.TOGGLE);
+        buttons.register("INTAKE-IN", gamepad2, BUTTON.dpad_down, BUTTON_TYPE.TOGGLE);
+        buttons.register("INTAKE-OUT", gamepad2, BUTTON.dpad_up, BUTTON_TYPE.TOGGLE);
 
         //while(!liftSwitchIsPressed()){
         //    lift.setPower(1); // POSITIVE IS DOWN!!!
