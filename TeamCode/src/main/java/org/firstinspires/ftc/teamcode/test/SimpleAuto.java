@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.test;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.actuators.Motor;
+import org.firstinspires.ftc.teamcode.auto.CommonTasks;
 import org.firstinspires.ftc.teamcode.auto.DriveToMethods;
 import org.firstinspires.ftc.teamcode.config.MotorConfigs;
 import org.firstinspires.ftc.teamcode.config.WheelMotorConfigs;
@@ -20,6 +21,7 @@ import static org.firstinspires.ftc.teamcode.auto.DriveToMethods.*;
 public class SimpleAuto extends OpMode implements DriveToListener {
 
     // Devices and subsystems
+    private CommonTasks common = null;
     private TankDrive tank;
     private DriveTo drive;
     private Motor lift;
@@ -56,14 +58,11 @@ public class SimpleAuto extends OpMode implements DriveToListener {
         telemetry.addData(">", "Initializing...");
         telemetry.update();
 
-        // Drive motors
-        tank = new WheelMotorConfigs().init(hardwareMap, telemetry);
-        tank.stop();
-
-        // Lift
-        lift = new MotorConfigs().init(hardwareMap, telemetry, "LIFT");
-        lift.stop();
-
+        // Common init
+        common = new CommonTasks(hardwareMap, telemetry);
+        tank = common.initDrive();
+        lift = common.initLift();
+        
         // Gyro
         gyro = new Gyro(hardwareMap, "imu", telemetry);
 
@@ -103,8 +102,8 @@ public class SimpleAuto extends OpMode implements DriveToListener {
         telemetry.addData("Lift", lift.getEncoder());
         telemetry.addData("LiftZero", liftState);
         telemetry.addData("Gyro Ready", gyro.isReady());
-        telemetry.addData("Time", (float)((int)(time * 1000)) / 1000.0f);
-        telemetry.addData("Lift Timeout", (float)((int)(liftTimeout * 1000)) / 1000.0f);
+        telemetry.addData("Time", (float) ((int) (time * 1000)) / 1000.0f);
+        telemetry.addData("Lift Timeout", (float) ((int) (liftTimeout * 1000)) / 1000.0f);
         telemetry.update();
 
         /*
