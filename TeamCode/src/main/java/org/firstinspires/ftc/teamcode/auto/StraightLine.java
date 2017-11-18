@@ -152,12 +152,7 @@ public class StraightLine extends OpMode implements DriveToListener {
                 state = state.next();
                 break;
             case LIFT_INIT:
-                // Delegate control to liftAutoStart
-                driver = common.liftAutoStart(lift, claws);
-                if (driver.isDone()) {
-                    state = state.next();
-                    driver.done = false;
-                }
+                driver = delegateDriver(common.liftAutoStart(lift, claws), state.next());
                 break;
             case DELAY:
                 driver.interval = delay.seconds();
@@ -199,6 +194,16 @@ public class StraightLine extends OpMode implements DriveToListener {
     @Override
     public double driveToSensor(DriveToParams param) {
         return DriveToMethods.sensor(tank, param);
+    }
+
+    // Utility function to delegate our AutoDriver to an external provider
+    // Driver is proxied back up to caller, state is advanced when delegate sets ::done
+    private AutoDriver delegateDriver(AutoDriver autoDriver, AUTO_STATE next) {
+        if (autoDriver.isDone()) {
+            autoDriver.done = false;
+            state = next;
+        }
+        return autoDriver;
     }
 
     // Define the order of auto routine components
