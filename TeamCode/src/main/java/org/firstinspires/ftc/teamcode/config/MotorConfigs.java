@@ -7,18 +7,34 @@ import org.firstinspires.ftc.teamcode.actuators.Motor;
 import org.firstinspires.ftc.teamcode.actuators.MotorConfig;
 
 public class MotorConfigs {
-    private static BOT bot = null;
+    private HardwareMap map = null;
+    private Telemetry telemetry = null;
+    private BOT bot = null;
 
-    public Motor init(HardwareMap map, Telemetry telemetry, String name) {
+    public MotorConfigs(HardwareMap map, Telemetry telemetry, BOT bot) {
+        this.map = map;
+        this.telemetry = telemetry;
+        this.bot = bot;
+    }
+
+    public MotorConfigs(HardwareMap map, Telemetry telemetry) {
+        this(map, telemetry, null);
+    }
+
+    public Motor init(String name) {
         Motor motor = null;
-        for (BOT i : BOT.values()) {
-            bot = i;
-            motor = new Motor(map, config(name), telemetry);
-            if (motor.isAvailable()) {
-                if (bot.ordinal() != 0) {
-                    telemetry.log().add("NOTICE: Using " + name + " motor config " + bot);
+        if (bot != null) {
+            motor = new Motor(map, config(name, bot), telemetry);
+        } else {
+            for (BOT b : BOT.values()) {
+                motor = new Motor(map, config(name, b), telemetry);
+                if (motor.isAvailable()) {
+                    bot = b;
+                    if (bot.ordinal() != 0) {
+                        telemetry.log().add("NOTICE: Using " + name + " motor config " + bot);
+                    }
+                    break;
                 }
-                break;
             }
         }
         assert motor != null;
@@ -28,10 +44,10 @@ public class MotorConfigs {
         return motor;
     }
 
-    private MotorConfig config(String name) {
+    private static MotorConfig config(String name, BOT b) {
         MotorConfig config = null;
-        assert bot != null;
-        switch (bot) {
+        assert b != null;
+        switch (b) {
             case FINAL:
                 config = FinalBot(name);
                 break;

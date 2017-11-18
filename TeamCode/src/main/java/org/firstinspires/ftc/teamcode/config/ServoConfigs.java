@@ -7,18 +7,34 @@ import org.firstinspires.ftc.teamcode.actuators.ServoFTC;
 import org.firstinspires.ftc.teamcode.actuators.ServoFTCConfig;
 
 public class ServoConfigs {
-    private static BOT bot = null;
+    private HardwareMap map = null;
+    private Telemetry telemetry = null;
+    private BOT bot = null;
 
-    public ServoFTC init(HardwareMap map, Telemetry telemetry, String name) {
+    public ServoConfigs(HardwareMap map, Telemetry telemetry, BOT bot) {
+        this.map = map;
+        this.telemetry = telemetry;
+        this.bot = bot;
+    }
+
+    public ServoConfigs(HardwareMap map, Telemetry telemetry) {
+        this(map, telemetry, null);
+    }
+
+    public ServoFTC init(String name) {
         ServoFTC servo = null;
-        for (BOT i : BOT.values()) {
-            bot = i;
-            servo = new ServoFTC(map, config(name), telemetry);
-            if (servo.isAvailable()) {
-                if (bot.ordinal() != 0) {
-                    telemetry.log().add("NOTICE: Using " + name + " servo config " + bot);
+        if (bot != null) {
+            servo = new ServoFTC(map, config(name, bot), telemetry);
+        } else {
+            for (BOT b : BOT.values()) {
+                servo = new ServoFTC(map, config(name, b), telemetry);
+                if (servo.isAvailable()) {
+                    bot = b;
+                    if (bot.ordinal() != 0) {
+                        telemetry.log().add("NOTICE: Using " + name + " servo config " + bot);
+                    }
+                    break;
                 }
-                break;
             }
         }
         assert servo != null;
@@ -28,10 +44,10 @@ public class ServoConfigs {
         return servo;
     }
 
-    private ServoFTCConfig config(String name) {
+    private static ServoFTCConfig config(String name, BOT b) {
         ServoFTCConfig config = null;
-        assert bot != null;
-        switch (bot) {
+        assert b != null;
+        switch (b) {
             case FINAL:
                 config = FinalBot(name);
                 break;

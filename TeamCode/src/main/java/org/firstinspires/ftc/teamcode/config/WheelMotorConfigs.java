@@ -8,14 +8,30 @@ import org.firstinspires.ftc.teamcode.wheels.TankDrive;
 import org.firstinspires.ftc.teamcode.wheels.TankMotor;
 
 public class WheelMotorConfigs {
-    private static BOT bot = null;
+    private HardwareMap map = null;
+    private Telemetry telemetry = null;
+    private BOT bot = null;
 
-    public TankDrive init(HardwareMap map, Telemetry telemetry) {
+    public WheelMotorConfigs(HardwareMap map, Telemetry telemetry, BOT bot) {
+        this.map = map;
+        this.telemetry = telemetry;
+        this.bot = bot;
+    }
+
+    public WheelMotorConfigs(HardwareMap map, Telemetry telemetry) {
+        this(map, telemetry, null);
+    }
+
+    public TankDrive init() {
         TankDrive tank = null;
+        if (bot != null) {
+            tank = new TankDrive(map, config(bot), encoderIndex(), encoderScale(), telemetry);
+        }
         for (BOT i : BOT.values()) {
-            bot = i;
-            tank = new TankDrive(map, config(), encoderIndex(), encoderScale(), telemetry);
+            BOT b = i;
+            tank = new TankDrive(map, config(b), encoderIndex(), encoderScale(), telemetry);
             if (tank.isAvailable()) {
+                bot = b;
                 if (bot.ordinal() != 0) {
                     telemetry.log().add("NOTICE: Using wheel config: " + bot);
                 }
@@ -29,10 +45,10 @@ public class WheelMotorConfigs {
         return tank;
     }
 
-    private TankMotor[] config() {
+    private static TankMotor[] config(BOT b) {
         TankMotor[] config = null;
-        assert bot != null;
-        switch (bot) {
+        assert b != null;
+        switch (b) {
             case FINAL:
                 config = FinalBot();
                 break;

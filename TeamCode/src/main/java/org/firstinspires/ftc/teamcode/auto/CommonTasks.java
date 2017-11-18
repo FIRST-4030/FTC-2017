@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.actuators.Motor;
 import org.firstinspires.ftc.teamcode.actuators.ServoFTC;
+import org.firstinspires.ftc.teamcode.config.BOT;
 import org.firstinspires.ftc.teamcode.config.MotorConfigs;
 import org.firstinspires.ftc.teamcode.config.ServoConfigs;
 import org.firstinspires.ftc.teamcode.config.WheelMotorConfigs;
@@ -20,31 +21,41 @@ public class CommonTasks {
     private static final double LIFT_DELAY = 0.75;
     private static final double CLAW_DELAY = 0.25;
 
+    private WheelMotorConfigs wheels = null;
+    private ServoConfigs servos = null;
+    private MotorConfigs motors = null;
     private HardwareMap map = null;
     private Telemetry telemetry = null;
     private LIFT_STATE liftState = LIFT_STATE.INIT;
 
-    public CommonTasks(HardwareMap map, Telemetry telemetry) {
+    public CommonTasks(HardwareMap map, Telemetry telemetry, BOT bot) {
         this.map = map;
         this.telemetry = telemetry;
+        wheels = new WheelMotorConfigs(map, telemetry, bot);
+        servos = new ServoConfigs(map, telemetry, bot);
+        motors = new MotorConfigs(map, telemetry, bot);
+    }
+
+    public CommonTasks(HardwareMap map, Telemetry telemetry) {
+        this(map, telemetry, null);
     }
 
     public TankDrive initDrive() {
-        TankDrive tank = new WheelMotorConfigs().init(map, telemetry);
+        TankDrive tank = wheels.init();
         tank.stop();
         return tank;
     }
 
     public Motor initLift() {
-        Motor lift = new MotorConfigs().init(map, telemetry, "LIFT");
+        Motor lift = motors.init("LIFT");
         lift.stop();
         return lift;
     }
 
     public ServoFTC[] initClaws() {
         ServoFTC[] claws = new ServoFTC[CLAWS.values().length];
-        claws[CLAWS.TOP.ordinal()] = new ServoConfigs().init(map, telemetry, "CLAW-TOP");
-        claws[CLAWS.BOTTOM.ordinal()] = new ServoConfigs().init(map, telemetry, "CLAW-BOTTOM");
+        claws[CLAWS.TOP.ordinal()] = servos.init("CLAW-TOP");
+        claws[CLAWS.BOTTOM.ordinal()] = servos.init("CLAW-BOTTOM");
         for (ServoFTC claw : claws) {
             claw.min();
         }
