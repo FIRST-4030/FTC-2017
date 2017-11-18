@@ -15,10 +15,11 @@ public class TankDrive {
     private double speedScale = 1.0f;
     private int encoderIndex = 0;
     private double encoderScale = 1.0f;
+    private int[] offsets;
 
-    public TankDrive(HardwareMap map, TankMotor[] motors, int index, double scale, Telemetry telemetry) {
-        this.encoderIndex = index;
-        this.encoderScale = scale;
+    public TankDrive(HardwareMap map, TankMotor[] motors, int encoderIndex, double encoderScale, Telemetry telemetry) {
+        this.encoderIndex = encoderIndex;
+        this.encoderScale = encoderScale;
         if (motors == null || motors.length < MIN_MOTORS) {
             throw new IllegalArgumentException(this.getClass().getName() + " must configure at least " +
                     MIN_MOTORS + " motors");
@@ -39,12 +40,24 @@ public class TankDrive {
                 return;
             }
         }
+        this.offsets = new int[motors.length];
+        for (int i = 0; i < motors.length; i++) {
+            offsets[i] = 0;
+        }
         this.motors = motors;
         this.disabled = false;
     }
 
     public boolean isAvailable() {
         return motors != null;
+    }
+
+    public void resetEncoder() {
+        resetEncoder(encoderIndex);
+    }
+
+    public void resetEncoder(int index) {
+        offsets[index] = -getEncoder(index);
     }
 
     public int getEncoder() {
@@ -58,7 +71,7 @@ public class TankDrive {
         if (index < 0 || index >= motors.length) {
             throw new ArrayIndexOutOfBoundsException(this.getClass().getName() + ": Invalid index: " + index);
         }
-        return (int) ((double) motors[index].motor.getCurrentPosition() * encoderScale);
+        return (int) ((double) (motors[index].motor.getCurrentPosition() + offsets[index]) * encoderScale);
     }
 
     public void setSpeed(double speed) {
