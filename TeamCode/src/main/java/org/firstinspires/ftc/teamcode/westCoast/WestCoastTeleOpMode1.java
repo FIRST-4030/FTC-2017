@@ -45,6 +45,7 @@ public class WestCoastTeleOpMode1 extends WestCoastOpMode{
         telemetry.addData("Lift.getCurrentPosition", getLiftPosition());
         telemetry.addData("switch voltage", liftSwitch.getVoltage());
 //        telemetry.addData("switch value", liftSwitch.getValue());
+        telemetry.addData("Lift Height", lift.getCurrentPosition());
         telemetry.update();
 
     }
