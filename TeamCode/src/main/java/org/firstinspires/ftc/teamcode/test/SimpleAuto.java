@@ -98,11 +98,11 @@ public class SimpleAuto extends OpMode implements DriveToListener {
         }
 
         // Driver feedback
-        telemetry.addData("Gyro Ready", gyro.isReady());
         telemetry.addData("Heading", gyro.getHeading());
         telemetry.addData("Encoder", tank.getEncoder());
         telemetry.addData("Lift", lift.getEncoder());
         telemetry.addData("LiftZero", liftState);
+        telemetry.addData("Gyro Ready", gyro.isReady());
         telemetry.update();
 
         /*
@@ -144,6 +144,10 @@ public class SimpleAuto extends OpMode implements DriveToListener {
             drive = driveForward(this, tank, 254);
         } else if (gamepad1.b) {
             liftReady = false;
+        } else if (gamepad1.dpad_left) {
+            drive = turnDegrees(this, gyro, -30);
+        } else if (gamepad1.dpad_right) {
+            drive = turnDegrees(this, gyro, 30);
         }
     }
 

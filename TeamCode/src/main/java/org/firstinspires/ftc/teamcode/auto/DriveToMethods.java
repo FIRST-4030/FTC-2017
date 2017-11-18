@@ -86,14 +86,9 @@ public class DriveToMethods {
             params[1].lessThan(target + OVERRUN_GYRO);
         }
 
-        // Default match mdoe is "all", so both parameters must match as the same time
+        // Default match mode is "all", so both parameters must match as the same time
         return new DriveTo(params);
     }
-
-//    public static DriveTo turnToHeading(DriveToListener listener, Gyro gyro, int heading){
-//
-//    }
-
 
     public static void stop(TankDrive tank, DriveToParams param) {
         switch ((SENSOR_TYPE) param.reference) {
