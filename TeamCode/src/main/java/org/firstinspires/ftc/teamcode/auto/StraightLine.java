@@ -75,7 +75,7 @@ public class StraightLine extends OpMode implements DriveToListener {
             liftReady = true;
         }
 
-        // Update the dpad buttons
+        // Update the buttons
         buttons.update();
 
         // Adjust delay

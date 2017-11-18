@@ -50,6 +50,7 @@ public class WheelMotorConfigs {
         assert b != null;
         switch (b) {
             case FINAL:
+            case CALIBRATION:
                 config = FinalBot();
                 break;
             case CODE:
@@ -64,6 +65,7 @@ public class WheelMotorConfigs {
         assert bot != null;
         switch (bot) {
             case FINAL:
+            case CALIBRATION:
                 scale = FinalBotEncoderScale;
                 break;
             case CODE:
@@ -78,6 +80,7 @@ public class WheelMotorConfigs {
         assert bot != null;
         switch (bot) {
             case FINAL:
+            case CALIBRATION:
                 index = FinalBotEncoder;
                 break;
             case CODE:

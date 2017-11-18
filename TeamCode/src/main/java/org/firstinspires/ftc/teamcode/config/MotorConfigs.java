@@ -49,6 +49,7 @@ public class MotorConfigs {
         assert b != null;
         switch (b) {
             case FINAL:
+            case CALIBRATION:
                 config = FinalBot(name);
                 break;
             case CODE:

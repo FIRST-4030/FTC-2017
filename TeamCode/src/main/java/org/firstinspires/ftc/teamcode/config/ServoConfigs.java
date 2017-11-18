@@ -49,13 +49,35 @@ public class ServoConfigs {
         assert b != null;
         switch (b) {
             case FINAL:
-                config = FinalBot(name);
+                config = FinalBot(name, false);
+                break;
+            case CALIBRATION:
+                config = FinalBot(name, true);
                 break;
             case CODE:
                 config = CodeBot(name);
                 break;
         }
         return config;
+    }
+
+    private static double calMin(boolean calibrate, double limit) {
+        return calibrateOrFinal(calibrate, true, limit);
+    }
+
+    private static double calMax(boolean calibrate, double limit) {
+        return calibrateOrFinal(calibrate, false, limit);
+    }
+
+    private static double calibrateOrFinal(boolean calibrate, boolean min, double limit) {
+        double calLimit = 1.0d;
+        if (min) {
+            calLimit = 0.0d;
+        }
+        if (calibrate) {
+            return calLimit;
+        }
+        return limit;
     }
 
     private static ServoFTCConfig CodeBot(String name) {
@@ -67,20 +89,20 @@ public class ServoConfigs {
         return config;
     }
 
-    private static ServoFTCConfig FinalBot(String name) {
+    private static ServoFTCConfig FinalBot(String name, boolean cal) {
         ServoFTCConfig config = null;
         switch (name) {
             case "CLAW-TOP":
-                config = new ServoFTCConfig("CL1", true, 0.0, 0.48);
+                config = new ServoFTCConfig("CL1", true, calMin(cal, 0.0d), calMax(cal, 0.48d));
                 break;
             case "CLAW-BOTTOM":
-                config = new ServoFTCConfig("CL2", false, 0.09, 0.35);
+                config = new ServoFTCConfig("CL2", false, calMin(cal, 0.09d), calMax(cal, 0.35d));
                 break;
             case "LEFT-INTAKE":
-                config = new ServoFTCConfig("lBumperS", false, .3, .7);
+                config = new ServoFTCConfig("lBumperS", false, calMin(cal, 0.3d), calMax(cal, 0.7d));
                 break;
             case "RIGHT_INTAKE":
-                config = new ServoFTCConfig("rBumperS", false, .3, .7);
+                config = new ServoFTCConfig("rBumperS", false, calMin(cal, 0.3d), calMax(cal, 0.7d));
                 break;
         }
         return config;
