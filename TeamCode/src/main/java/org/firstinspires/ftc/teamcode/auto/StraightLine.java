@@ -31,7 +31,7 @@ public class StraightLine extends OpMode implements DriveToListener {
     // Auto constants
     private static final double LIFT_DELAY = 0.75;
     private static final double CLAW_DELAY = 0.25;
-    private static final int RELEASE_REVERSE_MM = 50;
+    private static final int RELEASE_REVERSE_MM = 250;
 
     // Devices and subsystems
     private TankDrive tank = null;
@@ -246,21 +246,21 @@ public class StraightLine extends OpMode implements DriveToListener {
     }
 
     // Configurable straight-line distance
-        enum DISTANCE implements OrderedEnum {
-            SHORT(965),
-            LONG(1016);
+    enum DISTANCE implements OrderedEnum {
+        SHORT(965),
+        LONG(1016);
 
-            private int millimeters;
+        private int millimeters;
 
-            DISTANCE(int millimeters) {
-                this.millimeters = millimeters;
-            }
+        DISTANCE(int millimeters) {
+            this.millimeters = millimeters;
+        }
 
-            public int millimeters() {
-                return millimeters;
-            }
+        public int millimeters() {
+            return millimeters;
+        }
 
-            public DISTANCE prev() {
+        public DISTANCE prev() {
             return OrderedEnumHelper.prev(this);
         }
 
