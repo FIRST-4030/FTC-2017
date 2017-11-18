@@ -62,7 +62,7 @@ public class SimpleAuto extends OpMode implements DriveToListener {
         common = new CommonTasks(hardwareMap, telemetry);
         tank = common.initDrive();
         lift = common.initLift();
-        
+
         // Gyro
         gyro = new Gyro(hardwareMap, "imu", telemetry);
 
