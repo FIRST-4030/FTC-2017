@@ -23,12 +23,14 @@ public abstract class WestCoastOpMode extends OpMode{
     public final int TOP_CLAW = 0;
     public final int BOTTOM_CLAW = 1;
 
-    public final double UPPER_CLAW_MAX = .48;
-    public final double UPPER_CLAW_MIN = .06;
+    public final double UPPER_CLAW_MAX = .87;
+    public final double UPPER_CLAW_MIN = .60;
     public final double LOWER_CLAW_MAX = .35;
     public final double LOWER_CLAW_MIN = .09;
-    public final double BUMPER_SERVO_MIN = .3;
-    public final double BUMPER_SERVO_MAX = .7;
+    public final double LBUMPER_SERVO_MIN = .55;
+    public final double LBUMPER_SERVO_MAX = .2;
+    public final double RBUMPER_SERVO_MIN = .5;
+    public final double RBUMPER_SERVO_MAX = .15;
 
     public DcMotor lWheel1;
     public DcMotor lWheel2;
@@ -85,10 +87,10 @@ public abstract class WestCoastOpMode extends OpMode{
         setServoPosition(BOTTOM_CLAW, LOWER_CLAW_MIN);
 
         //initialize bumper servos to be in and set limits
-        lBumperS.setPosition(BUMPER_SERVO_MIN);
-        rBumperS.setPosition(BUMPER_SERVO_MIN);
-        lBumperS.scaleRange(BUMPER_SERVO_MIN, BUMPER_SERVO_MAX);
-        rBumperS.scaleRange(BUMPER_SERVO_MIN, BUMPER_SERVO_MAX);
+        lBumperS.setPosition(LBUMPER_SERVO_MIN);
+        rBumperS.setPosition(RBUMPER_SERVO_MIN);
+        //lBumperS.scaleRange(LBUMPER_SERVO_MIN, LBUMPER_SERVO_MAX);
+        //rBumperS.scaleRange(RBUMPER_SERVO_MIN, RBUMPER_SERVO_MAX);
     }
 
     /**
