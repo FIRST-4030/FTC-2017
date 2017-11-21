@@ -6,9 +6,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-public class TankDrive {
+public class TankDrive implements Wheels {
     private TankConfig config = null;
-    private boolean disabled = true;
     private boolean teleop = false;
     private double speedScale = 1.0f;
     private int[] offsets;
@@ -37,7 +36,6 @@ public class TankDrive {
             offsets[i] = 0;
         }
         this.config = config;
-        this.disabled = false;
     }
 
     public boolean isAvailable() {
@@ -67,7 +65,7 @@ public class TankDrive {
     }
 
     public void setSpeed(double speed) {
-        if (isDisabled()) {
+        if (isAvailable()) {
             return;
         }
         for (TankMotor motor : config.motors) {
@@ -75,8 +73,8 @@ public class TankDrive {
         }
     }
 
-    public void setSpeed(double speed, MotorSide side) {
-        if (isDisabled()) {
+    public void setSpeed(double speed, MOTOR_SIDE side) {
+        if (isAvailable()) {
             return;
         }
         for (TankMotor motor : config.motors) {
@@ -95,24 +93,6 @@ public class TankDrive {
         }
     }
 
-    public int numMotors() {
-        if (!isAvailable()) {
-            return 0;
-        }
-        return config.motors.length;
-    }
-
-    public boolean isDisabled() {
-        return !isAvailable() || this.disabled;
-    }
-
-    public void setDisabled(boolean disabled) {
-        if (!this.disabled && disabled) {
-            stop();
-        }
-        this.disabled = disabled;
-    }
-
     public boolean isTeleop() {
         return this.teleop;
     }
@@ -129,15 +109,15 @@ public class TankDrive {
     }
 
     public void loop(Gamepad pad) {
-        if (isDisabled() || !isTeleop() || pad == null) {
+        if (isAvailable() || !isTeleop() || pad == null) {
             return;
         }
 
         float left = cleanJoystick(pad.left_stick_y);
-        this.setSpeed(left, MotorSide.LEFT);
+        this.setSpeed(left, MOTOR_SIDE.LEFT);
 
         float right = cleanJoystick(pad.right_stick_y);
-        this.setSpeed(right, MotorSide.RIGHT);
+        this.setSpeed(right, MOTOR_SIDE.RIGHT);
     }
 
     private float cleanJoystick(float power) {

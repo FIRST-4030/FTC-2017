@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.sensors.Gyro;
 import org.firstinspires.ftc.teamcode.utils.AutoDriver;
 import org.firstinspires.ftc.teamcode.utils.OrderedEnum;
 import org.firstinspires.ftc.teamcode.utils.OrderedEnumHelper;
-import org.firstinspires.ftc.teamcode.wheels.MotorSide;
+import org.firstinspires.ftc.teamcode.wheels.MOTOR_SIDE;
 
 /*
  * These are robot-specific helper methods
@@ -120,20 +120,20 @@ public class CommonTasks implements DriveToListener {
     }
 
     public DriveTo driveForward(int distance) {
-        robot.tank.setTeleop(false);
+        robot.wheels.setTeleop(false);
         distance = Math.abs(distance);
         DriveToParams param = new DriveToParams(this, SENSOR_TYPE.DRIVE_ENCODER);
         int ticks = (int) ((float) distance * ENCODER_PER_MM);
-        param.greaterThan(ticks + robot.tank.getEncoder() - OVERRUN_ENCODER);
+        param.greaterThan(ticks + robot.wheels.getEncoder() - OVERRUN_ENCODER);
         return new DriveTo(new DriveToParams[]{param});
     }
 
     public DriveTo driveBackward(int distance) {
-        robot.tank.setTeleop(false);
+        robot.wheels.setTeleop(false);
         distance = -Math.abs(distance);
         DriveToParams param = new DriveToParams(this, SENSOR_TYPE.DRIVE_ENCODER);
         int ticks = (int) ((float) distance * ENCODER_PER_MM);
-        param.lessThan(-1 * (ticks + robot.tank.getEncoder() - OVERRUN_ENCODER));
+        param.lessThan(-1 * (ticks + robot.wheels.getEncoder() - OVERRUN_ENCODER));
         return new DriveTo(new DriveToParams[]{param});
     }
 
@@ -165,7 +165,7 @@ public class CommonTasks implements DriveToListener {
     public void driveToStop(DriveToParams param) {
         switch ((SENSOR_TYPE) param.reference) {
             case DRIVE_ENCODER:
-                robot.tank.stop();
+                robot.wheels.stop();
                 break;
         }
     }
@@ -175,7 +175,7 @@ public class CommonTasks implements DriveToListener {
         double value = 0;
         switch ((SENSOR_TYPE) param.reference) {
             case DRIVE_ENCODER:
-                value = robot.tank.getEncoder();
+                value = robot.wheels.getEncoder();
                 break;
             case GYROSCOPE:
             case GYROSCOPE_SLAVE:
@@ -190,18 +190,18 @@ public class CommonTasks implements DriveToListener {
         switch ((SENSOR_TYPE) param.reference) {
             case DRIVE_ENCODER:
                 if (param.comparator == COMP_FORWARD) {
-                    robot.tank.setSpeed(SPEED_FORWARD_SLOW);
+                    robot.wheels.setSpeed(SPEED_FORWARD_SLOW);
                 } else {
-                    robot.tank.setSpeed(SPEED_REVERSE);
+                    robot.wheels.setSpeed(SPEED_REVERSE);
                 }
                 break;
             case GYROSCOPE:
                 if (param.comparator == COMP_CLOCKWISE) {
-                    robot.tank.setSpeed(SPEED_TURN, MotorSide.LEFT);
-                    robot.tank.setSpeed(-SPEED_TURN, MotorSide.RIGHT);
+                    robot.wheels.setSpeed(SPEED_TURN, MOTOR_SIDE.LEFT);
+                    robot.wheels.setSpeed(-SPEED_TURN, MOTOR_SIDE.RIGHT);
                 } else {
-                    robot.tank.setSpeed(-SPEED_TURN, MotorSide.LEFT);
-                    robot.tank.setSpeed(SPEED_TURN, MotorSide.RIGHT);
+                    robot.wheels.setSpeed(-SPEED_TURN, MOTOR_SIDE.LEFT);
+                    robot.wheels.setSpeed(SPEED_TURN, MOTOR_SIDE.RIGHT);
                 }
                 break;
         }

@@ -10,11 +10,11 @@ import org.firstinspires.ftc.teamcode.robot.configs.MotorConfigs;
 import org.firstinspires.ftc.teamcode.robot.configs.ServoConfigs;
 import org.firstinspires.ftc.teamcode.robot.configs.WheelConfigs;
 import org.firstinspires.ftc.teamcode.sensors.Gyro;
-import org.firstinspires.ftc.teamcode.wheels.TankDrive;
+import org.firstinspires.ftc.teamcode.wheels.Wheels;
 
 public class Robot {
     public BOT bot = null;
-    public TankDrive tank = null;
+    public Wheels wheels = null;
     public Motor lift = null;
     public ServoFTC[] claws = null;
     public Motor[] intakes = null;
@@ -68,8 +68,8 @@ public class Robot {
         MotorConfigs motors = new MotorConfigs(map, telemetry, bot);
         ServoConfigs servos = new ServoConfigs(map, telemetry, bot);
 
-        tank = wheels.init();
-        tank.stop();
+        this.wheels = wheels.init();
+        this.wheels.stop();
 
         lift = motors.init(MOTORS.LIFT);
         lift.stop();

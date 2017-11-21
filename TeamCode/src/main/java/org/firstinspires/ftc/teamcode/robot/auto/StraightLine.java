@@ -5,15 +5,11 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import org.firstinspires.ftc.teamcode.actuators.ServoFTC;
 import org.firstinspires.ftc.teamcode.buttons.BUTTON;
 import org.firstinspires.ftc.teamcode.buttons.ButtonHandler;
-import org.firstinspires.ftc.teamcode.driveto.DriveToListener;
-import org.firstinspires.ftc.teamcode.driveto.DriveToParams;
 import org.firstinspires.ftc.teamcode.field.Field;
 import org.firstinspires.ftc.teamcode.robot.Robot;
 import org.firstinspires.ftc.teamcode.utils.AutoDriver;
 import org.firstinspires.ftc.teamcode.utils.OrderedEnum;
 import org.firstinspires.ftc.teamcode.utils.OrderedEnumHelper;
-
-import static org.firstinspires.ftc.teamcode.robot.auto.CommonTasks.*;
 
 @com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "Straight Line", group = "Auto")
 public class StraightLine extends OpMode {
@@ -123,13 +119,13 @@ public class StraightLine extends OpMode {
             // Return to teleop when complete
             if (driver.drive.isDone()) {
                 driver.drive = null;
-                robot.tank.setTeleop(true);
+                robot.wheels.setTeleop(true);
             }
         }
 
         // Driver feedback
         telemetry.addData("State", state);
-        telemetry.addData("Encoder", robot.tank.getEncoder());
+        telemetry.addData("Encoder", robot.wheels.getEncoder());
         telemetry.update();
 
         /*

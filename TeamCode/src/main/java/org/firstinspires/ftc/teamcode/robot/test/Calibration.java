@@ -48,7 +48,7 @@ public class Calibration extends OpMode {
     public void start() {
         telemetry.clearAll();
         robot.lift.resetEncoder();
-        robot.tank.resetEncoder();
+        robot.wheels.resetEncoder();
     }
 
     @Override
@@ -58,7 +58,7 @@ public class Calibration extends OpMode {
         buttons.update();
 
         // Adjust the lift and wheels
-        robot.tank.setSpeed(gamepad1.left_stick_y);
+        robot.wheels.setSpeed(gamepad1.left_stick_y);
         robot.lift.setPower(gamepad1.right_stick_y);
 
         // Adjust the claws
@@ -89,7 +89,7 @@ public class Calibration extends OpMode {
 
         // Feedback
         telemetry.addData("Lift", robot.lift.getEncoder());
-        telemetry.addData("Wheels", robot.tank.getEncoder());
+        telemetry.addData("Wheels", robot.wheels.getEncoder());
         for (CLAWS claw : CLAWS.values()) {
             telemetry.addData("Claw " + claw, robot.claws[claw.ordinal()].getPostion());
         }

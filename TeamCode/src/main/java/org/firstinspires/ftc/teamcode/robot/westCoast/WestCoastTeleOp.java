@@ -5,18 +5,12 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.actuators.Motor;
 import org.firstinspires.ftc.teamcode.actuators.ServoFTC;
+import org.firstinspires.ftc.teamcode.buttons.BUTTON_TYPE;
 import org.firstinspires.ftc.teamcode.robot.auto.CommonTasks;
 import org.firstinspires.ftc.teamcode.buttons.BUTTON;
 import org.firstinspires.ftc.teamcode.buttons.ButtonHandler;
 import org.firstinspires.ftc.teamcode.robot.CLAWS;
 import org.firstinspires.ftc.teamcode.robot.Robot;
-
-/**
- * Created by bnstc on 11/18/2017.
- * <p>
- * Note that the
- */
-
 
 @TeleOp(name = "The Real WCTeleOp", group = "WestCoastOpMode")
 public class WestCoastTeleOp extends OpMode {
@@ -26,12 +20,6 @@ public class WestCoastTeleOp extends OpMode {
     private CommonTasks common = null;
 
     private ButtonHandler buttons = new ButtonHandler();
-
-    private boolean topClawOpen = true;
-    private boolean bottomClawOpen = true;
-    private boolean intakeExtended = false;
-    private boolean intakeLocked = true;
-    private boolean slowMode = false;
 
     @Override
     public void init() {
@@ -48,8 +36,8 @@ public class WestCoastTeleOp extends OpMode {
         buttons.register("TOP-CLAW", gamepad2, BUTTON.right_bumper);
         buttons.register("BOTTOM-CLAW", gamepad2, BUTTON.left_bumper);
         buttons.register("EXTEND-INTAKE", gamepad2, BUTTON.b);
-        buttons.register("LOCK-INTAKE", gamepad2, BUTTON.a);
-        buttons.register("SLOW-MODE", gamepad1, BUTTON.a);
+        buttons.register("LOCK-INTAKE", gamepad2, BUTTON.a, BUTTON_TYPE.TOGGLE);
+        buttons.register("SLOW-MODE", gamepad1, BUTTON.a, BUTTON_TYPE.TOGGLE);
 
         // Wait for the game to begin
         telemetry.addData(">", "Init complete");
@@ -70,8 +58,8 @@ public class WestCoastTeleOp extends OpMode {
         intakes();
 
         // Driver Feedback
-        telemetry.addData("Slow Mode", slowMode);
-        telemetry.addData("Intakes Locked", intakeLocked);
+        telemetry.addData("Slow Mode", buttons.get("SLOW-MODE"));
+        telemetry.addData("Intakes Locked", buttons.get("LOCK-INTAKE"));
         telemetry.addData("Top CLaw", robot.claws[CLAWS.TOP.ordinal()].getPostion());
         telemetry.addData("Bottom Claw", robot.claws[CLAWS.BOTTOM.ordinal()].getPostion());
         telemetry.addData("Lift Height", robot.lift.getEncoder());
@@ -80,16 +68,12 @@ public class WestCoastTeleOp extends OpMode {
 
     public void driveBase() {
 
-        // Update Slow Mode
-        if (buttons.get("SLOW-MODE")) slowMode = !slowMode;
-
-        // Tank Drive
-        if (slowMode) {
-            robot.tank.setSpeedScale(0.5);
+        if (buttons.get("SLOW-MODE")) {
+            robot.wheels.setSpeedScale(0.5);
         } else {
-            robot.tank.setSpeedScale(1.0);
+            robot.wheels.setSpeedScale(1.0);
         }
-        robot.tank.loop(gamepad1);
+        robot.wheels.loop(gamepad1);
     }
 
     public void clawsAndLift() {
@@ -107,20 +91,15 @@ public class WestCoastTeleOp extends OpMode {
 
     public void intakes() {
 
-        // Lock Intakes
-        if (buttons.get("LOCK-INTAKE")) intakeLocked = !intakeLocked;
-
         // Toggle Intakes
         if (buttons.get("EXTEND-INTAKE")) {
-            intakeExtended = !intakeExtended;
             for (ServoFTC intake : robot.intakeArms) {
-                if (intakeExtended) intake.min();
-                else intake.max();
+                intake.toggle();
             }
         }
 
         // Intake Motors
-        if (!intakeLocked) {
+        if (!buttons.get("LOCK-INTAKE")) {
             for (Motor intake : robot.intakes) {
                 intake.setPower(gamepad2.right_stick_y);
             }

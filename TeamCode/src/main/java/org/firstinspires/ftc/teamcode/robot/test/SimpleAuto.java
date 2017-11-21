@@ -78,14 +78,14 @@ public class SimpleAuto extends OpMode {
             // Return to teleop when complete
             if (drive.isDone()) {
                 drive = null;
-                robot.tank.setTeleop(true);
+                robot.wheels.setTeleop(true);
             }
         }
 
         // Driver feedback
         telemetry.addData("Drive", drive);
         telemetry.addData("Heading", robot.gyro.getHeading());
-        telemetry.addData("Encoder", robot.tank.getEncoder());
+        telemetry.addData("Encoder", robot.wheels.getEncoder());
         telemetry.addData("Lift", robot.lift.getEncoder());
         telemetry.addData("LiftZero", liftState);
         telemetry.addData("Gyro Ready", robot.gyro.isReady());
