@@ -3,6 +3,14 @@ package org.firstinspires.ftc.teamcode.mechanum;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import org.firstinspires.ftc.teamcode.actuators.ServoFTC;
+import org.firstinspires.ftc.teamcode.actuators.ServoFTCConfig;
+import org.firstinspires.ftc.teamcode.buttons.BUTTON;
+import org.firstinspires.ftc.teamcode.buttons.ButtonHandler;
+import org.firstinspires.ftc.teamcode.buttons.SinglePressButton;
+
+import static org.firstinspires.ftc.teamcode.buttons.BUTTON_TYPE.TOGGLE;
+
 /**
  * Created by robotics on 9/16/2017.
  *
@@ -18,6 +26,16 @@ public abstract class MechanumOpMode extends OpMode {
     public DcMotor FRWheel;
     public DcMotor BLWheel;
     public DcMotor BRWheel;
+
+    public ServoFTCConfig jewelArm = new ServoFTCConfig("JewelArm", false, 0d, .5d);
+    public ServoFTC jewelServo = new ServoFTC(hardwareMap, jewelArm, telemetry);
+
+    double fLVM;
+    double fRVM;
+    double bLVM;
+    double bRVM;
+
+    private ButtonHandler button = new ButtonHandler();
 
 
 
@@ -37,6 +55,9 @@ public abstract class MechanumOpMode extends OpMode {
         FRWheel = hardwareMap.dcMotor.get("FL");
         BLWheel = hardwareMap.dcMotor.get("BR");
         BRWheel = hardwareMap.dcMotor.get("BL");
+
+        //register button
+        button.register("Jewel-Whacker", gamepad2, BUTTON.a, TOGGLE);
     }
 
     /**
@@ -92,10 +113,10 @@ public abstract class MechanumOpMode extends OpMode {
          */
 
         // Calculate the VMs
-        double fLVM = (speed * Math.sin(moveAngle + (Math.PI / 4))) - rotationSpeed;
-        double fRVM = (speed * Math.cos(moveAngle + (Math.PI / 4))) + rotationSpeed;
-        double bLVM = (speed * Math.cos(moveAngle + (Math.PI / 4))) - rotationSpeed;
-        double bRVM = (speed * Math.sin(moveAngle + (Math.PI / 4))) + rotationSpeed;
+        fLVM = (speed * Math.sin(moveAngle + (Math.PI / 4))) - rotationSpeed;
+        fRVM = (speed * Math.cos(moveAngle + (Math.PI / 4))) + rotationSpeed;
+        bLVM = (speed * Math.cos(moveAngle + (Math.PI / 4))) - rotationSpeed;
+        bRVM = (speed * Math.sin(moveAngle + (Math.PI / 4))) + rotationSpeed;
 
         // Account for the range of the VMs
 //        double largestVM = Math.abs(fLVM);
@@ -111,10 +132,10 @@ public abstract class MechanumOpMode extends OpMode {
 //        }
 
         //temporary thingy that allows for slower speeds
-        fLVM = fLVM / 2;
-        fRVM = fRVM / 2;
-        bLVM = bLVM / 2;
-        bRVM = bRVM / 2;
+        //fLVM = fLVM / 2;
+        //fRVM = fRVM / 2;
+        //bLVM = bLVM / 2;
+        //bRVM = bRVM / 2;
 
         telemetry.addData("FL Speed", fLVM);
         telemetry.addData("FR Speed", fRVM);
@@ -153,6 +174,8 @@ public abstract class MechanumOpMode extends OpMode {
         move(direction.getMoveDirection(), speed, 0);
 
     }
+
+    public void jewelArm()
 
     /**
      * Stop moving the robot

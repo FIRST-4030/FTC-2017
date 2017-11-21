@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.mechanum;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-@Disabled
+
 @TeleOp(name="MechanumTeleOpMode1", group="MechanumOpMode")
 public class MechanumTeleOpMode1 extends MechanumOpMode{
 
