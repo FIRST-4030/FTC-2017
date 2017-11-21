@@ -26,16 +26,17 @@ public class WheelMotorConfigs {
         TankDrive tank = null;
         if (bot != null) {
             tank = new TankDrive(map, config(bot), encoderIndex(), encoderScale(), telemetry);
-        }
-        for (BOT i : BOT.values()) {
-            BOT b = i;
-            tank = new TankDrive(map, config(b), encoderIndex(), encoderScale(), telemetry);
-            if (tank.isAvailable()) {
-                bot = b;
-                if (bot.ordinal() != 0) {
-                    telemetry.log().add("NOTICE: Using wheel config: " + bot);
+        } else {
+            for (BOT i : BOT.values()) {
+                BOT b = i;
+                tank = new TankDrive(map, config(b), encoderIndex(), encoderScale(), telemetry);
+                if (tank.isAvailable()) {
+                    bot = b;
+                    if (bot.ordinal() != 0) {
+                        telemetry.log().add("NOTICE: Using wheel config: " + bot);
+                    }
+                    break;
                 }
-                break;
             }
         }
         if (tank == null) {
