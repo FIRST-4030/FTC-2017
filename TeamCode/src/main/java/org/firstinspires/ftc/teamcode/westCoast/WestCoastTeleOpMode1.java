@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.buttons.ButtonHandler;
  * Created by Alex Wang on 10/9/2017.
  */
 
-@Disabled
+
 @TeleOp(name="WestCoastTeleOpMode1", group="WestCoastOpMode")
 public class WestCoastTeleOpMode1 extends WestCoastOpMode{
 

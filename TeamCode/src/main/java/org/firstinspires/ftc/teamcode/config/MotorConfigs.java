@@ -82,7 +82,7 @@ public class MotorConfigs {
                 config = new MotorConfig("lBumperM", false);
                 break;
             case "RIGHT-INTAKE":
-                config = new MotorConfig("rBumperM", false);
+                config = new MotorConfig("rBumperM", true);
                 break;
         }
         return config;
