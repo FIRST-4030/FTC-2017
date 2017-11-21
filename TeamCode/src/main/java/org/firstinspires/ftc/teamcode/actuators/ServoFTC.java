@@ -11,8 +11,14 @@ public class ServoFTC {
     private Double max;
 
     public ServoFTC(HardwareMap map, ServoFTCConfig config, Telemetry telemetry) {
-        if (config == null || config.name == null || config.name.isEmpty()) {
-            throw new IllegalArgumentException(this.getClass().getName() + ": Null config or null/empty name");
+        if (config == null) {
+            if (telemetry != null) {
+                telemetry.log().add(this.getClass().getName() + ": Null config");
+            }
+            return;
+        }
+        if (config.name == null || config.name.isEmpty()) {
+            throw new IllegalArgumentException(this.getClass().getName() + ": Null/empty name");
         }
         try {
             servo = map.servo.get(config.name);
