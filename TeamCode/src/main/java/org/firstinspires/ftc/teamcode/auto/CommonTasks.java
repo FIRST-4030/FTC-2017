@@ -1,92 +1,72 @@
 package org.firstinspires.ftc.teamcode.auto;
 
-import com.qualcomm.robotcore.hardware.HardwareMap;
-
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.actuators.Motor;
-import org.firstinspires.ftc.teamcode.actuators.ServoFTC;
-import org.firstinspires.ftc.teamcode.config.BOT;
-import org.firstinspires.ftc.teamcode.config.MotorConfigs;
-import org.firstinspires.ftc.teamcode.config.ServoConfigs;
-import org.firstinspires.ftc.teamcode.config.WheelMotorConfigs;
+import org.firstinspires.ftc.teamcode.driveto.DriveTo;
+import org.firstinspires.ftc.teamcode.driveto.DriveToComp;
+import org.firstinspires.ftc.teamcode.driveto.DriveToListener;
+import org.firstinspires.ftc.teamcode.driveto.DriveToParams;
+import org.firstinspires.ftc.teamcode.robot.CLAWS;
+import org.firstinspires.ftc.teamcode.robot.Robot;
+import org.firstinspires.ftc.teamcode.sensors.Gyro;
+import org.firstinspires.ftc.teamcode.utils.AutoDriver;
 import org.firstinspires.ftc.teamcode.utils.OrderedEnum;
 import org.firstinspires.ftc.teamcode.utils.OrderedEnumHelper;
-import org.firstinspires.ftc.teamcode.wheels.TankDrive;
+import org.firstinspires.ftc.teamcode.wheels.MotorSide;
 
-import static org.firstinspires.ftc.teamcode.auto.DriveToMethods.LIFT_SPEED_UP;
-
+/*
+ * These are robot-specific helper methods
+ * They exist to encourage code re-use across classes
+ *
+ * They are a reasonable template for future robots, but are unlikely to work as-is
+ */
 public class CommonTasks {
-    public enum CLAWS {TOP, BOTTOM;}
 
-    public enum INTAKES {RIGHT, LEFT;}
-
+    // LiftAutoStart constants
     private static final double LIFT_DELAY = 0.75;
     private static final double CLAW_DELAY = 0.25;
 
-    private WheelMotorConfigs wheels = null;
-    private ServoConfigs servos = null;
-    private MotorConfigs motors = null;
-    private HardwareMap map = null;
-    private Telemetry telemetry = null;
+    /**
+     * Configured drive constants
+     */
+    // Straight drive speed -- Forward is toward the claws, motor positive, tick increasing
+    public final static float SPEED_FORWARD = 1.0f;
+    public final static float SPEED_FORWARD_SLOW = SPEED_FORWARD * 0.75f;
+    public final static float SPEED_REVERSE = -SPEED_FORWARD;
+    // Turn drive speed
+    public final static float SPEED_TURN = SPEED_FORWARD * 0.5f;
+    // Lift speed -- Up is motor positive, ticks increasing
+    public final static float LIFT_SPEED_UP = 1.0f;
+    public final static float LIFT_SPEED_DOWN = -LIFT_SPEED_UP;
+
+    /**
+     * Tuned drive constants
+     */
+    // An estimate of the number of degrees we slip on inertia after calling wheels.stop()
+    public final static int OVERRUN_GYRO = 1; // TBD
+    // An estimate of the number of ricks we slip on inertia after calling wheels.stop()
+    public final static int OVERRUN_ENCODER = 10;
+
+    /**
+     * Physical-logical mapping
+     */
+    // Ratio of encoder ticks to millimeters driven
+    public final static float ENCODER_PER_MM = 1.15f;
+    // Clockwise is gryo-increasing
+    public final static DriveToComp COMP_CLOCKWISE = DriveToComp.GREATER;
+    // Forward is toward the claws, motor positive, ticks increasing
+    public final static DriveToComp COMP_FORWARD = DriveToComp.GREATER;
+
+    // Geometric constants
+    public final static int FULL_CIRCLE = 360;
+
+    // Runtime
+    private Robot robot;
     private LIFT_STATE liftState = LIFT_STATE.INIT;
 
-    public CommonTasks(HardwareMap map, Telemetry telemetry, BOT bot) {
-        this.map = map;
-        this.telemetry = telemetry;
-        wheels = new WheelMotorConfigs(map, telemetry, bot);
-        servos = new ServoConfigs(map, telemetry, bot);
-        motors = new MotorConfigs(map, telemetry, bot);
+    public CommonTasks(Robot robot) {
+        this.robot = robot;
     }
 
-    // In the common case we expect that BOT will be NULL, which triggers auto-detect behavior
-    // You should only override this default if your usage is limited to a single physical bot
-    public CommonTasks(HardwareMap map, Telemetry telemetry) {
-        this(map, telemetry, null);
-    }
-
-    public TankDrive initDrive() {
-        TankDrive tank = wheels.init();
-        tank.stop();
-        return tank;
-    }
-
-    public Motor initLift() {
-        Motor lift = motors.init("LIFT");
-        lift.stop();
-        return lift;
-    }
-
-    public ServoFTC[] initClaws() {
-        ServoFTC[] claws = new ServoFTC[CLAWS.values().length];
-        claws[CLAWS.TOP.ordinal()] = servos.init("CLAW-TOP");
-        claws[CLAWS.BOTTOM.ordinal()] = servos.init("CLAW-BOTTOM");
-        for (ServoFTC claw : claws) {
-            claw.min();
-        }
-        return claws;
-    }
-
-    public ServoFTC[] initIntakeServos() {
-        ServoFTC[] intakes = new ServoFTC[INTAKES.values().length];
-        intakes[INTAKES.RIGHT.ordinal()] = servos.init("RIGHT-INTAKE");
-        intakes[INTAKES.LEFT.ordinal()] = servos.init("LEFT-INTAKE");
-        for (ServoFTC intake : intakes) {
-            intake.min();
-        }
-        return intakes;
-    }
-
-    public Motor[] initIntakeMotors() {
-        Motor[] intakes = new Motor[INTAKES.values().length];
-        intakes[INTAKES.RIGHT.ordinal()] = motors.init("RIGHT-INTAKE");
-        intakes[INTAKES.LEFT.ordinal()] = motors.init("LEFT-INTAKE");
-        for (Motor intake : intakes) {
-            intake.stop();
-        }
-        return intakes;
-    }
-
-    public AutoDriver liftAutoStart(Motor lift, ServoFTC[] claws) {
+    public AutoDriver liftAutoStart() {
         AutoDriver driver = new AutoDriver();
 
         switch (liftState) {
@@ -94,18 +74,18 @@ public class CommonTasks {
                 liftState = liftState.next();
                 break;
             case GRAB:
-                claws[CLAWS.TOP.ordinal()].max();
-                claws[CLAWS.BOTTOM.ordinal()].min();
+                robot.claws[CLAWS.TOP.ordinal()].max();
+                robot.claws[CLAWS.BOTTOM.ordinal()].min();
                 driver.interval = CLAW_DELAY;
                 liftState = liftState.next();
                 break;
             case LIFT:
-                lift.setPower(LIFT_SPEED_UP);
+                robot.lift.setPower(LIFT_SPEED_UP);
                 driver.interval = LIFT_DELAY;
                 liftState = liftState.next();
                 break;
             case READY:
-                lift.stop();
+                robot.lift.stop();
                 liftState = liftState.next();
                 break;
             case DONE:
@@ -129,6 +109,97 @@ public class CommonTasks {
 
         public LIFT_STATE next() {
             return OrderedEnumHelper.next(this);
+        }
+    }
+
+    // Sensor reference types for our DriveTo callbacks
+    public enum SENSOR_TYPE {
+        DRIVE_ENCODER,
+        GYROSCOPE,
+        GYROSCOPE_SLAVE
+    }
+
+    public static DriveTo driveForward(DriveToListener listener, Robot robot, int distance) {
+        robot.tank.setTeleop(false);
+        distance = Math.abs(distance);
+        DriveToParams param = new DriveToParams(listener, SENSOR_TYPE.DRIVE_ENCODER);
+        int ticks = (int) ((float) distance * ENCODER_PER_MM);
+        param.greaterThan(ticks + robot.tank.getEncoder() - OVERRUN_ENCODER);
+        return new DriveTo(new DriveToParams[]{param});
+    }
+
+    public static DriveTo driveBackward(DriveToListener listener, Robot robot, int distance) {
+        robot.tank.setTeleop(false);
+        distance = -Math.abs(distance);
+        DriveToParams param = new DriveToParams(listener, SENSOR_TYPE.DRIVE_ENCODER);
+        int ticks = (int) ((float) distance * ENCODER_PER_MM);
+        param.lessThan(-1 * (ticks + robot.tank.getEncoder() - OVERRUN_ENCODER));
+        return new DriveTo(new DriveToParams[]{param});
+    }
+
+    public static DriveTo turnDegrees(DriveToListener listener, Robot robot, int degrees) {
+        DriveToParams[] params = new DriveToParams[2];
+        params[0] = new DriveToParams(listener, SENSOR_TYPE.GYROSCOPE_SLAVE);
+        params[1] = new DriveToParams(listener, SENSOR_TYPE.GYROSCOPE);
+
+        // Current and target heading in normalized degrees
+        int heading = robot.gyro.getHeading();
+        int target = Gyro.normalizeHeading(heading + degrees);
+        int opposite = Gyro.normalizeHeading(target + (FULL_CIRCLE / 2));
+
+        // Match both the target and its opposite to ensure we can turn through 0 degrees
+        if (degrees > 0) {
+            params[0].lessThan(opposite);
+            params[1].greaterThan(target - OVERRUN_GYRO);
+        } else {
+            params[0].greaterThan(opposite);
+            params[1].lessThan(target + OVERRUN_GYRO);
+        }
+
+        // Default match mode is "all", so both parameters must match as the same time
+        return new DriveTo(params);
+    }
+
+    public static void stop(Robot robot, DriveToParams param) {
+        switch ((SENSOR_TYPE) param.reference) {
+            case DRIVE_ENCODER:
+                robot.tank.stop();
+                break;
+        }
+    }
+
+    public static double sensor(Robot robot, DriveToParams param) {
+        double value = 0;
+        switch ((SENSOR_TYPE) param.reference) {
+            case DRIVE_ENCODER:
+                value = robot.tank.getEncoder();
+                break;
+            case GYROSCOPE:
+            case GYROSCOPE_SLAVE:
+                value = robot.gyro.getHeading();
+                break;
+        }
+        return value;
+    }
+
+    public static void run(Robot robot, DriveToParams param) {
+        switch ((SENSOR_TYPE) param.reference) {
+            case DRIVE_ENCODER:
+                if (param.comparator == COMP_FORWARD) {
+                    robot.tank.setSpeed(SPEED_FORWARD_SLOW);
+                } else {
+                    robot.tank.setSpeed(SPEED_REVERSE);
+                }
+                break;
+            case GYROSCOPE:
+                if (param.comparator == COMP_CLOCKWISE) {
+                    robot.tank.setSpeed(SPEED_TURN, MotorSide.LEFT);
+                    robot.tank.setSpeed(-SPEED_TURN, MotorSide.RIGHT);
+                } else {
+                    robot.tank.setSpeed(-SPEED_TURN, MotorSide.LEFT);
+                    robot.tank.setSpeed(SPEED_TURN, MotorSide.RIGHT);
+                }
+                break;
         }
     }
 }

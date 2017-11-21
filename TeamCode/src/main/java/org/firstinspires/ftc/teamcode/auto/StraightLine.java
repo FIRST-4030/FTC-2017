@@ -1,22 +1,19 @@
 package org.firstinspires.ftc.teamcode.auto;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.actuators.Motor;
 import org.firstinspires.ftc.teamcode.actuators.ServoFTC;
 import org.firstinspires.ftc.teamcode.buttons.BUTTON;
 import org.firstinspires.ftc.teamcode.buttons.ButtonHandler;
 import org.firstinspires.ftc.teamcode.driveto.DriveToListener;
 import org.firstinspires.ftc.teamcode.driveto.DriveToParams;
 import org.firstinspires.ftc.teamcode.field.Field;
-import org.firstinspires.ftc.teamcode.sensors.Gyro;
+import org.firstinspires.ftc.teamcode.robot.Robot;
+import org.firstinspires.ftc.teamcode.utils.AutoDriver;
 import org.firstinspires.ftc.teamcode.utils.OrderedEnum;
 import org.firstinspires.ftc.teamcode.utils.OrderedEnumHelper;
-import org.firstinspires.ftc.teamcode.wheels.TankDrive;
 
-import static org.firstinspires.ftc.teamcode.auto.DriveToMethods.driveBackward;
-import static org.firstinspires.ftc.teamcode.auto.DriveToMethods.driveForward;
+import static org.firstinspires.ftc.teamcode.auto.CommonTasks.*;
 
 @com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "Straight Line", group = "Auto")
 public class StraightLine extends OpMode implements DriveToListener {
@@ -26,11 +23,8 @@ public class StraightLine extends OpMode implements DriveToListener {
     private static final double RELEASE_DELAY = 0.5d;
 
     // Devices and subsystems
+    private Robot robot = null;
     private CommonTasks common = null;
-    private TankDrive tank = null;
-    private Gyro gyro = null;
-    private ServoFTC[] claws = null;
-    private Motor lift = null;
 
     // Runtime state
     private AutoDriver driver = new AutoDriver();
@@ -50,12 +44,9 @@ public class StraightLine extends OpMode implements DriveToListener {
         telemetry.addData(">", "Initializing...");
         telemetry.update();
 
-        // Init the common tasks elements
-        common = new CommonTasks(hardwareMap, telemetry);
-        tank = common.initDrive();
-        lift = common.initLift();
-        claws = common.initClaws();
-        gyro  = new Gyro(hardwareMap,"imu", telemetry);
+        // Init the robot and common tasks
+        robot = new Robot(hardwareMap, telemetry);
+        common = new CommonTasks(robot);
 
         // Register buttons
         buttons.register("DELAY-UP", gamepad1, BUTTON.dpad_up);
@@ -116,7 +107,7 @@ public class StraightLine extends OpMode implements DriveToListener {
         telemetry.clearAll();
 
         // Disable the lift if it isn't ready
-        lift.setEnabled(liftReady);
+        robot.lift.setEnabled(liftReady);
 
         // Steady...
         state = AUTO_STATE.values()[0];
@@ -132,13 +123,13 @@ public class StraightLine extends OpMode implements DriveToListener {
             // Return to teleop when complete
             if (driver.drive.isDone()) {
                 driver.drive = null;
-                tank.setTeleop(true);
+                robot.tank.setTeleop(true);
             }
         }
 
         // Driver feedback
         telemetry.addData("State", state);
-        telemetry.addData("Encoder", tank.getEncoder());
+        telemetry.addData("Encoder", robot.tank.getEncoder());
         telemetry.update();
 
         /*
@@ -156,25 +147,25 @@ public class StraightLine extends OpMode implements DriveToListener {
                 state = state.next();
                 break;
             case LIFT_INIT:
-                driver = delegateDriver(common.liftAutoStart(lift, claws), state.next());
+                driver = delegateDriver(common.liftAutoStart(), state.next());
                 break;
             case DELAY:
                 driver.interval = delay.seconds();
                 state = state.next();
                 break;
             case DRIVE_FORWARD:
-                driver.drive = driveForward(this, tank, distance.millimeters());
+                driver.drive = driveForward(this, robot, distance.millimeters());
                 state = state.next();
                 break;
             case RELEASE:
-                for (ServoFTC claw : claws) {
+                for (ServoFTC claw : robot.claws) {
                     claw.min();
                 }
                 driver.interval = RELEASE_DELAY;
                 state = state.next();
                 break;
             case RELEASE_REVERSE:
-                driver.drive = driveBackward(this, tank, RELEASE_REVERSE_MM);
+                driver.drive = driveBackward(this, robot, RELEASE_REVERSE_MM);
                 state = state.next();
                 break;
             case DONE:
@@ -187,17 +178,17 @@ public class StraightLine extends OpMode implements DriveToListener {
 
     @Override
     public void driveToStop(DriveToParams param) {
-        DriveToMethods.stop(tank, param);
+        CommonTasks.stop(robot, param);
     }
 
     @Override
     public void driveToRun(DriveToParams param) {
-        DriveToMethods.run(tank, gyro, param);
+        CommonTasks.run(robot, param);
     }
 
     @Override
     public double driveToSensor(DriveToParams param) {
-        return DriveToMethods.sensor(tank, param, gyro);
+        return CommonTasks.sensor(robot, param);
     }
 
     // Utility function to delegate our AutoDriver to an external provider

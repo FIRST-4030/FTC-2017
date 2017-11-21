@@ -23,7 +23,7 @@ public class Gyro {
     private boolean ready = false;
     private int offset = 0;
 
-    public Gyro(HardwareMap map, String name, Telemetry telemetry) {
+    public Gyro(HardwareMap map, Telemetry telemetry, String name) {
         if (name == null || name.isEmpty()) {
             throw new IllegalArgumentException(this.getClass().getName() + ": Null/empty name");
         }
@@ -31,9 +31,7 @@ public class Gyro {
             gyro = map.get(BNO055IMU.class, name);
         } catch (Exception e) {
             gyro = null;
-            if (telemetry != null) {
-                telemetry.log().add(this.getClass().getName() + "No such device: " + name);
-            }
+            telemetry.log().add(this.getClass().getName() + "No such device: " + name);
             return;
         }
 
@@ -121,7 +119,6 @@ public class Gyro {
     }
 
     /**
-     *
      * @param heading Any heading
      * @return The same heading projected into the space between 0 and 359, inclusively
      */

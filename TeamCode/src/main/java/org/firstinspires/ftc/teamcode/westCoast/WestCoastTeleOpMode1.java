@@ -1,9 +1,6 @@
 package org.firstinspires.ftc.teamcode.westCoast;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-
-import org.firstinspires.ftc.teamcode.buttons.ButtonHandler;
 
 /**
  * Created by Alex Wang on 10/9/2017.

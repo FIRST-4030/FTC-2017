@@ -8,7 +8,8 @@ import org.firstinspires.ftc.teamcode.actuators.ServoFTC;
 import org.firstinspires.ftc.teamcode.auto.CommonTasks;
 import org.firstinspires.ftc.teamcode.buttons.BUTTON;
 import org.firstinspires.ftc.teamcode.buttons.ButtonHandler;
-import org.firstinspires.ftc.teamcode.config.BOT;
+import org.firstinspires.ftc.teamcode.robot.CLAWS;
+import org.firstinspires.ftc.teamcode.robot.Robot;
 import org.firstinspires.ftc.teamcode.wheels.MotorSide;
 import org.firstinspires.ftc.teamcode.wheels.TankDrive;
 
@@ -23,12 +24,8 @@ import org.firstinspires.ftc.teamcode.wheels.TankDrive;
 public class WestCoastTeleOp extends OpMode {
 
     // Devices and subsystems
+    private Robot robot = null;
     private CommonTasks common = null;
-    private TankDrive tank = null;
-    private ServoFTC[] claws = null;
-    private Motor lift = null;
-    private ServoFTC[] intakeServos = null;
-    private Motor[] intakeMotors = null;
 
     private ButtonHandler buttons = new ButtonHandler();
 
@@ -46,13 +43,8 @@ public class WestCoastTeleOp extends OpMode {
         telemetry.update();
 
         // Init the common tasks elements in CALIBRATION mode
-        common = new CommonTasks(hardwareMap, telemetry);
-        tank = common.initDrive();
-        lift = common.initLift();
-        claws = common.initClaws();
-        intakeServos = common.initIntakeServos();
-        intakeMotors = common.initIntakeMotors();
-
+        robot = new Robot(hardwareMap, telemetry);
+        common = new CommonTasks(robot);
 
         // Register buttons
         buttons.register("TOP-CLAW", gamepad2, BUTTON.right_bumper);
@@ -82,9 +74,9 @@ public class WestCoastTeleOp extends OpMode {
         // Driver Feedback
         telemetry.addData("Slow Mode", slowMode);
         telemetry.addData("Intakes Locked", intakeLocked);
-        telemetry.addData("Top CLaw", claws[CommonTasks.CLAWS.TOP.ordinal()].getPostion());
-        telemetry.addData("Bottom Claw", claws[CommonTasks.CLAWS.BOTTOM.ordinal()].getPostion());
-        telemetry.addData("Lift Height", lift.getEncoder());
+        telemetry.addData("Top CLaw", robot.claws[CLAWS.TOP.ordinal()].getPostion());
+        telemetry.addData("Bottom Claw", robot.claws[CLAWS.BOTTOM.ordinal()].getPostion());
+        telemetry.addData("Lift Height", robot.lift.getEncoder());
 
     }
 
@@ -94,30 +86,25 @@ public class WestCoastTeleOp extends OpMode {
         if (buttons.get("SLOW-MODE")) slowMode = !slowMode;
 
         // Tank Drive
-        tank.setSpeed((-gamepad1.left_stick_y) * (slowMode ? .5 : 1), MotorSide.LEFT);
-        tank.setSpeed((-gamepad1.right_stick_y) * (slowMode ? .5 : 1), MotorSide.RIGHT);
-
+        if (slowMode) {
+            robot.tank.setSpeedScale(0.5);
+        } else {
+            robot.tank.setSpeedScale(1.0);
+        }
+        robot.tank.loop(gamepad1);
     }
 
     public void clawsAndLift() {
 
         // Lift
-        lift.setPower(gamepad2.left_stick_y);
+        robot.lift.setPower(gamepad2.left_stick_y);
 
-        // Toggle Claws
-        if (buttons.get("TOP-CLAW")) {
-            topClawOpen = !topClawOpen;
-            ServoFTC claw = claws[CommonTasks.CLAWS.TOP.ordinal()];
-            if (topClawOpen) claw.min();
-            else claw.max();
+        // Claws
+        for (CLAWS claw : CLAWS.values()) {
+            if (buttons.get("CLAW-" + claw)) {
+                robot.claws[claw.ordinal()].toggle();
+            }
         }
-        if (buttons.get("BOTTOM-CLAW")) {
-            bottomClawOpen = !bottomClawOpen;
-            ServoFTC claw = claws[CommonTasks.CLAWS.BOTTOM.ordinal()];
-            if (bottomClawOpen) claw.min();
-            else claw.max();
-        }
-
     }
 
     public void intakes() {
@@ -128,7 +115,7 @@ public class WestCoastTeleOp extends OpMode {
         // Toggle Intakes
         if (buttons.get("EXTEND-INTAKE")) {
             intakeExtended = !intakeExtended;
-            for (ServoFTC intake : intakeServos) {
+            for (ServoFTC intake : robot.intakeArms) {
                 if (intakeExtended) intake.min();
                 else intake.max();
             }
@@ -136,7 +123,7 @@ public class WestCoastTeleOp extends OpMode {
 
         // Intake Motors
         if (!intakeLocked) {
-            for (Motor intake : intakeMotors) {
+            for (Motor intake : robot.intakes) {
                 intake.setPower(gamepad2.right_stick_y);
             }
         }

@@ -4,10 +4,9 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.actuators.ServoFTC;
-import org.firstinspires.ftc.teamcode.actuators.ServoFTCConfig;
+import org.firstinspires.ftc.teamcode.actuators.ServoConfig;
 import org.firstinspires.ftc.teamcode.buttons.BUTTON;
 import org.firstinspires.ftc.teamcode.buttons.ButtonHandler;
-import org.firstinspires.ftc.teamcode.buttons.SinglePressButton;
 
 import static org.firstinspires.ftc.teamcode.buttons.BUTTON_TYPE.TOGGLE;
 
@@ -27,8 +26,8 @@ public abstract class MechanumOpMode extends OpMode {
     public DcMotor BLWheel;
     public DcMotor BRWheel;
 
-    public ServoFTCConfig jewelArm = new ServoFTCConfig("JewelArm", false, 0d, .5d);
-    public ServoFTC jewelServo = new ServoFTC(hardwareMap, jewelArm, telemetry);
+    public ServoConfig jewelArm = new ServoConfig("JewelArm", false, 0d, .5d);
+    public ServoFTC jewelServo = new ServoFTC(hardwareMap, telemetry, jewelArm);
 
     double fLVM;
     double fRVM;
@@ -175,7 +174,9 @@ public abstract class MechanumOpMode extends OpMode {
 
     }
 
-    public void jewelArm()
+    public void jewelArm() {
+
+    }
 
     /**
      * Stop moving the robot

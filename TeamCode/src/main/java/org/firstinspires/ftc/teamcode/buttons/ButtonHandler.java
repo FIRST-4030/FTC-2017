@@ -6,7 +6,7 @@ import java.lang.reflect.Field;
 import java.util.HashMap;
 
 public class ButtonHandler {
-    private HashMap<String, Button> buttons = new HashMap<String, Button>();
+    private HashMap<String, Button> buttons = new HashMap<>();
 
     public void register(String name, Gamepad gamepad, BUTTON button) {
         this.register(name, gamepad, button, BUTTON_TYPE.SINGLE_PRESS);

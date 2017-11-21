@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.auto;
+package org.firstinspires.ftc.teamcode.utils;
 
 import org.firstinspires.ftc.teamcode.driveto.DriveTo;
 

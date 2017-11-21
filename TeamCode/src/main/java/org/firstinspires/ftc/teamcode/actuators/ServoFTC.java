@@ -7,14 +7,12 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class ServoFTC {
     private Servo servo;
-    private Double min;
-    private Double max;
+    private double min = 0.0d;
+    private double max = 1.0d;
 
-    public ServoFTC(HardwareMap map, ServoFTCConfig config, Telemetry telemetry) {
+    public ServoFTC(HardwareMap map, Telemetry telemetry, ServoConfig config) {
         if (config == null) {
-            if (telemetry != null) {
-                telemetry.log().add(this.getClass().getName() + ": Null config");
-            }
+            telemetry.log().add(this.getClass().getName() + ": Null config");
             return;
         }
         if (config.name == null || config.name.isEmpty()) {
@@ -29,9 +27,7 @@ public class ServoFTC {
             this.max = config.max;
         } catch (Exception e) {
             servo = null;
-            if (telemetry != null) {
-                telemetry.log().add(this.getClass().getName() + "No such device: " + config.name);
-            }
+            telemetry.log().add(this.getClass().getName() + "No such device: " + config.name);
         }
     }
 
@@ -40,9 +36,9 @@ public class ServoFTC {
     }
 
     public void setPosition(double position) {
-        if (min != null && position < min) {
+        if (position < min) {
             position = min;
-        } else if (max != null && position > max) {
+        } else if (position > max) {
             position = max;
         }
         setPositionRaw(position);
@@ -63,14 +59,18 @@ public class ServoFTC {
     }
 
     public void min() {
-        if (min != null) {
-            setPosition(min);
-        }
+        setPositionRaw(min);
     }
 
     public void max() {
-        if (max != null) {
-            setPosition(max);
+        setPosition(max);
+    }
+
+    public void toggle() {
+        if (getPostion() == max) {
+            min();
+        } else {
+            max();
         }
     }
 }
