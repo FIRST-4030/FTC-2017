@@ -1,17 +1,15 @@
-package org.firstinspires.ftc.teamcode.westCoast;
+package org.firstinspires.ftc.teamcode.robot.westCoast;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.actuators.Motor;
 import org.firstinspires.ftc.teamcode.actuators.ServoFTC;
-import org.firstinspires.ftc.teamcode.auto.CommonTasks;
+import org.firstinspires.ftc.teamcode.robot.auto.CommonTasks;
 import org.firstinspires.ftc.teamcode.buttons.BUTTON;
 import org.firstinspires.ftc.teamcode.buttons.ButtonHandler;
 import org.firstinspires.ftc.teamcode.robot.CLAWS;
 import org.firstinspires.ftc.teamcode.robot.Robot;
-import org.firstinspires.ftc.teamcode.wheels.MotorSide;
-import org.firstinspires.ftc.teamcode.wheels.TankDrive;
 
 /**
  * Created by bnstc on 11/18/2017.

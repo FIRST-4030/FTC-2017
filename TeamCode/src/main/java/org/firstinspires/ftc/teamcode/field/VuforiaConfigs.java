@@ -4,6 +4,12 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.teamcode.field.Field;
 import org.firstinspires.ftc.teamcode.vuforia.VuforiaTarget;
 
+/*
+ * This config depends on the game layout but not on the robot itself
+ * (unless you customize the camera position, which we haven't done to date)
+ *
+ * FYI: For some games the ftc_app SDK provides a default location for the Vuforia targets
+ */
 public class VuforiaConfigs {
     public static final String AssetName = "RelicVuMark";
     public static final int TargetCount = 1;

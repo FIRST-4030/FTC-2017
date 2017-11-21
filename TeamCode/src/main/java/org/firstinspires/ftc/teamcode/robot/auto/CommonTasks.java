@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.auto;
+package org.firstinspires.ftc.teamcode.robot.auto;
 
 import org.firstinspires.ftc.teamcode.driveto.DriveTo;
 import org.firstinspires.ftc.teamcode.driveto.DriveToComp;
@@ -18,7 +18,7 @@ import org.firstinspires.ftc.teamcode.wheels.MotorSide;
  *
  * They are a reasonable template for future robots, but are unlikely to work as-is
  */
-public class CommonTasks {
+public class CommonTasks implements DriveToListener {
 
     // LiftAutoStart constants
     private static final double LIFT_DELAY = 0.75;
@@ -119,28 +119,28 @@ public class CommonTasks {
         GYROSCOPE_SLAVE
     }
 
-    public static DriveTo driveForward(DriveToListener listener, Robot robot, int distance) {
+    public DriveTo driveForward(int distance) {
         robot.tank.setTeleop(false);
         distance = Math.abs(distance);
-        DriveToParams param = new DriveToParams(listener, SENSOR_TYPE.DRIVE_ENCODER);
+        DriveToParams param = new DriveToParams(this, SENSOR_TYPE.DRIVE_ENCODER);
         int ticks = (int) ((float) distance * ENCODER_PER_MM);
         param.greaterThan(ticks + robot.tank.getEncoder() - OVERRUN_ENCODER);
         return new DriveTo(new DriveToParams[]{param});
     }
 
-    public static DriveTo driveBackward(DriveToListener listener, Robot robot, int distance) {
+    public DriveTo driveBackward(int distance) {
         robot.tank.setTeleop(false);
         distance = -Math.abs(distance);
-        DriveToParams param = new DriveToParams(listener, SENSOR_TYPE.DRIVE_ENCODER);
+        DriveToParams param = new DriveToParams(this, SENSOR_TYPE.DRIVE_ENCODER);
         int ticks = (int) ((float) distance * ENCODER_PER_MM);
         param.lessThan(-1 * (ticks + robot.tank.getEncoder() - OVERRUN_ENCODER));
         return new DriveTo(new DriveToParams[]{param});
     }
 
-    public static DriveTo turnDegrees(DriveToListener listener, Robot robot, int degrees) {
+    public DriveTo turnDegrees(int degrees) {
         DriveToParams[] params = new DriveToParams[2];
-        params[0] = new DriveToParams(listener, SENSOR_TYPE.GYROSCOPE_SLAVE);
-        params[1] = new DriveToParams(listener, SENSOR_TYPE.GYROSCOPE);
+        params[0] = new DriveToParams(this, SENSOR_TYPE.GYROSCOPE_SLAVE);
+        params[1] = new DriveToParams(this, SENSOR_TYPE.GYROSCOPE);
 
         // Current and target heading in normalized degrees
         int heading = robot.gyro.getHeading();
@@ -148,6 +148,7 @@ public class CommonTasks {
         int opposite = Gyro.normalizeHeading(target + (FULL_CIRCLE / 2));
 
         // Match both the target and its opposite to ensure we can turn through 0 degrees
+        // Set the sensor type to GYRO_SLAVE for the opposite so we don't drive with it
         if (degrees > 0) {
             params[0].lessThan(opposite);
             params[1].greaterThan(target - OVERRUN_GYRO);
@@ -160,7 +161,8 @@ public class CommonTasks {
         return new DriveTo(params);
     }
 
-    public static void stop(Robot robot, DriveToParams param) {
+    @Override
+    public void driveToStop(DriveToParams param) {
         switch ((SENSOR_TYPE) param.reference) {
             case DRIVE_ENCODER:
                 robot.tank.stop();
@@ -168,7 +170,8 @@ public class CommonTasks {
         }
     }
 
-    public static double sensor(Robot robot, DriveToParams param) {
+    @Override
+    public double driveToSensor(DriveToParams param) {
         double value = 0;
         switch ((SENSOR_TYPE) param.reference) {
             case DRIVE_ENCODER:
@@ -182,7 +185,8 @@ public class CommonTasks {
         return value;
     }
 
-    public static void run(Robot robot, DriveToParams param) {
+    @Override
+    public void driveToRun(DriveToParams param) {
         switch ((SENSOR_TYPE) param.reference) {
             case DRIVE_ENCODER:
                 if (param.comparator == COMP_FORWARD) {

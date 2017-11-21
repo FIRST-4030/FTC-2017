@@ -1,19 +1,17 @@
-package org.firstinspires.ftc.teamcode.test;
+package org.firstinspires.ftc.teamcode.robot.test;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
-import org.firstinspires.ftc.teamcode.auto.CommonTasks;
+import org.firstinspires.ftc.teamcode.robot.auto.CommonTasks;
 import org.firstinspires.ftc.teamcode.driveto.DriveTo;
-import org.firstinspires.ftc.teamcode.driveto.DriveToListener;
-import org.firstinspires.ftc.teamcode.driveto.DriveToParams;
 import org.firstinspires.ftc.teamcode.robot.Robot;
 import org.firstinspires.ftc.teamcode.utils.OrderedEnum;
 import org.firstinspires.ftc.teamcode.utils.OrderedEnumHelper;
 
-import static org.firstinspires.ftc.teamcode.auto.CommonTasks.*;
+import static org.firstinspires.ftc.teamcode.robot.auto.CommonTasks.*;
 
 @com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "Simple Auto", group = "Test")
-public class SimpleAuto extends OpMode implements DriveToListener {
+public class SimpleAuto extends OpMode {
 
     // Devices and subsystems
     private Robot robot = null;
@@ -132,29 +130,14 @@ public class SimpleAuto extends OpMode implements DriveToListener {
         }
 
         if (gamepad1.a) {
-            drive = driveForward(this, robot, 254);
+            drive = common.driveForward(254);
         } else if (gamepad1.b) {
             liftReady = false;
             liftState = LIFT_STATE.INIT;
         } else if (gamepad1.dpad_left) {
-            drive = turnDegrees(this, robot, -30);
+            drive = common.turnDegrees(-30);
         } else if (gamepad1.dpad_right) {
-            drive = turnDegrees(this, robot, 30);
+            drive = common.turnDegrees(30);
         }
-    }
-
-    @Override
-    public void driveToStop(DriveToParams param) {
-        CommonTasks.stop(robot, param);
-    }
-
-    @Override
-    public void driveToRun(DriveToParams param) {
-        CommonTasks.run(robot, param);
-    }
-
-    @Override
-    public double driveToSensor(DriveToParams param) {
-        return CommonTasks.sensor(robot, param);
     }
 }

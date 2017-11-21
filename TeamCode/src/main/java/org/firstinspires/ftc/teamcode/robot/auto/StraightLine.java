@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.auto;
+package org.firstinspires.ftc.teamcode.robot.auto;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
@@ -13,10 +13,10 @@ import org.firstinspires.ftc.teamcode.utils.AutoDriver;
 import org.firstinspires.ftc.teamcode.utils.OrderedEnum;
 import org.firstinspires.ftc.teamcode.utils.OrderedEnumHelper;
 
-import static org.firstinspires.ftc.teamcode.auto.CommonTasks.*;
+import static org.firstinspires.ftc.teamcode.robot.auto.CommonTasks.*;
 
 @com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "Straight Line", group = "Auto")
-public class StraightLine extends OpMode implements DriveToListener {
+public class StraightLine extends OpMode {
 
     // Auto constants
     private static final int RELEASE_REVERSE_MM = 250;
@@ -53,8 +53,8 @@ public class StraightLine extends OpMode implements DriveToListener {
         buttons.register("DELAY-DOWN", gamepad1, BUTTON.dpad_down);
         buttons.register("DISTANCE-UP", gamepad1, BUTTON.dpad_right);
         buttons.register("DISTANCE-DOWN", gamepad1, BUTTON.dpad_left);
-        buttons.register("ALLIANCE-RED", gamepad1, BUTTON.b);
-        buttons.register("ALLIANCE-BLUE", gamepad1, BUTTON.x);
+        buttons.register("ALLIANCE-" + Field.AllianceColor.RED, gamepad1, BUTTON.b);
+        buttons.register("ALLIANCE-" + Field.AllianceColor.BLUE, gamepad1, BUTTON.x);
 
         // Wait for the game to begin
         telemetry.addData(">", "Init complete");
@@ -88,10 +88,10 @@ public class StraightLine extends OpMode implements DriveToListener {
         }
 
         // Adjust alliance color
-        if (buttons.get("ALLIANCE-RED")) {
-            alliance = Field.AllianceColor.RED;
-        } else if (buttons.get("ALLIANCE-BLUE")) {
-            alliance = Field.AllianceColor.BLUE;
+        for (Field.AllianceColor color : Field.AllianceColor.values()) {
+            if (buttons.get("ALLIANCE-" + color)) {
+                alliance = color;
+            }
         }
 
         // Driver feedback
@@ -154,7 +154,7 @@ public class StraightLine extends OpMode implements DriveToListener {
                 state = state.next();
                 break;
             case DRIVE_FORWARD:
-                driver.drive = driveForward(this, robot, distance.millimeters());
+                driver.drive = common.driveForward(distance.millimeters());
                 state = state.next();
                 break;
             case RELEASE:
@@ -165,7 +165,7 @@ public class StraightLine extends OpMode implements DriveToListener {
                 state = state.next();
                 break;
             case RELEASE_REVERSE:
-                driver.drive = driveBackward(this, robot, RELEASE_REVERSE_MM);
+                driver.drive = common.driveBackward(RELEASE_REVERSE_MM);
                 state = state.next();
                 break;
             case DONE:
@@ -174,21 +174,6 @@ public class StraightLine extends OpMode implements DriveToListener {
                 this.requestOpModeStop();
                 break;
         }
-    }
-
-    @Override
-    public void driveToStop(DriveToParams param) {
-        CommonTasks.stop(robot, param);
-    }
-
-    @Override
-    public void driveToRun(DriveToParams param) {
-        CommonTasks.run(robot, param);
-    }
-
-    @Override
-    public double driveToSensor(DriveToParams param) {
-        return CommonTasks.sensor(robot, param);
     }
 
     // Utility function to delegate our AutoDriver to an external provider

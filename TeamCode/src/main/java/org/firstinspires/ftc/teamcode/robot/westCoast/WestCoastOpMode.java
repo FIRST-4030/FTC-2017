@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.westCoast;
+package org.firstinspires.ftc.teamcode.robot.westCoast;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.*;

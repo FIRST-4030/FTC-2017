@@ -1,9 +1,9 @@
-package org.firstinspires.ftc.teamcode.test;
+package org.firstinspires.ftc.teamcode.robot.test;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.auto.CommonTasks;
+import org.firstinspires.ftc.teamcode.robot.auto.CommonTasks;
 import org.firstinspires.ftc.teamcode.buttons.BUTTON;
 import org.firstinspires.ftc.teamcode.buttons.ButtonHandler;
 import org.firstinspires.ftc.teamcode.robot.CLAWS;
