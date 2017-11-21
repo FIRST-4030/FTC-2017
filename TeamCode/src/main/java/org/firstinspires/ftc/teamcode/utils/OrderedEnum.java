@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.utils;
 
 public interface OrderedEnum {
 
-    public OrderedEnum prev();
+    OrderedEnum prev();
 
-    public OrderedEnum next();
+    OrderedEnum next();
 }

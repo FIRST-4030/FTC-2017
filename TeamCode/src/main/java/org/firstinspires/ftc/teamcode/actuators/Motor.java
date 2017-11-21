@@ -8,6 +8,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class Motor {
     private DcMotor motor;
     private boolean enabled = true;
+    private int offset = 0;
 
     public Motor(HardwareMap map, MotorConfig config, Telemetry telemetry) {
         if (config == null || config.name == null || config.name.isEmpty()) {
@@ -52,6 +53,10 @@ public class Motor {
         if (!isAvailable()) {
             return 0;
         }
-        return motor.getCurrentPosition();
+        return motor.getCurrentPosition() + offset;
+    }
+
+    public void resetEncoder() {
+        offset = -getEncoder();
     }
 }

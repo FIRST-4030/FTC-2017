@@ -4,7 +4,6 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.*;
 
 import org.firstinspires.ftc.teamcode.buttons.BUTTON;
-import org.firstinspires.ftc.teamcode.buttons.BUTTON_TYPE;
 import org.firstinspires.ftc.teamcode.buttons.ButtonHandler;
 
 /**
@@ -24,12 +23,14 @@ public abstract class WestCoastOpMode extends OpMode{
     public final int TOP_CLAW = 0;
     public final int BOTTOM_CLAW = 1;
 
-    public final double UPPER_CLAW_MAX = .48;
-    public final double UPPER_CLAW_MIN = .06;
+    public final double UPPER_CLAW_MAX = .87;
+    public final double UPPER_CLAW_MIN = .60;
     public final double LOWER_CLAW_MAX = .35;
     public final double LOWER_CLAW_MIN = .09;
-    public final double BUMPER_SERVO_MIN = .8;
-    public final double BUMPER_SERVO_MAX = 1;
+    public final double LBUMPER_SERVO_MIN = .55;
+    public final double LBUMPER_SERVO_MAX = .2;
+    public final double RBUMPER_SERVO_MIN = .5;
+    public final double RBUMPER_SERVO_MAX = .15;
 
     public DcMotor lWheel1;
     public DcMotor lWheel2;
@@ -58,7 +59,7 @@ public abstract class WestCoastOpMode extends OpMode{
         lift = hardwareMap.dcMotor.get("LM1");
         topClaw = hardwareMap.servo.get("CL1");
         bottomClaw = hardwareMap.servo.get("CL2");
-        //liftSwitch = hardwareMap.analogInput.get("LS1");
+        liftSwitch = hardwareMap.analogInput.get("LS1");
         lBumperM = hardwareMap.dcMotor.get("lBumperM");
         rBumperM = hardwareMap.dcMotor.get("rBumperM");
         lBumperS = hardwareMap.servo.get("lBumperS");
@@ -66,14 +67,14 @@ public abstract class WestCoastOpMode extends OpMode{
 
 
         topClaw.setDirection(Servo.Direction.REVERSE);
-//        lBumperS.setDirection(Servo.Direction.REVERSE);
-//        rBumperS.setDirection(Servo.Direction.REVERSE);
 
+        setServoPosition(TOP_CLAW, UPPER_CLAW_MAX);
+        setServoPosition(BOTTOM_CLAW, LOWER_CLAW_MAX);
 
         //register buttons
-        buttons.register("INTAKE-PRESSED", gamepad2, BUTTON.a, BUTTON_TYPE.TOGGLE);
-        buttons.register("INTAKE-IN", gamepad2, BUTTON.dpad_down, BUTTON_TYPE.TOGGLE);
-        buttons.register("INTAKE-OUT", gamepad2, BUTTON.dpad_up, BUTTON_TYPE.TOGGLE);
+        buttons.register("INTAKE-PRESSED", gamepad2, BUTTON.a);
+        buttons.register("INTAKE-IN", gamepad2, BUTTON.dpad_down);
+        buttons.register("INTAKE-OUT", gamepad2, BUTTON.dpad_up);
 
         //while(!liftSwitchIsPressed()){
         //    lift.setPower(1); // POSITIVE IS DOWN!!!
@@ -82,16 +83,14 @@ public abstract class WestCoastOpMode extends OpMode{
         //liftMinimum = getLiftPosition();
         //lift.setPower(0);
 
-        //intialize servos.
-//        setServoPosition(TOP_CLAW, UPPER_CLAW_MIN);
-//        setServoPosition(BOTTOM_CLAW, LOWER_CLAW_MIN);
+        setServoPosition(TOP_CLAW, UPPER_CLAW_MIN);
+        setServoPosition(BOTTOM_CLAW, LOWER_CLAW_MIN);
 
         //initialize bumper servos to be in and set limits
-        lBumperS.scaleRange(BUMPER_SERVO_MIN, BUMPER_SERVO_MAX);
-        rBumperS.scaleRange(BUMPER_SERVO_MIN, BUMPER_SERVO_MAX);
-        lBumperS.setPosition(BUMPER_SERVO_MIN);
-        rBumperS.setPosition(BUMPER_SERVO_MIN);
-
+        lBumperS.setPosition(LBUMPER_SERVO_MIN);
+        rBumperS.setPosition(RBUMPER_SERVO_MIN);
+        //lBumperS.scaleRange(LBUMPER_SERVO_MIN, LBUMPER_SERVO_MAX);
+        //rBumperS.scaleRange(RBUMPER_SERVO_MIN, RBUMPER_SERVO_MAX);
     }
 
     /**
@@ -159,7 +158,7 @@ public abstract class WestCoastOpMode extends OpMode{
     }
 
     public int getLiftPosition(){
-        return lift.getCurrentPosition();
+        return lWheel2.getCurrentPosition();
     }
 
 }

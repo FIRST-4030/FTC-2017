@@ -49,6 +49,13 @@ public class ServoFTC {
         servo.setPosition(position);
     }
 
+    public double getPostion() {
+        if (!isAvailable()) {
+            return 0.0d;
+        }
+        return servo.getPosition();
+    }
+
     public void min() {
         if (min != null) {
             setPosition(min);

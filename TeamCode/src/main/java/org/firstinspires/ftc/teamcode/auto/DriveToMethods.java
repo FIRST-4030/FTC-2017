@@ -49,6 +49,7 @@ public class DriveToMethods {
 
     public static DriveTo driveForward(DriveToListener listener, TankDrive tank, int distance) {
         tank.setTeleop(false);
+        distance = Math.abs(distance);
         DriveToParams param = new DriveToParams(listener, SENSOR_TYPE.DRIVE_ENCODER);
         int ticks = (int) ((float) distance * ENCODER_PER_MM);
         param.greaterThan(ticks + tank.getEncoder() - OVERRUN_ENCODER);
@@ -57,6 +58,7 @@ public class DriveToMethods {
 
     public static DriveTo driveBackward(DriveToListener listener, TankDrive tank, int distance) {
         tank.setTeleop(false);
+        distance = -Math.abs(distance);
         DriveToParams param = new DriveToParams(listener, SENSOR_TYPE.DRIVE_ENCODER);
         int ticks = (int) ((float) distance * ENCODER_PER_MM);
         param.lessThan(-1 * (ticks + tank.getEncoder() - OVERRUN_ENCODER));
@@ -92,14 +94,9 @@ public class DriveToMethods {
             params[1].lessThan(target + OVERRUN_GYRO);
         }
 
-        // Default match mdoe is "all", so both parameters must match as the same time
+        // Default match mode is "all", so both parameters must match as the same time
         return new DriveTo(params);
     }
-
-//    public static DriveTo turnToHeading(DriveToListener listener, Gyro gyro, int heading){
-//
-//    }
-
 
     public static void stop(TankDrive tank, DriveToParams param) {
         switch ((SENSOR_TYPE) param.reference) {

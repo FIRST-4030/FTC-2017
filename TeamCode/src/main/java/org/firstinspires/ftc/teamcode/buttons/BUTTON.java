@@ -15,5 +15,5 @@ public enum BUTTON {
     right_stick_button,
     start,
     x,
-    y;
+    y
 }
