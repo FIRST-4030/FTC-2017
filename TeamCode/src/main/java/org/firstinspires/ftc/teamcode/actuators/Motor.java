@@ -41,7 +41,7 @@ public class Motor {
     }
 
     public boolean isAvailable() {
-        return enabled & (motor != null);
+        return enabled && (motor != null);
     }
 
     public void setPower(double power) {
