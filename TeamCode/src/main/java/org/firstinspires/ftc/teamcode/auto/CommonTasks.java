@@ -38,6 +38,8 @@ public class CommonTasks {
         motors = new MotorConfigs(map, telemetry, bot);
     }
 
+    // In the common case we expect that BOT will be NULL, which triggers auto-detect behavior
+    // You should only override this default if your usage is limited to a single physical bot
     public CommonTasks(HardwareMap map, Telemetry telemetry) {
         this(map, telemetry, null);
     }
