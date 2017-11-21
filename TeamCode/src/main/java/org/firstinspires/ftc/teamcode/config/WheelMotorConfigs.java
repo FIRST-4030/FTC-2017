@@ -25,11 +25,11 @@ public class WheelMotorConfigs {
     public TankDrive init() {
         TankDrive tank = null;
         if (bot != null) {
-            tank = new TankDrive(map, config(bot), encoderIndex(), encoderScale(), telemetry);
+            tank = new TankDrive(map, config(bot), telemetry);
         } else {
             for (BOT i : BOT.values()) {
                 BOT b = i;
-                tank = new TankDrive(map, config(b), 0, 1.0, telemetry);
+                tank = new TankDrive(map, config(b), telemetry);
                 if (tank.isAvailable()) {
                     bot = b;
                     if (bot.ordinal() != 0) {
@@ -44,6 +44,10 @@ public class WheelMotorConfigs {
         }
         if (!tank.isAvailable()) {
             telemetry.log().add("ERROR: Unable to initialize wheels");
+        }
+        if (bot != null) {
+            tank.setEncoderScale(encoderScale());
+            tank.setEncoderIndex(encoderIndex());
         }
         return tank;
     }

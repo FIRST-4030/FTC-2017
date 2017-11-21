@@ -14,12 +14,10 @@ public class TankDrive {
     private boolean teleop = false;
     private double speedScale = 1.0f;
     private int encoderIndex = 0;
-    private double encoderScale = 1.0f;
+    private double encoderScale = 1.0d;
     private int[] offsets;
 
-    public TankDrive(HardwareMap map, TankMotor[] motors, int encoderIndex, double encoderScale, Telemetry telemetry) {
-        this.encoderIndex = encoderIndex;
-        this.encoderScale = encoderScale;
+    public TankDrive(HardwareMap map, TankMotor[] motors, Telemetry telemetry) {
         if (motors == null || motors.length < MIN_MOTORS) {
             throw new IllegalArgumentException(this.getClass().getName() + " must configure at least " +
                     MIN_MOTORS + " motors");
@@ -52,6 +50,14 @@ public class TankDrive {
         }
         this.motors = motors;
         this.disabled = false;
+    }
+
+    public void setEncoderScale(double scale) {
+        this.encoderScale = scale;
+    }
+
+    public void setEncoderIndex(int index) {
+        this.encoderIndex = index;
     }
 
     public boolean isAvailable() {
