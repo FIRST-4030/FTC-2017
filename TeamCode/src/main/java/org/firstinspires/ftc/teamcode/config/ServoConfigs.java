@@ -37,7 +37,9 @@ public class ServoConfigs {
                 }
             }
         }
-        assert servo != null;
+        if (servo == null) {
+            throw new IllegalArgumentException("No servo object available");
+        }
         if (!servo.isAvailable()) {
             telemetry.log().add("ERROR: Unable to initialize servo: " + name);
         }
@@ -46,7 +48,9 @@ public class ServoConfigs {
 
     private static ServoFTCConfig config(String name, BOT b) {
         ServoFTCConfig config = null;
-        assert b != null;
+        if (b == null) {
+            throw new IllegalArgumentException("Null BOT");
+        }
         switch (b) {
             case FINAL:
                 config = FinalBot(name, false);
