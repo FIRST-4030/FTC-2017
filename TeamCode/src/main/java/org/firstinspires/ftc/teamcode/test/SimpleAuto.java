@@ -161,11 +161,11 @@ public class SimpleAuto extends OpMode implements DriveToListener {
 
     @Override
     public void driveToRun(DriveToParams param) {
-        DriveToMethods.run(tank, param);
+        DriveToMethods.run(tank, gyro, param);
     }
 
     @Override
     public double driveToSensor(DriveToParams param) {
-        return DriveToMethods.sensor(tank, param);
+        return DriveToMethods.sensor(tank, param, gyro);
     }
 }

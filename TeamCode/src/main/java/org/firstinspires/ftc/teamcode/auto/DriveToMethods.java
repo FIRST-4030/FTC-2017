@@ -5,6 +5,7 @@ import org.firstinspires.ftc.teamcode.driveto.DriveToComp;
 import org.firstinspires.ftc.teamcode.driveto.DriveToListener;
 import org.firstinspires.ftc.teamcode.driveto.DriveToParams;
 import org.firstinspires.ftc.teamcode.sensors.Gyro;
+import org.firstinspires.ftc.teamcode.wheels.MotorSide;
 import org.firstinspires.ftc.teamcode.wheels.TankDrive;
 
 /*
@@ -19,6 +20,10 @@ public class DriveToMethods {
     public final static int OVERRUN_GYRO = 10; // TBD
     // Degrees in a circle, for use in MOD math
     public final static int FULL_CIRCLE = 360;
+    //used to compare turn angle
+    public final static DriveToComp COMP_CLOCKWISE = DriveToComp.GREATER;
+    //speed at which we turn
+    public final static double TURN_SPEED = .5d;
 
     // Ratio of encoder ticks to millimeters driven
     public final static float ENCODER_PER_MM = 1.15f;
@@ -38,7 +43,8 @@ public class DriveToMethods {
     // Sensor reference types for our DriveTo callbacks
     public enum SENSOR_TYPE {
         DRIVE_ENCODER,
-        GYROSCOPE
+        GYROSCOPE,
+        GYROSCOPE_SLAVE
     }
 
     public static DriveTo driveForward(DriveToListener listener, TankDrive tank, int distance) {
@@ -71,7 +77,7 @@ public class DriveToMethods {
      */
     public static DriveTo turnDegrees(DriveToListener listener, Gyro gyro, int degrees) {
         DriveToParams[] params = new DriveToParams[2];
-        params[0] = new DriveToParams(listener, SENSOR_TYPE.GYROSCOPE);
+        params[0] = new DriveToParams(listener, SENSOR_TYPE.GYROSCOPE_SLAVE);
         params[1] = new DriveToParams(listener, SENSOR_TYPE.GYROSCOPE);
 
         // Current and target heading in normalized degrees
@@ -100,23 +106,37 @@ public class DriveToMethods {
         }
     }
 
-    public static double sensor(TankDrive tank, DriveToParams param) {
+    public static double sensor(TankDrive tank, DriveToParams param, Gyro gyro) {
         double value = 0;
         switch ((SENSOR_TYPE) param.reference) {
             case DRIVE_ENCODER:
                 value = tank.getEncoder();
                 break;
+            case GYROSCOPE:
+            case GYROSCOPE_SLAVE:
+                value = gyro.getHeading();
+                break;
         }
         return value;
     }
 
-    public static void run(TankDrive tank, DriveToParams param) {
+    public static void run(TankDrive tank, Gyro gyro, DriveToParams param) {
         switch ((SENSOR_TYPE) param.reference) {
             case DRIVE_ENCODER:
                 if (param.comparator == COMP_FORWARD) {
                     tank.setSpeed(SPEED_FORWARD_SLOW);
                 } else {
                     tank.setSpeed(SPEED_REVERSE);
+                }
+                break;
+            case GYROSCOPE:
+                if(param.comparator == COMP_CLOCKWISE) {
+                    tank.setSpeed(TURN_SPEED, MotorSide.LEFT);
+                    tank.setSpeed(-TURN_SPEED, MotorSide.RIGHT);
+                }
+                else {
+                    tank.setSpeed(-TURN_SPEED, MotorSide.LEFT);
+                    tank.setSpeed(TURN_SPEED, MotorSide.RIGHT);
                 }
                 break;
         }

@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.auto;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.actuators.Motor;
 import org.firstinspires.ftc.teamcode.actuators.ServoFTC;
@@ -9,6 +10,7 @@ import org.firstinspires.ftc.teamcode.buttons.ButtonHandler;
 import org.firstinspires.ftc.teamcode.driveto.DriveToListener;
 import org.firstinspires.ftc.teamcode.driveto.DriveToParams;
 import org.firstinspires.ftc.teamcode.field.Field;
+import org.firstinspires.ftc.teamcode.sensors.Gyro;
 import org.firstinspires.ftc.teamcode.utils.OrderedEnum;
 import org.firstinspires.ftc.teamcode.utils.OrderedEnumHelper;
 import org.firstinspires.ftc.teamcode.wheels.TankDrive;
@@ -26,6 +28,7 @@ public class StraightLine extends OpMode implements DriveToListener {
     // Devices and subsystems
     private CommonTasks common = null;
     private TankDrive tank = null;
+    private Gyro gyro = null;
     private ServoFTC[] claws = null;
     private Motor lift = null;
 
@@ -52,6 +55,7 @@ public class StraightLine extends OpMode implements DriveToListener {
         tank = common.initDrive();
         lift = common.initLift();
         claws = common.initClaws();
+        gyro  = new Gyro(hardwareMap,"imu", telemetry);
 
         // Register buttons
         buttons.register("DELAY-UP", gamepad1, BUTTON.dpad_up);
@@ -188,12 +192,12 @@ public class StraightLine extends OpMode implements DriveToListener {
 
     @Override
     public void driveToRun(DriveToParams param) {
-        DriveToMethods.run(tank, param);
+        DriveToMethods.run(tank, gyro, param);
     }
 
     @Override
     public double driveToSensor(DriveToParams param) {
-        return DriveToMethods.sensor(tank, param);
+        return DriveToMethods.sensor(tank, param, gyro);
     }
 
     // Utility function to delegate our AutoDriver to an external provider

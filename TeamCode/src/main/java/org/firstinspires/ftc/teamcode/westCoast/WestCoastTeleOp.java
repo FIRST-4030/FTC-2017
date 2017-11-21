@@ -14,9 +14,8 @@ import org.firstinspires.ftc.teamcode.wheels.TankDrive;
 
 /**
  * Created by bnstc on 11/18/2017.
- *
+ * <p>
  * Note that the
- *
  */
 
 
@@ -69,7 +68,7 @@ public class WestCoastTeleOp extends OpMode {
     }
 
     @Override
-    public void loop(){
+    public void loop() {
 
         // Update Buttons
         buttons.update();
@@ -89,10 +88,10 @@ public class WestCoastTeleOp extends OpMode {
 
     }
 
-    public void driveBase(){
+    public void driveBase() {
 
         // Update Slow Mode
-        if(buttons.get("SLOW-MODE")) slowMode = !slowMode;
+        if (buttons.get("SLOW-MODE")) slowMode = !slowMode;
 
         // Tank Drive
         tank.setSpeed((-gamepad1.left_stick_y) * (slowMode ? .5 : 1), MotorSide.LEFT);
@@ -100,48 +99,46 @@ public class WestCoastTeleOp extends OpMode {
 
     }
 
-    public void clawsAndLift(){
+    public void clawsAndLift() {
 
         // Lift
         lift.setPower(gamepad2.left_stick_y);
 
         // Toggle Claws
-        if(buttons.get("TOP-CLAW")){
+        if (buttons.get("TOP-CLAW")) {
             topClawOpen = !topClawOpen;
             ServoFTC claw = claws[CommonTasks.CLAWS.TOP.ordinal()];
-            if(topClawOpen) claw.min();
+            if (topClawOpen) claw.min();
             else claw.max();
         }
-        if(buttons.get("BOTTOM-CLAW")){
+        if (buttons.get("BOTTOM-CLAW")) {
             bottomClawOpen = !bottomClawOpen;
             ServoFTC claw = claws[CommonTasks.CLAWS.BOTTOM.ordinal()];
-            if(bottomClawOpen) claw.min();
+            if (bottomClawOpen) claw.min();
             else claw.max();
         }
 
     }
 
-    public void intakes(){
+    public void intakes() {
 
         // Lock Intakes
-        if(buttons.get("LOCK-INTAKE")) intakeLocked = !intakeLocked;
+        if (buttons.get("LOCK-INTAKE")) intakeLocked = !intakeLocked;
 
         // Toggle Intakes
-        if(buttons.get("EXTEND-INTAKE")){
+        if (buttons.get("EXTEND-INTAKE")) {
             intakeExtended = !intakeExtended;
-            for(ServoFTC intake : intakeServos){
-                if(intakeExtended) intake.min();
+            for (ServoFTC intake : intakeServos) {
+                if (intakeExtended) intake.min();
                 else intake.max();
             }
         }
 
         // Intake Motors
-        if(!intakeLocked) {
+        if (!intakeLocked) {
             for (Motor intake : intakeMotors) {
                 intake.setPower(gamepad2.right_stick_y);
             }
         }
-
     }
-
 }

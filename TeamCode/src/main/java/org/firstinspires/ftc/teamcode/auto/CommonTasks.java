@@ -17,6 +17,7 @@ import static org.firstinspires.ftc.teamcode.auto.DriveToMethods.LIFT_SPEED_UP;
 
 public class CommonTasks {
     public enum CLAWS {TOP, BOTTOM;}
+
     public enum INTAKES {RIGHT, LEFT;}
 
     private static final double LIFT_DELAY = 0.75;
@@ -37,6 +38,8 @@ public class CommonTasks {
         motors = new MotorConfigs(map, telemetry, bot);
     }
 
+    // In the common case we expect that BOT will be NULL, which triggers auto-detect behavior
+    // You should only override this default if your usage is limited to a single physical bot
     public CommonTasks(HardwareMap map, Telemetry telemetry) {
         this(map, telemetry, null);
     }
@@ -67,7 +70,7 @@ public class CommonTasks {
         ServoFTC[] intakes = new ServoFTC[INTAKES.values().length];
         intakes[INTAKES.RIGHT.ordinal()] = servos.init("RIGHT-INTAKE");
         intakes[INTAKES.LEFT.ordinal()] = servos.init("LEFT-INTAKE");
-        for(ServoFTC intake : intakes){
+        for (ServoFTC intake : intakes) {
             intake.min();
         }
         return intakes;
@@ -77,7 +80,7 @@ public class CommonTasks {
         Motor[] intakes = new Motor[INTAKES.values().length];
         intakes[INTAKES.RIGHT.ordinal()] = motors.init("RIGHT-INTAKE");
         intakes[INTAKES.LEFT.ordinal()] = motors.init("LEFT-INTAKE");
-        for(Motor intake : intakes){
+        for (Motor intake : intakes) {
             intake.stop();
         }
         return intakes;

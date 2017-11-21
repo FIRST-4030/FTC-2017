@@ -18,7 +18,7 @@ public class WestCoastTeleOpMode1 extends WestCoastOpMode{
     public boolean rBumperPressed = false;
     public boolean lBumperPressed = false;
 
-    //used for spinner on-off switch
+    //used for intake on-off switch telemetry
     boolean isBumperStickOn = false;
 
 
@@ -45,7 +45,10 @@ public class WestCoastTeleOpMode1 extends WestCoastOpMode{
         telemetry.addData("Bottom Claw", bottomClaw.getPosition());
         // Actually, this IS what we want. The list motor encoder is just bad (sigh)
         telemetry.addData("Lift.getCurrentPosition", getLiftPosition());
-        telemetry.addData("switch voltage", liftSwitch.getVoltage());
+//        telemetry.addData("switch voltage", liftSwitch.getVoltage());
+        telemetry.addData("Intake switch",buttons.get("INTAKE-PRESSED"));
+        telemetry.addData("INTAKE-IN", buttons.get("INTAKE-IN"));
+        telemetry.addData("INTAKE-OUT", buttons.get("INTAKE-OUT"));
 //        telemetry.addData("switch value", liftSwitch.getValue());
         telemetry.addData("Lift Height", lift.getCurrentPosition());
         telemetry.update();
@@ -79,7 +82,6 @@ public class WestCoastTeleOpMode1 extends WestCoastOpMode{
         } else if(!gamepad2.left_bumper){
             lBumperPressed = false;
         }
-
 //        if(gamepad2.right_bumper){
 //
 //            setServoPosition(TOP_CLAW, (topClawOpen ? UPPER_CLAW_MIN : UPPER_CLAW_MAX));
@@ -113,11 +115,11 @@ public class WestCoastTeleOpMode1 extends WestCoastOpMode{
     public void bumpers()
     {
         //spinner on-off switch
-        if(buttons.get("INTAKE-PRESSED") && isBumperStickOn == false)
+        if(buttons.get("INTAKE-PRESSED"))
         {
             isBumperStickOn = true;
         }
-        else if (buttons.get("INTAKE-PRESSED") && isBumperStickOn == true)
+        else if (buttons.get("INTAKE-PRESSED"))
         {
             isBumperStickOn = false;
         }
