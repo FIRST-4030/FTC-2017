@@ -47,7 +47,7 @@ public class WestCoastTeleOp extends OpMode {
         telemetry.update();
 
         // Init the common tasks elements in CALIBRATION mode
-        common = new CommonTasks(hardwareMap, telemetry, BOT.CODE);
+        common = new CommonTasks(hardwareMap, telemetry);
         tank = common.initDrive();
         lift = common.initLift();
         claws = common.initClaws();
