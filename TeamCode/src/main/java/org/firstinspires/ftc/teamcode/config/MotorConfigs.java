@@ -37,7 +37,9 @@ public class MotorConfigs {
                 }
             }
         }
-        assert motor != null;
+        if (motor == null) {
+            throw new IllegalArgumentException("No motor object available");
+        }
         if (!motor.isAvailable()) {
             telemetry.log().add("ERROR: Unable to initialize motor: " + name);
         }
@@ -46,7 +48,9 @@ public class MotorConfigs {
 
     private static MotorConfig config(String name, BOT b) {
         MotorConfig config = null;
-        assert b != null;
+        if (b == null) {
+            throw new IllegalArgumentException("Null BOT");
+        }
         switch (b) {
             case FINAL:
             case CALIBRATION:
