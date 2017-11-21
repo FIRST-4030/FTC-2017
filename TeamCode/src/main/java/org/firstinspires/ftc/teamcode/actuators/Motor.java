@@ -11,8 +11,14 @@ public class Motor {
     private int offset = 0;
 
     public Motor(HardwareMap map, MotorConfig config, Telemetry telemetry) {
-        if (config == null || config.name == null || config.name.isEmpty()) {
-            throw new IllegalArgumentException(this.getClass().getName() + ": Null config or null/empty name");
+        if (config == null) {
+            if (telemetry != null) {
+                telemetry.log().add(this.getClass().getName() + ": Null config");
+            }
+            return;
+        }
+        if (config.name == null || config.name.isEmpty()) {
+            throw new IllegalArgumentException(this.getClass().getName() + ": Null/empty name");
         }
         try {
             motor = map.dcMotor.get(config.name);

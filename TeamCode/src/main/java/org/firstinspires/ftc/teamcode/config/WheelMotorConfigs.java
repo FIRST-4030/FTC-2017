@@ -29,7 +29,7 @@ public class WheelMotorConfigs {
         } else {
             for (BOT i : BOT.values()) {
                 BOT b = i;
-                tank = new TankDrive(map, config(b), encoderIndex(), encoderScale(), telemetry);
+                tank = new TankDrive(map, config(b), 0, 1.0, telemetry);
                 if (tank.isAvailable()) {
                     bot = b;
                     if (bot.ordinal() != 0) {

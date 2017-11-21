@@ -25,7 +25,13 @@ public class TankDrive {
                     MIN_MOTORS + " motors");
         }
         for (TankMotor motor : motors) {
-            if (motor == null || motor.name == null || motor.name.isEmpty()) {
+            if (motor == null) {
+                if (telemetry != null) {
+                    telemetry.log().add(this.getClass().getName() + ": Null motor");
+                }
+                break;
+            }
+            if (motor.name == null || motor.name.isEmpty()) {
                 throw new IllegalArgumentException(this.getClass().getName() + ": Null motor or null/empty motor name");
             }
             try {
