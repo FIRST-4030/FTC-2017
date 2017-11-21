@@ -47,7 +47,7 @@ public class WestCoastTeleOp extends OpMode {
         telemetry.update();
 
         // Init the common tasks elements in CALIBRATION mode
-        common = new CommonTasks(hardwareMap, telemetry);
+        common = new CommonTasks(hardwareMap, telemetry, BOT.CODE);
         tank = common.initDrive();
         lift = common.initLift();
         claws = common.initClaws();
@@ -83,8 +83,9 @@ public class WestCoastTeleOp extends OpMode {
         // Driver Feedback
         telemetry.addData("Slow Mode", slowMode);
         telemetry.addData("Intakes Locked", intakeLocked);
-        telemetry.addData("Top CLaw", topClawOpen ? "Open" : "Closed");
-        telemetry.addData("Bottom Claw", bottomClawOpen ? "Open" : "Closed");
+        telemetry.addData("Top CLaw", claws[CommonTasks.CLAWS.TOP.ordinal()].getPostion());
+        telemetry.addData("Bottom Claw", claws[CommonTasks.CLAWS.BOTTOM.ordinal()].getPostion());
+        telemetry.addData("Lift Height", lift.getEncoder());
 
     }
 
@@ -94,8 +95,8 @@ public class WestCoastTeleOp extends OpMode {
         if(buttons.get("SLOW-MODE")) slowMode = !slowMode;
 
         // Tank Drive
-        tank.setSpeed((gamepad1.left_stick_y) * (slowMode ? .5 : 1), MotorSide.LEFT);
-        tank.setSpeed((gamepad1.right_stick_y) * (slowMode ? .5 : 1), MotorSide.RIGHT);
+        tank.setSpeed((-gamepad1.left_stick_y) * (slowMode ? .5 : 1), MotorSide.LEFT);
+        tank.setSpeed((-gamepad1.right_stick_y) * (slowMode ? .5 : 1), MotorSide.RIGHT);
 
     }
 
@@ -126,7 +127,7 @@ public class WestCoastTeleOp extends OpMode {
         if(buttons.get("LOCK-INTAKE")) intakeLocked = !intakeLocked;
 
         // Toggle Intakes
-        if(!intakeLocked && buttons.get("EXTEND-INTAKE")){
+        if(buttons.get("EXTEND-INTAKE")){
             intakeExtended = !intakeExtended;
             for(ServoFTC intake : intakeServos){
                 if(intakeExtended) intake.min();
@@ -135,8 +136,10 @@ public class WestCoastTeleOp extends OpMode {
         }
 
         // Intake Motors
-        for(Motor intake : intakeMotors){
-            intake.setPower(gamepad2.right_stick_y);
+        if(!intakeLocked) {
+            for (Motor intake : intakeMotors) {
+                intake.setPower(gamepad2.right_stick_y);
+            }
         }
 
     }
