@@ -61,11 +61,6 @@ public class Gyro {
         gyro.startAccelerationIntegration(new Position(), new Velocity(), INTEGRATION_INTERVAL);
     }
 
-    public void disable() {
-        ready = false;
-        gyro = null;
-    }
-
     public boolean isAvailable() {
         return gyro != null;
     }
@@ -80,7 +75,7 @@ public class Gyro {
     public void setHeading(int heading) {
         // Normalize heading and offset
         heading = normalizeHeading(heading);
-        int offset = (heading - getHeadingNormalized(true)) % FULL_CIRCLE;
+        int offset = (heading - getRawHeadingNormalized()) % FULL_CIRCLE;
         if (offset > FULL_CIRCLE / 2) {
             offset -= FULL_CIRCLE;
         }
@@ -91,31 +86,25 @@ public class Gyro {
         this.offset = offset;
     }
 
-    public int getHeadingRaw() {
+    public int getRawHeading() {
         if (!isReady()) {
             return 0;
         }
 
-        // Invert to make CW rotation increase the heading
+        // Invert to make CW rotation increase with the heading
         return (int) -gyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
     }
 
     public int getHeading() {
-        return (getHeadingRaw() + offset);
+        return (getRawHeading() + offset);
     }
 
-    public int getHeadingNormalized() {
-        return getHeadingNormalized(false);
+    private int getHeadingNormalized() {
+        return normalizeHeading(getHeading());
     }
 
-    private int getHeadingNormalized(boolean raw) {
-        int heading;
-        if (raw) {
-            heading = getHeadingRaw();
-        } else {
-            heading = getHeading();
-        }
-        return normalizeHeading(heading);
+    private int getRawHeadingNormalized() {
+        return normalizeHeading(getRawHeading());
     }
 
     /**

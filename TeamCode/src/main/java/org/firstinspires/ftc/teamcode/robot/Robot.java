@@ -10,6 +10,7 @@ import org.firstinspires.ftc.teamcode.robot.configs.MotorConfigs;
 import org.firstinspires.ftc.teamcode.robot.configs.ServoConfigs;
 import org.firstinspires.ftc.teamcode.robot.configs.WheelConfigs;
 import org.firstinspires.ftc.teamcode.sensors.Gyro;
+import org.firstinspires.ftc.teamcode.sensors.Switch;
 import org.firstinspires.ftc.teamcode.wheels.Wheels;
 
 public class Robot {
@@ -20,6 +21,7 @@ public class Robot {
     public Motor[] intakes = null;
     public ServoFTC[] intakeArms = null;
     public Gyro gyro = null;
+    public Switch liftSwitch = null;
 
     private HardwareMap map;
     private Telemetry telemetry;
@@ -96,5 +98,6 @@ public class Robot {
         }
 
         gyro = new Gyro(map, telemetry, "imu");
+        liftSwitch = new Switch(map, telemetry, "LS1");
     }
 }

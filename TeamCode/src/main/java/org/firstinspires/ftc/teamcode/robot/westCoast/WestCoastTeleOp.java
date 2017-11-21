@@ -15,10 +15,12 @@ import org.firstinspires.ftc.teamcode.robot.Robot;
 @TeleOp(name = "The Real WCTeleOp", group = "WestCoastOpMode")
 public class WestCoastTeleOp extends OpMode {
 
+    // Drive speeds
+    private final static double SCALE_FULL = 1.0d;
+    private final static double SCALE_SLOW = SCALE_FULL * 0.5d;
+
     // Devices and subsystems
     private Robot robot = null;
-    private CommonTasks common = null;
-
     private ButtonHandler buttons = new ButtonHandler();
 
     @Override
@@ -28,9 +30,8 @@ public class WestCoastTeleOp extends OpMode {
         telemetry.addData(">", "Initializing...");
         telemetry.update();
 
-        // Init the common tasks elements in CALIBRATION mode
+        // Init the common tasks elements
         robot = new Robot(hardwareMap, telemetry);
-        common = new CommonTasks(robot);
 
         // Register buttons
         buttons.register("TOP-CLAW", gamepad2, BUTTON.right_bumper);
@@ -48,13 +49,12 @@ public class WestCoastTeleOp extends OpMode {
     @Override
     public void loop() {
 
-        // Update Buttons
+        // Update buttons
         buttons.update();
 
+        // Move the robot
         driveBase();
-
         clawsAndLift();
-
         intakes();
 
         // Driver Feedback
@@ -63,15 +63,14 @@ public class WestCoastTeleOp extends OpMode {
         telemetry.addData("Top CLaw", robot.claws[CLAWS.TOP.ordinal()].getPostion());
         telemetry.addData("Bottom Claw", robot.claws[CLAWS.BOTTOM.ordinal()].getPostion());
         telemetry.addData("Lift Height", robot.lift.getEncoder());
-
+        telemetry.update();
     }
 
     public void driveBase() {
-
         if (buttons.get("SLOW-MODE")) {
-            robot.wheels.setSpeedScale(0.5);
+            robot.wheels.setSpeedScale(SCALE_SLOW);
         } else {
-            robot.wheels.setSpeedScale(1.0);
+            robot.wheels.setSpeedScale(SCALE_FULL);
         }
         robot.wheels.loop(gamepad1);
     }

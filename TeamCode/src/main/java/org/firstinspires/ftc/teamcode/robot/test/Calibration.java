@@ -17,7 +17,6 @@ public class Calibration extends OpMode {
 
     // Devices and subsystems
     private Robot robot = null;
-    private CommonTasks common = null;
 
     // Driving
     private double servoInterval = 0.01;
@@ -28,7 +27,6 @@ public class Calibration extends OpMode {
 
         // Init the common tasks elements in CALIBRATION mode
         robot = new Robot(hardwareMap, telemetry);
-        common = new CommonTasks(robot);
 
         // Register buttons
         buttons.register("CLAW-" + CLAWS.TOP + "-UP", gamepad1, BUTTON.dpad_up);
@@ -88,8 +86,6 @@ public class Calibration extends OpMode {
         }
 
         // Feedback
-        telemetry.addData("Lift", robot.lift.getEncoder());
-        telemetry.addData("Wheels", robot.wheels.getEncoder());
         for (CLAWS claw : CLAWS.values()) {
             telemetry.addData("Claw " + claw, robot.claws[claw.ordinal()].getPostion());
         }
@@ -97,6 +93,9 @@ public class Calibration extends OpMode {
             telemetry.addData("Intake " + intake, robot.intakeArms[intake.ordinal()].getPostion());
         }
         telemetry.addData("Servo Interval", servoInterval);
+        telemetry.addData("Lift", robot.lift.getEncoder());
+        telemetry.addData("Lift Switch", robot.liftSwitch.get());
+        telemetry.addData("Wheels", robot.wheels.getEncoder());
         telemetry.update();
     }
 }
