@@ -16,7 +16,8 @@ import org.firstinspires.ftc.teamcode.wheels.TankDrive;
 import static org.firstinspires.ftc.teamcode.auto.DriveToMethods.LIFT_SPEED_UP;
 
 public class CommonTasks {
-    enum CLAWS {TOP, BOTTOM;}
+    public enum CLAWS {TOP, BOTTOM;}
+    public enum INTAKES {RIGHT, LEFT;}
 
     private static final double LIFT_DELAY = 0.75;
     private static final double CLAW_DELAY = 0.25;
@@ -60,6 +61,26 @@ public class CommonTasks {
             claw.min();
         }
         return claws;
+    }
+
+    public ServoFTC[] initIntakeServos() {
+        ServoFTC[] intakes = new ServoFTC[INTAKES.values().length];
+        intakes[INTAKES.RIGHT.ordinal()] = servos.init("RIGHT-INTAKE");
+        intakes[INTAKES.LEFT.ordinal()] = servos.init("LEFT-INTAKE");
+        for(ServoFTC intake : intakes){
+            intake.min();
+        }
+        return intakes;
+    }
+
+    public Motor[] initIntakeMotors() {
+        Motor[] intakes = new Motor[INTAKES.values().length];
+        intakes[INTAKES.RIGHT.ordinal()] = motors.init("RIGHT-INTAKE");
+        intakes[INTAKES.LEFT.ordinal()] = motors.init("LEFT-INTAKE");
+        for(Motor intake : intakes){
+            intake.stop();
+        }
+        return intakes;
     }
 
     public AutoDriver liftAutoStart(Motor lift, ServoFTC[] claws) {

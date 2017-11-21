@@ -26,19 +26,22 @@ public class WheelMotorConfigs {
         TankDrive tank = null;
         if (bot != null) {
             tank = new TankDrive(map, config(bot), encoderIndex(), encoderScale(), telemetry);
-        }
-        for (BOT i : BOT.values()) {
-            BOT b = i;
-            tank = new TankDrive(map, config(b), encoderIndex(), encoderScale(), telemetry);
-            if (tank.isAvailable()) {
-                bot = b;
-                if (bot.ordinal() != 0) {
-                    telemetry.log().add("NOTICE: Using wheel config: " + bot);
+        } else {
+            for (BOT i : BOT.values()) {
+                BOT b = i;
+                tank = new TankDrive(map, config(b), encoderIndex(), encoderScale(), telemetry);
+                if (tank.isAvailable()) {
+                    bot = b;
+                    if (bot.ordinal() != 0) {
+                        telemetry.log().add("NOTICE: Using wheel config: " + bot);
+                    }
+                    break;
                 }
-                break;
             }
         }
-        assert tank != null;
+        if (tank == null) {
+            throw new IllegalArgumentException("No tank object available");
+        }
         if (!tank.isAvailable()) {
             telemetry.log().add("ERROR: Unable to initialize wheels");
         }
@@ -47,7 +50,9 @@ public class WheelMotorConfigs {
 
     private static TankMotor[] config(BOT b) {
         TankMotor[] config = null;
-        assert b != null;
+        if (b == null) {
+            throw new IllegalArgumentException("Null BOT");
+        }
         switch (b) {
             case FINAL:
             case CALIBRATION:
@@ -62,7 +67,9 @@ public class WheelMotorConfigs {
 
     private double encoderScale() {
         double scale = 1.0;
-        assert bot != null;
+        if (bot == null) {
+            throw new IllegalArgumentException("Null BOT");
+        }
         switch (bot) {
             case FINAL:
             case CALIBRATION:
@@ -77,7 +84,9 @@ public class WheelMotorConfigs {
 
     private int encoderIndex() {
         int index = 0;
-        assert bot != null;
+        if (bot == null) {
+            throw new IllegalArgumentException("Null BOT");
+        }
         switch (bot) {
             case FINAL:
             case CALIBRATION:
