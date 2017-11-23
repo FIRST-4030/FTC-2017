@@ -7,6 +7,7 @@ import org.firstinspires.ftc.teamcode.driveto.DriveTo;
 import org.firstinspires.ftc.teamcode.robot.Robot;
 import org.firstinspires.ftc.teamcode.utils.OrderedEnum;
 import org.firstinspires.ftc.teamcode.utils.OrderedEnumHelper;
+import org.firstinspires.ftc.teamcode.utils.Round;
 
 import static org.firstinspires.ftc.teamcode.robot.auto.CommonTasks.*;
 
@@ -88,8 +89,8 @@ public class SimpleAuto extends OpMode {
         telemetry.addData("Lift", robot.lift.getEncoder());
         telemetry.addData("LiftZero", liftState);
         telemetry.addData("Gyro Ready", robot.gyro.isReady());
-        telemetry.addData("Time", (float) ((int) (time * 1000)) / 1000.0f);
-        telemetry.addData("Lift Timeout", (float) ((int) (liftTimeout * 1000)) / 1000.0f);
+        telemetry.addData("Time", Round.truncate(time));
+        telemetry.addData("Lift Timeout", Round.truncate(liftTimeout));
         telemetry.update();
 
         /*
