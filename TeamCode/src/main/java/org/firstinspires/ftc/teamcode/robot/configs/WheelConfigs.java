@@ -8,28 +8,19 @@ import org.firstinspires.ftc.teamcode.wheels.TankConfig;
 import org.firstinspires.ftc.teamcode.wheels.TankDrive;
 import org.firstinspires.ftc.teamcode.wheels.TankMotor;
 
-public class WheelConfigs {
-    private HardwareMap map = null;
-    private Telemetry telemetry = null;
-    private BOT bot = null;
-
+public class WheelConfigs extends Configs {
     public WheelConfigs(HardwareMap map, Telemetry telemetry, BOT bot) {
-        if (map == null || bot == null) {
-            throw new IllegalArgumentException("Null HardwareMap or BOT");
-        }
-        this.map = map;
-        this.telemetry = telemetry;
-        this.bot = bot;
+        super(map, telemetry, bot);
     }
 
     public TankDrive init() {
         TankConfig config = config(bot);
         if (config == null) {
-            throw new IllegalArgumentException("No motor configured for: " + bot);
+            throw new IllegalArgumentException(this.getClass().getName() + ": Not configured: " + bot);
         }
         TankDrive tank = new TankDrive(map, telemetry, config);
         if (!tank.isAvailable()) {
-            telemetry.log().add("Unable to initialize tank for: " + bot);
+            telemetry.log().add(this.getClass().getName() + ": Unable to initialize: " + bot);
         }
         return tank;
     }

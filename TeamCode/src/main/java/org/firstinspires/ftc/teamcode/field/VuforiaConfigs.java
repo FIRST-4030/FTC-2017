@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.field;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.teamcode.field.Field;
 import org.firstinspires.ftc.teamcode.vuforia.VuforiaTarget;
 
 /*
@@ -12,7 +11,8 @@ import org.firstinspires.ftc.teamcode.vuforia.VuforiaTarget;
  */
 public class VuforiaConfigs {
     public static final String AssetName = "RelicVuMark";
-    public static final int TargetCount = 1;
+    public static final String[] TargetNames = {"VuMark"};
+    public static final int TargetCount = TargetNames.length;
 
     static public VuforiaTarget Bot() {
         // TODO: This location and rotation is imaginary, but should at least be close.

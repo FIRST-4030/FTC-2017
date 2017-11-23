@@ -3,14 +3,19 @@ package org.firstinspires.ftc.teamcode.robot;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.teamcode.actuators.Motor;
 import org.firstinspires.ftc.teamcode.actuators.ServoFTC;
+import org.firstinspires.ftc.teamcode.field.VuforiaConfigs;
 import org.firstinspires.ftc.teamcode.robot.configs.BOT;
+import org.firstinspires.ftc.teamcode.robot.configs.GyroConfigs;
 import org.firstinspires.ftc.teamcode.robot.configs.MotorConfigs;
 import org.firstinspires.ftc.teamcode.robot.configs.ServoConfigs;
+import org.firstinspires.ftc.teamcode.robot.configs.SwitchConfigs;
 import org.firstinspires.ftc.teamcode.robot.configs.WheelConfigs;
-import org.firstinspires.ftc.teamcode.sensors.Gyro;
-import org.firstinspires.ftc.teamcode.sensors.Switch;
+import org.firstinspires.ftc.teamcode.sensors.gyro.Gyro;
+import org.firstinspires.ftc.teamcode.sensors.switches.Switch;
+import org.firstinspires.ftc.teamcode.vuforia.VuforiaFTC;
 import org.firstinspires.ftc.teamcode.wheels.Wheels;
 
 public class Robot {
@@ -22,6 +27,8 @@ public class Robot {
     public ServoFTC[] intakeArms = null;
     public Gyro gyro = null;
     public Switch liftSwitch = null;
+    public VuforiaFTC vuforia = null;
+    public VuforiaTrackable vumark = null;
 
     private HardwareMap map;
     private Telemetry telemetry;
@@ -66,9 +73,11 @@ public class Robot {
     }
 
     private void init() {
+        GyroConfigs gyros = new GyroConfigs(map, telemetry, bot);
         WheelConfigs wheels = new WheelConfigs(map, telemetry, bot);
         MotorConfigs motors = new MotorConfigs(map, telemetry, bot);
         ServoConfigs servos = new ServoConfigs(map, telemetry, bot);
+        SwitchConfigs switches = new SwitchConfigs(map, telemetry, bot);
 
         this.wheels = wheels.init();
         this.wheels.stop();
@@ -97,7 +106,13 @@ public class Robot {
             intake.min();
         }
 
-        gyro = new Gyro(map, telemetry, "imu");
-        liftSwitch = new Switch(map, telemetry, "LS1");
+        vuforia = new VuforiaFTC(VuforiaConfigs.AssetName, VuforiaConfigs.TargetCount,
+                VuforiaConfigs.Field(), VuforiaConfigs.Bot());
+        vuforia.init();
+        vumark = vuforia.getTrackable(VuforiaConfigs.TargetNames[0]);
+
+        gyro = gyros.init();
+
+        liftSwitch = switches.init(SWITCHES.LIFT);
     }
 }

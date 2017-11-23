@@ -6,7 +6,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.actuators.Motor;
 import org.firstinspires.ftc.teamcode.actuators.ServoFTC;
 import org.firstinspires.ftc.teamcode.buttons.BUTTON_TYPE;
-import org.firstinspires.ftc.teamcode.robot.auto.CommonTasks;
 import org.firstinspires.ftc.teamcode.buttons.BUTTON;
 import org.firstinspires.ftc.teamcode.buttons.ButtonHandler;
 import org.firstinspires.ftc.teamcode.robot.CLAWS;

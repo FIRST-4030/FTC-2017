@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.sensors;
+package org.firstinspires.ftc.teamcode.sensors.gyro;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
@@ -11,8 +11,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 
-public class Gyro {
-    private static final int FULL_CIRCLE = 360;
+public class RevIMU implements Gyro {
     private static final String LOG_NAME = null;
     private static final String CALIBRATION_FILE = null;
 
@@ -23,7 +22,7 @@ public class Gyro {
     private boolean ready = false;
     private int offset = 0;
 
-    public Gyro(HardwareMap map, Telemetry telemetry, String name) {
+    public RevIMU(HardwareMap map, Telemetry telemetry, String name) {
         if (name == null || name.isEmpty()) {
             throw new IllegalArgumentException(this.getClass().getName() + ": Null/empty name");
         }
@@ -72,21 +71,11 @@ public class Gyro {
         return ready;
     }
 
-    public void setHeading(int heading) {
-        // Normalize heading and offset
-        heading = normalizeHeading(heading);
-        int offset = (heading - getRawHeadingNormalized()) % FULL_CIRCLE;
-        if (offset > FULL_CIRCLE / 2) {
-            offset -= FULL_CIRCLE;
-        }
-        setOffset(offset);
-    }
-
     public void setOffset(int offset) {
         this.offset = offset;
     }
 
-    public int getRawHeading() {
+    public int getRaw() {
         if (!isReady()) {
             return 0;
         }
@@ -96,22 +85,6 @@ public class Gyro {
     }
 
     public int getHeading() {
-        return (getRawHeading() + offset);
-    }
-
-    private int getHeadingNormalized() {
-        return normalizeHeading(getHeading());
-    }
-
-    private int getRawHeadingNormalized() {
-        return normalizeHeading(getRawHeading());
-    }
-
-    /**
-     * @param heading Any heading
-     * @return The same heading projected into the space between 0 and 359, inclusively
-     */
-    public static int normalizeHeading(int heading) {
-        return ((heading % FULL_CIRCLE) + FULL_CIRCLE) % FULL_CIRCLE;
+        return (getRaw() + offset);
     }
 }

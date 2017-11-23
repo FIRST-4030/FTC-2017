@@ -39,7 +39,6 @@ public class SimpleAuto extends OpMode {
     private static final int LIFT_TIMEOUT = 1500;
     // In general you should init false, but for testing start with nothing
     private boolean liftReady = true;
-    private boolean liftButton = false;
     private double liftTimeout = 0;
 
     @Override
@@ -109,7 +108,7 @@ public class SimpleAuto extends OpMode {
                     liftState = liftState.next();
                     break;
                 case RETRACT:
-                    if (liftButton) {
+                    if (robot.liftSwitch.get()) {
                         liftState = liftState.next();
                     } else if (time > liftTimeout) {
                         robot.lift.stop();

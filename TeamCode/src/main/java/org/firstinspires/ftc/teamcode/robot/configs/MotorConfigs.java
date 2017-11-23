@@ -7,28 +7,20 @@ import org.firstinspires.ftc.teamcode.actuators.Motor;
 import org.firstinspires.ftc.teamcode.actuators.MotorConfig;
 import org.firstinspires.ftc.teamcode.robot.MOTORS;
 
-public class MotorConfigs {
-    private HardwareMap map = null;
-    private Telemetry telemetry = null;
-    private BOT bot = null;
-
+public class MotorConfigs extends Configs {
     public MotorConfigs(HardwareMap map, Telemetry telemetry, BOT bot) {
-        if (map == null || bot == null) {
-            throw new IllegalArgumentException("Null HardwareMap or BOT");
-        }
-        this.map = map;
-        this.telemetry = telemetry;
-        this.bot = bot;
+        super(map, telemetry, bot);
+
     }
 
     public Motor init(MOTORS name) {
         MotorConfig config = config(name, bot);
         if (config == null) {
-            throw new IllegalArgumentException("No motor configured for: " + bot + ":" + name);
+            throw new IllegalArgumentException(this.getClass().getName() + ": Not configured: " + bot + ":" + name);
         }
         Motor motor = new Motor(map, telemetry, config);
         if (!motor.isAvailable()) {
-            telemetry.log().add("Unable to initialize motor: " + bot + ":" + name);
+            telemetry.log().add(this.getClass().getName() + ": Unable to initialize: " + bot + ":" + name);
         }
         return motor;
     }

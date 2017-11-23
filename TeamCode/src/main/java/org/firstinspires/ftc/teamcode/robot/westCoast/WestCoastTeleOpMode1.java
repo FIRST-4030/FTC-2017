@@ -2,11 +2,6 @@ package org.firstinspires.ftc.teamcode.robot.westCoast;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-/**
- * Created by Alex Wang on 10/9/2017.
- */
-
-
 @TeleOp(name="WestCoastTeleOpMode1", group="WestCoastOpMode")
 public class WestCoastTeleOpMode1 extends WestCoastOpMode{
 

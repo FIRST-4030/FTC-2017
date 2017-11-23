@@ -36,10 +36,6 @@ public class StraightLine extends OpMode {
     @Override
     public void init() {
 
-        // Placate drivers
-        telemetry.addData(">", "Initializing...");
-        telemetry.update();
-
         // Init the robot and common tasks
         robot = new Robot(hardwareMap, telemetry);
         common = new CommonTasks(robot);

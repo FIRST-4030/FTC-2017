@@ -7,28 +7,19 @@ import org.firstinspires.ftc.teamcode.actuators.ServoFTC;
 import org.firstinspires.ftc.teamcode.actuators.ServoConfig;
 import org.firstinspires.ftc.teamcode.robot.SERVOS;
 
-public class ServoConfigs {
-    private HardwareMap map = null;
-    private Telemetry telemetry = null;
-    private BOT bot = null;
-
+public class ServoConfigs extends Configs {
     public ServoConfigs(HardwareMap map, Telemetry telemetry, BOT bot) {
-        if (map == null || bot == null) {
-            throw new IllegalArgumentException("Null HardwareMap or BOT");
-        }
-        this.map = map;
-        this.telemetry = telemetry;
-        this.bot = bot;
+        super(map, telemetry, bot);
     }
 
     public ServoFTC init(SERVOS name) {
         ServoConfig config = config(name, bot);
         if (config == null) {
-            throw new IllegalArgumentException("No servo configured for: " + bot + ":" + name);
+            throw new IllegalArgumentException(this.getClass().getName() + ": Not configured: " + bot + ":" + name);
         }
         ServoFTC servo = new ServoFTC(map, telemetry, config);
         if (!servo.isAvailable()) {
-            telemetry.log().add("Unable to initialize servo: " + bot + ":" + name);
+            telemetry.log().add(this.getClass().getName() + ": Unable to initialize: " + bot + ":" + name);
         }
         return servo;
     }

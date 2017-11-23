@@ -49,6 +49,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
+import org.firstinspires.ftc.teamcode.utils.Heading;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -70,8 +71,7 @@ public class VuforiaFTC {
     private static final AngleUnit ANGLE_UNIT = AngleUnit.DEGREES;
 
     // Cartesian heading constants
-    private static final int FULL_CIRCLE = 360;
-    private static final int HEADING_OFFSET = -FULL_CIRCLE / 4;
+    private static final int HEADING_OFFSET = -Heading.FULL_CIRCLE / 4;
 
     // Frame capture constants
     private static final int CAPTURE_QUEUE_DISABLE = 0;
@@ -184,19 +184,19 @@ public class VuforiaFTC {
         telemetry.addData("Valid", isStale() ? "No" : "Yes");
 
         // List of visible targets (if any)
-        String visibleStr = "";
+        StringBuilder visibleStr = new StringBuilder();
         for (String target : targetVisible.keySet()) {
             if (getVisible(target)) {
-                if (!visibleStr.isEmpty()) {
-                    visibleStr += ", ";
+                if (visibleStr.length() > 0) {
+                    visibleStr.append(", ");
                 }
-                visibleStr += target;
+                visibleStr.append(target);
             }
         }
-        if (visibleStr.isEmpty()) {
-            visibleStr = "<None>";
+        if (visibleStr.length() == 0) {
+            visibleStr = new StringBuilder("<None>");
         }
-        telemetry.addData("Visible", visibleStr);
+        telemetry.addData("Visible", visibleStr.toString());
 
         // Angle to each visible target (if any)
         for (String target : targetVisible.keySet()) {
@@ -367,9 +367,9 @@ public class VuforiaFTC {
     public int getHeading() {
         int heading = orientation[2];
         if (orientation[0] < 0) {
-            heading -= FULL_CIRCLE / 2;
+            heading -= Heading.FULL_CIRCLE / 2;
         }
-        return normalizeHeading(cartesianToCardinal(heading));
+        return Heading.normalize(cartesianToCardinal(heading));
     }
 
     /**
@@ -457,7 +457,7 @@ public class VuforiaFTC {
     private int bearing(int[] src, int[] dest) {
         double bearing = Math.atan2(dest[1] - src[1], dest[0] - src[0]);
         bearing = Math.toDegrees(bearing);
-        return normalizeHeading(cartesianToCardinal((int) bearing));
+        return Heading.normalize(cartesianToCardinal((int) bearing));
     }
 
     // Distance from x1,y1 to x2,y2 in field location units (millimeters)
@@ -494,11 +494,7 @@ public class VuforiaFTC {
         trackable.setLocation(location);
     }
 
-    private int normalizeHeading(int heading) {
-        return ((heading % FULL_CIRCLE) + FULL_CIRCLE) % FULL_CIRCLE;
-    }
-
     private int cartesianToCardinal(int heading) {
-        return FULL_CIRCLE - (heading + HEADING_OFFSET);
+        return Heading.FULL_CIRCLE - (heading + HEADING_OFFSET);
     }
 }

@@ -5,21 +5,17 @@ import android.graphics.Color;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
-import org.firstinspires.ftc.teamcode.field.VuforiaConfigs;
+import org.firstinspires.ftc.teamcode.robot.Robot;
 import org.firstinspires.ftc.teamcode.vuforia.ImageFTC;
-import org.firstinspires.ftc.teamcode.vuforia.VuforiaFTC;
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "Vuforia Test", group = "Test")
 public class VuforiaTest extends OpMode {
     private final static int COLOR_SLICES = 5;
 
-    // Numeric constants
-    private final static int FULL_CIRCLE = 360;
+    // Devices and subsystems
+    private Robot robot = null;
 
     // Dynamic things we need to remember
-    private VuforiaFTC vuforia;
-    private VuforiaTrackable mark;
     private int lastBearing = 0;
     private int lastDistance = 0;
     private String lastTarget = "<None>";
@@ -30,15 +26,8 @@ public class VuforiaTest extends OpMode {
     @Override
     public void init() {
 
-        // Placate drivers; sometimes VuforiaFTC is slow to init
-        telemetry.addData(">", "Initializing...");
-        telemetry.update();
-
-        // Vuforia
-        vuforia = new VuforiaFTC(VuforiaConfigs.AssetName, VuforiaConfigs.TargetCount,
-                VuforiaConfigs.Field(), VuforiaConfigs.Bot());
-        vuforia.init();
-        mark = vuforia.getTrackable("VuMark");
+        // Init the robot
+        robot = new Robot(hardwareMap, telemetry);
 
         // Wait for the game to begin
         telemetry.addData(">", "Ready for game start");
@@ -53,16 +42,16 @@ public class VuforiaTest extends OpMode {
     public void start() {
         telemetry.clearAll();
 
-        // Start Vuforia tracking
-        vuforia.start();
-        vuforia.enableCapture(true);
+        // Start Vuforia tracking and capture
+        robot.vuforia.start();
+        robot.vuforia.enableCapture(true);
     }
 
     @Override
     public void loop() {
 
         // Driver feedback
-        vuforia.display(telemetry);
+        robot.vuforia.display(telemetry);
         telemetry.addData("Mark", lastMark);
         telemetry.addData("RGB", lastRGB);
         telemetry.addData("Target (" + lastTarget + ")", lastDistance + "mm @ " + lastBearing + "°");
@@ -70,19 +59,19 @@ public class VuforiaTest extends OpMode {
         telemetry.update();
 
         // Update our location and target info
-        vuforia.track();
+        robot.vuforia.track();
 
         // Collect data about the first visible target
         String target = null;
         int bearing = 0;
         int distance = 0;
-        if (!vuforia.isStale()) {
-            for (String t : vuforia.getVisible().keySet()) {
-                if (vuforia.getVisible(t)) {
+        if (!robot.vuforia.isStale()) {
+            for (String t : robot.vuforia.getVisible().keySet()) {
+                if (robot.vuforia.getVisible(t)) {
                     target = t;
-                    int index = vuforia.getTargetIndex(t);
-                    bearing = vuforia.bearing(index);
-                    distance = vuforia.distance(index);
+                    int index = robot.vuforia.getTargetIndex(t);
+                    bearing = robot.vuforia.bearing(index);
+                    distance = robot.vuforia.distance(index);
                     break;
                 }
             }
@@ -92,11 +81,11 @@ public class VuforiaTest extends OpMode {
         }
 
         // Read the VuMark
-        RelicRecoveryVuMark lastMark = RelicRecoveryVuMark.from(mark);
+        lastMark = RelicRecoveryVuMark.from(robot.vumark);
 
         // Grab and optionally save an image
-        vuforia.capture();
-        ImageFTC image = vuforia.getImage();
+        robot.vuforia.capture();
+        ImageFTC image = robot.vuforia.getImage();
         if (image != null && gamepad1.a) {
             image.savePNG("vuforia-" + image.getTimestamp() + ".png");
         }
@@ -107,13 +96,14 @@ public class VuforiaTest extends OpMode {
         if (image != null) {
             lastImage = "(" + image.getWidth() + "," + image.getHeight() + ") " + image.getTimestamp();
             int slice = image.getWidth() / COLOR_SLICES;
-            lastRGB = "";
+            StringBuilder lastRGBStr = new StringBuilder();
             for (int i = 0; i < COLOR_SLICES; i++) {
                 int rgb = image.rgb(
                         new int[]{(i * slice), 0},
                         new int[]{((i + 1) * slice) - 1, image.getHeight() - 1});
-                lastRGB += " (" + Color.red(rgb) + "," + Color.green(rgb) + "," + Color.blue(rgb) + ")";
+                lastRGBStr.append(" (" + Color.red(rgb) + "," + Color.green(rgb) + "," + Color.blue(rgb) + ")");
             }
+            lastRGB = lastRGBStr.toString();
         }
     }
 }

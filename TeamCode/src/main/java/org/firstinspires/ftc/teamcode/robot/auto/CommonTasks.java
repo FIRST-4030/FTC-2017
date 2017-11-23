@@ -6,8 +6,8 @@ import org.firstinspires.ftc.teamcode.driveto.DriveToListener;
 import org.firstinspires.ftc.teamcode.driveto.DriveToParams;
 import org.firstinspires.ftc.teamcode.robot.CLAWS;
 import org.firstinspires.ftc.teamcode.robot.Robot;
-import org.firstinspires.ftc.teamcode.sensors.Gyro;
 import org.firstinspires.ftc.teamcode.utils.AutoDriver;
+import org.firstinspires.ftc.teamcode.utils.Heading;
 import org.firstinspires.ftc.teamcode.utils.OrderedEnum;
 import org.firstinspires.ftc.teamcode.utils.OrderedEnumHelper;
 import org.firstinspires.ftc.teamcode.wheels.MOTOR_SIDE;
@@ -54,9 +54,6 @@ public class CommonTasks implements DriveToListener {
     public final static DriveToComp COMP_CLOCKWISE = DriveToComp.GREATER;
     // Forward is toward the claws, motor positive, ticks increasing
     public final static DriveToComp COMP_FORWARD = DriveToComp.GREATER;
-
-    // Geometric constants
-    public final static int FULL_CIRCLE = 360;
 
     // Runtime
     private Robot robot;
@@ -144,8 +141,8 @@ public class CommonTasks implements DriveToListener {
 
         // Current and target heading in normalized degrees
         int heading = robot.gyro.getHeading();
-        int target = Gyro.normalizeHeading(heading + degrees);
-        int opposite = Gyro.normalizeHeading(target + (FULL_CIRCLE / 2));
+        int target = Heading.normalize(heading + degrees);
+        int opposite = Heading.normalize(target + (Heading.FULL_CIRCLE / 2));
 
         // Match both the target and its opposite to ensure we can turn through 0 degrees
         // Set the sensor type to GYRO_SLAVE for the opposite so we don't drive with it
