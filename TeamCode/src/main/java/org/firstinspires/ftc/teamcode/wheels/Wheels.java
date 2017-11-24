@@ -2,9 +2,9 @@ package org.firstinspires.ftc.teamcode.wheels;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
 
-public interface Wheels {
-    boolean isAvailable();
+import org.firstinspires.ftc.teamcode.utils.Available;
 
+public interface Wheels extends Available {
     void stop();
 
     void setSpeed(double speed);

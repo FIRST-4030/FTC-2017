@@ -7,13 +7,13 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class TankDrive implements Wheels {
-    private TankConfig config = null;
+    private WheelsConfig config = null;
     private boolean teleop = false;
     private double speedScale = 1.0f;
     private int[] offsets;
 
-    public TankDrive(HardwareMap map, Telemetry telemetry, TankConfig config) {
-        for (TankMotor motor : config.motors) {
+    public TankDrive(HardwareMap map, Telemetry telemetry, WheelsConfig config) {
+        for (WheelMotor motor : config.motors) {
             if (motor == null) {
                 telemetry.log().add(this.getClass().getName() + ": Null motor");
                 break;
@@ -68,7 +68,7 @@ public class TankDrive implements Wheels {
         if (isAvailable()) {
             return;
         }
-        for (TankMotor motor : config.motors) {
+        for (WheelMotor motor : config.motors) {
             motor.motor.setPower(speed * speedScale);
         }
     }
@@ -77,7 +77,7 @@ public class TankDrive implements Wheels {
         if (isAvailable()) {
             return;
         }
-        for (TankMotor motor : config.motors) {
+        for (WheelMotor motor : config.motors) {
             if (motor.side == side) {
                 motor.motor.setPower(speed * speedScale);
             }
@@ -88,7 +88,7 @@ public class TankDrive implements Wheels {
         if (!isAvailable()) {
             return;
         }
-        for (TankMotor motor : config.motors) {
+        for (WheelMotor motor : config.motors) {
             motor.motor.setPower(0.0d);
         }
     }

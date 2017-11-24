@@ -16,10 +16,8 @@ public class SwitchConfigs extends Configs {
     }
 
     public Switch init(SWITCHES name) {
-        SwitchConfig config = config(name, bot);
-        if (config == null) {
-            throw new IllegalArgumentException(this.getClass().getName() + ": Not configured: " + bot + ":" + name);
-        }
+        SwitchConfig config = config(bot, name);
+        super.checkConfig(config, name);
         Switch button = null;
         switch (config.type) {
             case DIGITAL:
@@ -29,17 +27,14 @@ public class SwitchConfigs extends Configs {
                 button = new Voltage(map, telemetry, config.name);
                 break;
         }
-        if (button == null || !button.isAvailable()) {
-            telemetry.log().add(this.getClass().getName() + ": Unable to initialize: " + bot + ":" + name);
-        }
+        super.checkAvailable(button, name);
         return button;
     }
 
-    public static SwitchConfig config(SWITCHES name, BOT bot) {
+    public SwitchConfig config(BOT bot, SWITCHES name) {
+        super.checkBOT();
+
         SwitchConfig config = null;
-        if (bot == null) {
-            throw new IllegalArgumentException("Null BOT");
-        }
         switch (bot) {
             case WestCoast:
                 switch (name) {

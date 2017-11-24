@@ -14,25 +14,18 @@ public class MotorConfigs extends Configs {
     }
 
     public Motor init(MOTORS name) {
-        MotorConfig config = config(name, bot);
-        if (config == null) {
-            throw new IllegalArgumentException(this.getClass().getName() + ": Not configured: " + bot + ":" + name);
-        }
+        MotorConfig config = config(bot, name);
+        super.checkConfig(config, name);
         Motor motor = new Motor(map, telemetry, config);
-        if (!motor.isAvailable()) {
-            telemetry.log().add(this.getClass().getName() + ": Unable to initialize: " + bot + ":" + name);
-        }
+        super.checkAvailable(motor, name);
         return motor;
     }
 
-    public static MotorConfig config(MOTORS motor, BOT bot) {
+    public MotorConfig config(BOT bot, MOTORS motor) {
+        super.checkBOT();
+        super.checkNull(motor, MOTORS.class.getName());
+
         MotorConfig config = null;
-        if (motor == null) {
-            throw new IllegalArgumentException("Null motor");
-        }
-        if (bot == null) {
-            throw new IllegalArgumentException("Null BOT");
-        }
         switch (bot) {
             case WestCoast:
                 switch (motor) {

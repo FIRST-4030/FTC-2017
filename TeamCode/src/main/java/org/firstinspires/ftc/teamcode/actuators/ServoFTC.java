@@ -4,8 +4,9 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.utils.Available;
 
-public class ServoFTC {
+public class ServoFTC implements Available {
     private Servo servo;
     private double min = 0.0d;
     private double max = 1.0d;

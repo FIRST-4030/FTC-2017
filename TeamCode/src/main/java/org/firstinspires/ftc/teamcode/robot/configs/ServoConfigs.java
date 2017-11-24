@@ -13,18 +13,17 @@ public class ServoConfigs extends Configs {
     }
 
     public ServoFTC init(SERVOS name) {
-        ServoConfig config = config(name, bot);
-        if (config == null) {
-            throw new IllegalArgumentException(this.getClass().getName() + ": Not configured: " + bot + ":" + name);
-        }
+        ServoConfig config = config(bot, name);
+        super.checkConfig(config, name);
         ServoFTC servo = new ServoFTC(map, telemetry, config);
-        if (!servo.isAvailable()) {
-            telemetry.log().add(this.getClass().getName() + ": Unable to initialize: " + bot + ":" + name);
-        }
+        super.checkAvailable(servo, name);
         return servo;
     }
 
-    public static ServoConfig config(SERVOS servo, BOT bot) {
+    public ServoConfig config(BOT bot, SERVOS servo) {
+        super.checkBOT();
+        super.checkNull(servo, SERVOS.class.getName());
+
         ServoConfig config = null;
         switch (bot) {
             case WestCoast:

@@ -16,9 +16,7 @@ public class GyroConfigs extends Configs {
 
     public Gyro init() {
         GyroConfig config = config(bot);
-        if (config == null) {
-            throw new IllegalArgumentException(this.getClass().getName() + ": Not configured: " + bot);
-        }
+        super.checkConfig(config);
         Gyro gyro = null;
         switch (config.type) {
             case REV:
@@ -28,17 +26,14 @@ public class GyroConfigs extends Configs {
                 gyro = new MRGyro(map, telemetry, config.name);
                 break;
         }
-        if (gyro == null || !gyro.isAvailable()) {
-            telemetry.log().add(this.getClass().getName() + ": Unable to initialize: " + bot);
-        }
+        super.checkAvailable(gyro);
         return gyro;
     }
 
-    public static GyroConfig config(BOT bot) {
+    public GyroConfig config(BOT bot) {
+        super.checkBOT();
+
         GyroConfig config = null;
-        if (bot == null) {
-            throw new IllegalArgumentException("Null BOT");
-        }
         switch (bot) {
             case WestCoast:
                 config = new GyroConfig(GYRO_TYPES.REV, "imu");

@@ -4,8 +4,9 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.utils.Available;
 
-public class Motor {
+public class Motor implements Available {
     private DcMotor motor = null;
     private boolean enabled = true;
     private int offset = 0;

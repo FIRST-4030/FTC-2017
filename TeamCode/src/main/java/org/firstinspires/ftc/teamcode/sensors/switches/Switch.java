@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.sensors.switches;
 
-public interface Switch {
-    boolean isAvailable();
+import org.firstinspires.ftc.teamcode.utils.Available;
 
+public interface Switch extends Available {
     boolean get();
 }
