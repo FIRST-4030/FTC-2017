@@ -12,11 +12,10 @@ import static org.firstinspires.ftc.teamcode.buttons.BUTTON_TYPE.TOGGLE;
 
 /**
  * Created by robotics on 9/16/2017.
- *
+ * <p>
  * by Bryan Cook
- *
+ * <p>
  * An OpMode abstract class
- *
  */
 
 public abstract class MechanumOpMode extends OpMode {
@@ -35,7 +34,6 @@ public abstract class MechanumOpMode extends OpMode {
     double bRVM;
 
     private ButtonHandler button = new ButtonHandler();
-
 
 
     @Override
@@ -61,14 +59,15 @@ public abstract class MechanumOpMode extends OpMode {
 
     /**
      * Turn a DC motor at a power range of -1 to 1
-     *
+     * <p>
      * Throws an IllegalArgumentException if the power parameter is not between -1 and 1 inclusive
      *
      * @param motor The motor to turn
      * @param power The power to turn the motor at. Between -1 and 1
      */
-    public void turnMotor(DcMotor motor, double power){
-        if(Math.abs(power) > 1) throw new IllegalArgumentException("turnMotor: The motor power must be between -1 and 1");
+    public void turnMotor(DcMotor motor, double power) {
+        if (Math.abs(power) > 1)
+            throw new IllegalArgumentException("turnMotor: The motor power must be between -1 and 1");
 
         motor.setPower(power);
 
@@ -77,20 +76,20 @@ public abstract class MechanumOpMode extends OpMode {
 
     /**
      * Move the mechanum drive base given a move speed, a move angle, and a rotation speed
-     *
+     * <p>
      * Will throw an Illegal argument exception if the speed or rotationSpeed are not between -1
      * and 1 inclusive
      *
-     * @param moveAngle The direction of the robot's desired velocity vector.
-     *                  (pi is straight ahead?)
-     * @param speed The magnitude of the robot's desired velocity vector. Between -1 and 1
+     * @param moveAngle     The direction of the robot's desired velocity vector.
+     *                      (pi is straight ahead?)
+     * @param speed         The magnitude of the robot's desired velocity vector. Between -1 and 1
      * @param rotationSpeed The desired Rotation speed of the robot. Between -1 and 1.
      */
-    public void move(double moveAngle, double speed, double rotationSpeed){
+    public void move(double moveAngle, double speed, double rotationSpeed) {
 
-        if(Math.abs(speed) > 1) throw new IllegalArgumentException(
+        if (Math.abs(speed) > 1) throw new IllegalArgumentException(
                 "move: The speed parameter must be between 1 and -1 inclusive");
-        if(Math.abs(rotationSpeed) > 1) throw new IllegalArgumentException(
+        if (Math.abs(rotationSpeed) > 1) throw new IllegalArgumentException(
                 "move: The rotationSpeed parameter must be between 1 and -1 inclusive");
 
         /*
@@ -158,30 +157,26 @@ public abstract class MechanumOpMode extends OpMode {
 
     /**
      * A much simpler but less flexible version of the move() method
-     *
+     * <p>
      * Will throw an Illegal Argument Exception if the value of speed in not between -1 and 1
      * inclusive
      *
      * @param direction 1 of 4 directions to move in
-     * @param speed The desired robot speed. Between -1 and 1
+     * @param speed     The desired robot speed. Between -1 and 1
      */
-    public void simpleMove(Direction direction, double speed){
+    public void simpleMove(Direction direction, double speed) {
 
-        if(Math.abs(speed) > 1) throw new IllegalArgumentException(
+        if (Math.abs(speed) > 1) throw new IllegalArgumentException(
                 "simpleMove: The parameter speed must be between -1 and 1 inclusive");
 
         move(direction.getMoveDirection(), speed, 0);
 
     }
 
-    public void jewelArm() {
-
-    }
-
     /**
      * Stop moving the robot
      */
-    public void stop(){
+    public void stop() {
         FLWheel.setPower(0);
         FRWheel.setPower(0);
         BLWheel.setPower(0);
