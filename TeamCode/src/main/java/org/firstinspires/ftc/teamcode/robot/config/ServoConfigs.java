@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.robot.configs;
+package org.firstinspires.ftc.teamcode.robot.config;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -6,6 +6,8 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.actuators.ServoFTC;
 import org.firstinspires.ftc.teamcode.actuators.ServoConfig;
 import org.firstinspires.ftc.teamcode.robot.SERVOS;
+import org.firstinspires.ftc.teamcode.config.BOT;
+import org.firstinspires.ftc.teamcode.config.Configs;
 
 public class ServoConfigs extends Configs {
     public ServoConfigs(HardwareMap map, Telemetry telemetry, BOT bot) {

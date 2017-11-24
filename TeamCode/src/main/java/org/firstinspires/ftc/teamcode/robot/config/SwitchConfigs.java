@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.robot.configs;
+package org.firstinspires.ftc.teamcode.robot.config;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -9,6 +9,8 @@ import org.firstinspires.ftc.teamcode.sensors.switches.SWITCH_TYPES;
 import org.firstinspires.ftc.teamcode.sensors.switches.Switch;
 import org.firstinspires.ftc.teamcode.sensors.switches.SwitchConfig;
 import org.firstinspires.ftc.teamcode.sensors.switches.Voltage;
+import org.firstinspires.ftc.teamcode.config.BOT;
+import org.firstinspires.ftc.teamcode.config.Configs;
 
 public class SwitchConfigs extends Configs {
     public SwitchConfigs(HardwareMap map, Telemetry telemetry, BOT bot) {

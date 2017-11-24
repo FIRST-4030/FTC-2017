@@ -7,12 +7,12 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.teamcode.actuators.Motor;
 import org.firstinspires.ftc.teamcode.actuators.ServoFTC;
 import org.firstinspires.ftc.teamcode.field.VuforiaConfigs;
-import org.firstinspires.ftc.teamcode.robot.configs.BOT;
-import org.firstinspires.ftc.teamcode.robot.configs.GyroConfigs;
-import org.firstinspires.ftc.teamcode.robot.configs.MotorConfigs;
-import org.firstinspires.ftc.teamcode.robot.configs.ServoConfigs;
-import org.firstinspires.ftc.teamcode.robot.configs.SwitchConfigs;
-import org.firstinspires.ftc.teamcode.robot.configs.WheelConfigs;
+import org.firstinspires.ftc.teamcode.config.BOT;
+import org.firstinspires.ftc.teamcode.robot.config.GyroConfigs;
+import org.firstinspires.ftc.teamcode.robot.config.MotorConfigs;
+import org.firstinspires.ftc.teamcode.robot.config.ServoConfigs;
+import org.firstinspires.ftc.teamcode.robot.config.SwitchConfigs;
+import org.firstinspires.ftc.teamcode.robot.config.WheelConfigs;
 import org.firstinspires.ftc.teamcode.sensors.gyro.Gyro;
 import org.firstinspires.ftc.teamcode.sensors.switches.Switch;
 import org.firstinspires.ftc.teamcode.vuforia.VuforiaFTC;
@@ -54,7 +54,7 @@ public class Robot {
         for (BOT b : BOT.values()) {
             boolean failed = false;
             for (MOTORS name : MOTORS.values()) {
-                Motor motor = new Motor(map, telemetry, MotorConfigs.config(name, b));
+                Motor motor = new Motor(map, telemetry, MotorConfigs.config(b, name));
                 if (!motor.isAvailable()) {
                     failed = true;
                     break;

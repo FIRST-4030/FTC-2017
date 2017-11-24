@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.robot.configs;
+package org.firstinspires.ftc.teamcode.robot.config;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -8,6 +8,8 @@ import org.firstinspires.ftc.teamcode.sensors.gyro.Gyro;
 import org.firstinspires.ftc.teamcode.sensors.gyro.GyroConfig;
 import org.firstinspires.ftc.teamcode.sensors.gyro.MRGyro;
 import org.firstinspires.ftc.teamcode.sensors.gyro.RevIMU;
+import org.firstinspires.ftc.teamcode.config.BOT;
+import org.firstinspires.ftc.teamcode.config.Configs;
 
 public class GyroConfigs extends Configs {
     public GyroConfigs(HardwareMap map, Telemetry telemetry, BOT bot) {

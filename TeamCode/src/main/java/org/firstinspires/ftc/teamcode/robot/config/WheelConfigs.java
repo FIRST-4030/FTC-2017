@@ -1,8 +1,10 @@
-package org.firstinspires.ftc.teamcode.robot.configs;
+package org.firstinspires.ftc.teamcode.robot.config;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.config.BOT;
+import org.firstinspires.ftc.teamcode.config.Configs;
 import org.firstinspires.ftc.teamcode.wheels.DRIVE_TYPE;
 import org.firstinspires.ftc.teamcode.wheels.MOTOR_SIDE;
 import org.firstinspires.ftc.teamcode.wheels.WheelsConfig;

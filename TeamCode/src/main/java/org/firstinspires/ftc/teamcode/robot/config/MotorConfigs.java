@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.robot.configs;
+package org.firstinspires.ftc.teamcode.robot.config;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -6,6 +6,8 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.actuators.Motor;
 import org.firstinspires.ftc.teamcode.actuators.MotorConfig;
 import org.firstinspires.ftc.teamcode.robot.MOTORS;
+import org.firstinspires.ftc.teamcode.config.BOT;
+import org.firstinspires.ftc.teamcode.config.Configs;
 
 public class MotorConfigs extends Configs {
     public MotorConfigs(HardwareMap map, Telemetry telemetry, BOT bot) {
@@ -21,9 +23,11 @@ public class MotorConfigs extends Configs {
         return motor;
     }
 
-    public MotorConfig config(BOT bot, MOTORS motor) {
-        super.checkBOT();
-        super.checkNull(motor, MOTORS.class.getName());
+    // This method is static for use in frame detection in Robot
+    // Other config methods can be static, but do not need to be in typical use
+    public static MotorConfig config(BOT bot, MOTORS motor) {
+        checkNull(bot, BOT.class.getName());
+        checkNull(motor, MOTORS.class.getName());
 
         MotorConfig config = null;
         switch (bot) {

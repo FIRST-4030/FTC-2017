@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.wheels;
 
-import org.firstinspires.ftc.teamcode.utils.Config;
+import org.firstinspires.ftc.teamcode.config.Config;
 
 public class WheelsConfig implements Config {
     public WheelMotor[] motors;

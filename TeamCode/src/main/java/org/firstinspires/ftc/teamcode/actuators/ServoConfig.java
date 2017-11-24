@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.actuators;
 
-import org.firstinspires.ftc.teamcode.utils.Config;
+import org.firstinspires.ftc.teamcode.config.Config;
 
 public class ServoConfig implements Config {
     public final String name;

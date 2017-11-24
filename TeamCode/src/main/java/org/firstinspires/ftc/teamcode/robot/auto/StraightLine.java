@@ -7,7 +7,7 @@ import org.firstinspires.ftc.teamcode.buttons.BUTTON;
 import org.firstinspires.ftc.teamcode.buttons.ButtonHandler;
 import org.firstinspires.ftc.teamcode.field.Field;
 import org.firstinspires.ftc.teamcode.robot.Robot;
-import org.firstinspires.ftc.teamcode.utils.AutoDriver;
+import org.firstinspires.ftc.teamcode.driveto.AutoDriver;
 import org.firstinspires.ftc.teamcode.utils.OrderedEnum;
 import org.firstinspires.ftc.teamcode.utils.OrderedEnumHelper;
 

@@ -6,7 +6,7 @@ import org.firstinspires.ftc.teamcode.driveto.DriveToListener;
 import org.firstinspires.ftc.teamcode.driveto.DriveToParams;
 import org.firstinspires.ftc.teamcode.robot.CLAWS;
 import org.firstinspires.ftc.teamcode.robot.Robot;
-import org.firstinspires.ftc.teamcode.utils.AutoDriver;
+import org.firstinspires.ftc.teamcode.driveto.AutoDriver;
 import org.firstinspires.ftc.teamcode.utils.Heading;
 import org.firstinspires.ftc.teamcode.utils.OrderedEnum;
 import org.firstinspires.ftc.teamcode.utils.OrderedEnumHelper;

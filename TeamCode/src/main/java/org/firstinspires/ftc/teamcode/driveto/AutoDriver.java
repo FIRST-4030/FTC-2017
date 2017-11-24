@@ -1,6 +1,4 @@
-package org.firstinspires.ftc.teamcode.utils;
-
-import org.firstinspires.ftc.teamcode.driveto.DriveTo;
+package org.firstinspires.ftc.teamcode.driveto;
 
 public class AutoDriver {
     public boolean done = false;

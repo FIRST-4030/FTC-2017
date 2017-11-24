@@ -1,17 +1,16 @@
-package org.firstinspires.ftc.teamcode.robot.configs;
+package org.firstinspires.ftc.teamcode.config;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.utils.Available;
-import org.firstinspires.ftc.teamcode.utils.Config;
 
 abstract public class Configs {
     protected HardwareMap map = null;
     protected Telemetry telemetry = null;
     protected BOT bot = null;
 
-    public Configs(HardwareMap map, Telemetry telemetry, BOT bot) throws IllegalArgumentException {
+    protected Configs(HardwareMap map, Telemetry telemetry, BOT bot) throws IllegalArgumentException {
         if (map == null || telemetry == null || bot == null) {
             throw new IllegalArgumentException(this.getClass().getName() +
                     ": Null HardwareMap, Telemetry, or BOT");
@@ -21,14 +20,14 @@ abstract public class Configs {
         this.bot = bot;
     }
 
-    protected void checkBOT() throws IllegalArgumentException {
-        checkNull(bot, "BOT");
+    protected static void checkNull(Object obj, String name) throws IllegalArgumentException {
+        if (obj == null) {
+            throw new IllegalArgumentException("Null " + name);
+        }
     }
 
-    protected void checkNull(Object obj, String name) throws IllegalArgumentException {
-        if (obj == null) {
-            throw new IllegalArgumentException(this.getClass().getName() + ": Null " + name);
-        }
+    protected void checkBOT() throws IllegalArgumentException {
+        checkNull(bot, BOT.class.getName());
     }
 
     protected void checkConfig(Config config) throws IllegalArgumentException {
