@@ -19,6 +19,10 @@ public class WheelMotor implements Available {
         this(name, side, MOTOR_END.FRONT, reverse);
     }
 
+    public WheelMotor(String name, MOTOR_SIDE side, MOTOR_END end) {
+        this(name, side, end, false);
+    }
+
     public WheelMotor(String name, MOTOR_SIDE side, MOTOR_END end, boolean reverse) {
         this.name = name;
         this.side = side;

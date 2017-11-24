@@ -6,6 +6,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.config.BOT;
 import org.firstinspires.ftc.teamcode.config.Configs;
 import org.firstinspires.ftc.teamcode.wheels.DRIVE_TYPE;
+import org.firstinspires.ftc.teamcode.wheels.MOTOR_END;
 import org.firstinspires.ftc.teamcode.wheels.MOTOR_SIDE;
 import org.firstinspires.ftc.teamcode.wheels.WheelsConfig;
 import org.firstinspires.ftc.teamcode.wheels.TankDrive;
@@ -18,7 +19,7 @@ public class WheelConfigs extends Configs {
     }
 
     public Wheels init() {
-        WheelsConfig config = config(bot);
+        WheelsConfig config = config();
         super.checkConfig(config);
         Wheels wheels = null;
         switch (config.type) {
@@ -32,10 +33,10 @@ public class WheelConfigs extends Configs {
         return wheels;
     }
 
-    public WheelsConfig config(BOT bot) {
-        WheelMotor[] motors;
+    public WheelsConfig config() {
         super.checkBOT();
 
+        WheelMotor[] motors;
         WheelsConfig config = null;
         switch (bot) {
             case WestCoast:
@@ -47,9 +48,11 @@ public class WheelConfigs extends Configs {
                 config = new WheelsConfig(DRIVE_TYPE.TANK, motors, 0, 1.0d);
                 break;
             case Mecanum:
-                motors = new WheelMotor[2];
-                motors[0] = new WheelMotor("L", MOTOR_SIDE.LEFT);
-                motors[1] = new WheelMotor("R", MOTOR_SIDE.RIGHT, true);
+                motors = new WheelMotor[4];
+                motors[0] = new WheelMotor("LF", MOTOR_SIDE.LEFT, MOTOR_END.FRONT);
+                motors[1] = new WheelMotor("LR", MOTOR_SIDE.LEFT, MOTOR_END.BACK, true);
+                motors[2] = new WheelMotor("RF", MOTOR_SIDE.RIGHT, MOTOR_END.FRONT);
+                motors[3] = new WheelMotor("RR", MOTOR_SIDE.RIGHT, MOTOR_END.BACK, true);
                 config = new WheelsConfig(DRIVE_TYPE.TANK, motors, 0, 1.0d);
                 break;
         }

@@ -15,14 +15,14 @@ public class ServoConfigs extends Configs {
     }
 
     public ServoFTC init(SERVOS name) {
-        ServoConfig config = config(bot, name);
+        ServoConfig config = config(name);
         super.checkConfig(config, name);
         ServoFTC servo = new ServoFTC(map, telemetry, config);
         super.checkAvailable(servo, name);
         return servo;
     }
 
-    public ServoConfig config(BOT bot, SERVOS servo) {
+    public ServoConfig config(SERVOS servo) {
         super.checkBOT();
         super.checkNull(servo, SERVOS.class.getName());
 

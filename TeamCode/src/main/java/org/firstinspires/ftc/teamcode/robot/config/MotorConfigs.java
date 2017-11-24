@@ -16,18 +16,16 @@ public class MotorConfigs extends Configs {
     }
 
     public Motor init(MOTORS name) {
-        MotorConfig config = config(bot, name);
+        MotorConfig config = config(name);
         super.checkConfig(config, name);
         Motor motor = new Motor(map, telemetry, config);
         super.checkAvailable(motor, name);
         return motor;
     }
 
-    // This method is static for use in frame detection in Robot
-    // Other config methods can be static, but do not need to be in typical use
-    public static MotorConfig config(BOT bot, MOTORS motor) {
-        checkNull(bot, BOT.class.getName());
-        checkNull(motor, MOTORS.class.getName());
+    public MotorConfig config(MOTORS motor) {
+        super.checkBOT();
+        super.checkNull(motor, MOTORS.class.getName());
 
         MotorConfig config = null;
         switch (bot) {

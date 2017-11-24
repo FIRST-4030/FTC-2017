@@ -18,7 +18,7 @@ public class SwitchConfigs extends Configs {
     }
 
     public Switch init(SWITCHES name) {
-        SwitchConfig config = config(bot, name);
+        SwitchConfig config = config(name);
         super.checkConfig(config, name);
         Switch button = null;
         switch (config.type) {
@@ -33,7 +33,7 @@ public class SwitchConfigs extends Configs {
         return button;
     }
 
-    public SwitchConfig config(BOT bot, SWITCHES name) {
+    public SwitchConfig config(SWITCHES name) {
         super.checkBOT();
 
         SwitchConfig config = null;

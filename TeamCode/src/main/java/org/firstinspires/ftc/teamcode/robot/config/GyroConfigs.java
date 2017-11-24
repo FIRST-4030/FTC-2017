@@ -17,7 +17,7 @@ public class GyroConfigs extends Configs {
     }
 
     public Gyro init() {
-        GyroConfig config = config(bot);
+        GyroConfig config = config();
         super.checkConfig(config);
         Gyro gyro = null;
         switch (config.type) {
@@ -32,7 +32,7 @@ public class GyroConfigs extends Configs {
         return gyro;
     }
 
-    public GyroConfig config(BOT bot) {
+    public GyroConfig config() {
         super.checkBOT();
 
         GyroConfig config = null;

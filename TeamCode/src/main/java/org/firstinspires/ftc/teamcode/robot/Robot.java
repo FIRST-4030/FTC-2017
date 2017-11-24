@@ -49,25 +49,22 @@ public class Robot {
     }
 
     public BOT detectBot() {
-        // Try all motors from each bot until something matches
-        bot = BOT.values()[0];
+        // Try WheelConfigs from each bot until something succeeds
+        bot = null;
         for (BOT b : BOT.values()) {
-            boolean failed = false;
-            for (MOTORS name : MOTORS.values()) {
-                Motor motor = new Motor(map, telemetry, MotorConfigs.config(b, name));
-                if (!motor.isAvailable()) {
-                    failed = true;
-                    break;
-                }
-            }
-            if (!failed) {
+            WheelConfigs wheels = new WheelConfigs(map, telemetry, b);
+            Wheels w = wheels.init();
+            if (w != null && w.isAvailable()) {
                 bot = b;
                 break;
             }
         }
-
+        if (bot == null) {
+            bot = BOT.values()[0];
+            telemetry.log().add("BOT detection failed. Default: " + bot);
+        }
         if (bot.ordinal() != 0) {
-            telemetry.log().add("Using BOT " + bot);
+            telemetry.log().add("Using BOT: " + bot);
         }
         return bot;
     }
