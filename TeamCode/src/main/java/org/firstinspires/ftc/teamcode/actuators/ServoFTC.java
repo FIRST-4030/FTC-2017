@@ -8,8 +8,10 @@ import org.firstinspires.ftc.teamcode.utils.Available;
 
 public class ServoFTC implements Available {
     private Servo servo;
-    private double min = 0.0d;
-    private double max = 1.0d;
+    private static final double ABS_MIN = 0.0d;
+    private final static double ABS_MAX = 1.0d;
+    private double min = ABS_MIN;
+    private double max = ABS_MAX;
 
     public ServoFTC(HardwareMap map, Telemetry telemetry, ServoConfig config) {
         if (config == null) {
@@ -49,12 +51,17 @@ public class ServoFTC implements Available {
         if (!isAvailable()) {
             return;
         }
+        if (position < ABS_MIN) {
+            position = ABS_MIN;
+        } else if (position > ABS_MAX) {
+            position = ABS_MAX;
+        }
         servo.setPosition(position);
     }
 
     public double getPostion() {
         if (!isAvailable()) {
-            return 0.0d;
+            return ABS_MIN;
         }
         return servo.getPosition();
     }
@@ -68,7 +75,7 @@ public class ServoFTC implements Available {
     }
 
     public void toggle() {
-        if (getPostion() == max) {
+        if (getPostion() >= max) {
             min();
         } else {
             max();
