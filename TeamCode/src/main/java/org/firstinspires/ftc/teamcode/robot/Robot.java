@@ -105,7 +105,6 @@ public class Robot {
 
         vuforia = new VuforiaFTC(VuforiaConfigs.AssetName, VuforiaConfigs.TargetCount,
                 VuforiaConfigs.Field(), VuforiaConfigs.Bot());
-        vuforia.init();
         vumark = vuforia.getTrackable(VuforiaConfigs.TargetNames[0]);
 
         gyro = gyros.init();

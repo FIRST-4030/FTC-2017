@@ -106,7 +106,7 @@ public class VuforiaFTC {
         CONFIG_TARGETS_NUM = numTargets;
     }
 
-    public void init() {
+    public void start() {
         // Init Vuforia
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(R.id.cameraMonitorViewId);
         parameters.vuforiaLicenseKey = VUFORIA_KEY;
@@ -131,12 +131,9 @@ public class VuforiaFTC {
         for (VuforiaTrackable trackable : targets) {
             ((VuforiaTrackableDefaultListener) trackable.getListener()).setPhoneInformation(phoneLocation, parameters.cameraDirection);
         }
-    }
 
-    public void start() {
         targetsRaw.activate();
     }
-
     public void track() {
         for (VuforiaTrackable trackable : targets) {
             // Per-target visibility (somewhat imaginary but still useful)
