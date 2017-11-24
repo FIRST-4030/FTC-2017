@@ -2,8 +2,8 @@ package org.firstinspires.ftc.teamcode.robot.test;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
+import org.firstinspires.ftc.teamcode.driveto.AutoDriver;
 import org.firstinspires.ftc.teamcode.robot.auto.CommonTasks;
-import org.firstinspires.ftc.teamcode.driveto.DriveTo;
 import org.firstinspires.ftc.teamcode.robot.Robot;
 import org.firstinspires.ftc.teamcode.utils.OrderedEnum;
 import org.firstinspires.ftc.teamcode.utils.OrderedEnumHelper;
@@ -17,7 +17,7 @@ public class SimpleAuto extends OpMode {
     // Devices and subsystems
     private Robot robot = null;
     private CommonTasks common = null;
-    private DriveTo drive;
+    private AutoDriver driver = new AutoDriver();
 
     // Lift zero testing
     enum LIFT_STATE implements OrderedEnum {
@@ -45,10 +45,6 @@ public class SimpleAuto extends OpMode {
     @Override
     public void init() {
 
-        // Placate drivers; sometimes VuforiaFTC is slow to init
-        telemetry.addData(">", "Initializing...");
-        telemetry.update();
-
         // Common init
         robot = new Robot(hardwareMap, telemetry);
         common = new CommonTasks(robot);
@@ -70,34 +66,31 @@ public class SimpleAuto extends OpMode {
     @Override
     public void loop() {
 
-        // Handle DriveTo driving
-        if (drive != null) {
+        // Handle AutoDriver driving
+        if (driver.drive != null) {
             // DriveTo
-            drive.drive();
+            driver.drive.drive();
 
             // Return to teleop when complete
-            if (drive.isDone()) {
-                drive = null;
+            if (driver.drive.isDone()) {
+                driver.drive = null;
                 robot.wheels.setTeleop(true);
             }
         }
 
         // Driver feedback
-        telemetry.addData("Drive", drive);
-        telemetry.addData("Heading", robot.gyro.getHeading());
-        telemetry.addData("Encoder", robot.wheels.getEncoder());
-        telemetry.addData("Lift", robot.lift.getEncoder());
         telemetry.addData("LiftZero", liftState);
-        telemetry.addData("Gyro Ready", robot.gyro.isReady());
-        telemetry.addData("Time", Round.truncate(time));
-        telemetry.addData("Lift Timeout", Round.truncate(liftTimeout));
+        telemetry.addData("Lift", robot.lift.getEncoder() + (robot.liftSwitch.get() ? "Down" : "Up"));
+        telemetry.addData("Gyro", robot.gyro.isReady() ? robot.gyro.getHeading() : "<Calibrating>");
+        telemetry.addData("Encoder", robot.wheels.getEncoder());
+        telemetry.addData("Time/Drive", Round.truncate(time) + "/" + driver.drive);
         telemetry.update();
 
         /*
-         * Cut the loop short when we are auto-driving
-         * This keeps us out of the state machine until the last auto-drive command is complete
+         * Cut the loop short when we are AutoDriver'ing
+         * This keeps us out of the state machine until the preceding command is complete
          */
-        if (drive != null) {
+        if (driver.isRunning(time)) {
             return;
         }
 
@@ -130,14 +123,14 @@ public class SimpleAuto extends OpMode {
         }
 
         if (gamepad1.a) {
-            drive = common.driveForward(254);
+            driver.drive = common.driveForward(254);
         } else if (gamepad1.b) {
             liftReady = false;
             liftState = LIFT_STATE.INIT;
         } else if (gamepad1.dpad_left) {
-            drive = common.turnDegrees(-30);
+            driver.drive = common.turnDegrees(-30);
         } else if (gamepad1.dpad_right) {
-            drive = common.turnDegrees(30);
+            driver.drive = common.turnDegrees(30);
         }
     }
 }
