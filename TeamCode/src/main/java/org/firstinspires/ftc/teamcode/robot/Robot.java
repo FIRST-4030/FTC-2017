@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.robot;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.teamcode.actuators.Motor;
 import org.firstinspires.ftc.teamcode.actuators.ServoFTC;
 import org.firstinspires.ftc.teamcode.field.VuforiaConfigs;
@@ -12,7 +11,7 @@ import org.firstinspires.ftc.teamcode.robot.config.GyroConfigs;
 import org.firstinspires.ftc.teamcode.robot.config.MotorConfigs;
 import org.firstinspires.ftc.teamcode.robot.config.ServoConfigs;
 import org.firstinspires.ftc.teamcode.robot.config.SwitchConfigs;
-import org.firstinspires.ftc.teamcode.robot.config.WheelConfigs;
+import org.firstinspires.ftc.teamcode.robot.config.WheelsConfigs;
 import org.firstinspires.ftc.teamcode.sensors.gyro.Gyro;
 import org.firstinspires.ftc.teamcode.sensors.switches.Switch;
 import org.firstinspires.ftc.teamcode.vuforia.VuforiaFTC;
@@ -48,10 +47,10 @@ public class Robot {
     }
 
     public BOT detectBot() {
-        // Try WheelConfigs from each bot until something succeeds
+        // Try WheelsConfigs from each bot until something succeeds
         bot = null;
         for (BOT b : BOT.values()) {
-            WheelConfigs wheels = new WheelConfigs(map, telemetry, b);
+            WheelsConfigs wheels = new WheelsConfigs(map, telemetry, b);
             Wheels w = wheels.init();
             if (w != null && w.isAvailable()) {
                 bot = b;
@@ -70,7 +69,7 @@ public class Robot {
 
     private void init() {
         GyroConfigs gyros = new GyroConfigs(map, telemetry, bot);
-        WheelConfigs wheels = new WheelConfigs(map, telemetry, bot);
+        WheelsConfigs wheels = new WheelsConfigs(map, telemetry, bot);
         MotorConfigs motors = new MotorConfigs(map, telemetry, bot);
         ServoConfigs servos = new ServoConfigs(map, telemetry, bot);
         SwitchConfigs switches = new SwitchConfigs(map, telemetry, bot);

@@ -13,8 +13,8 @@ import org.firstinspires.ftc.teamcode.wheels.TankDrive;
 import org.firstinspires.ftc.teamcode.wheels.WheelMotor;
 import org.firstinspires.ftc.teamcode.wheels.Wheels;
 
-public class WheelConfigs extends Configs {
-    public WheelConfigs(HardwareMap map, Telemetry telemetry, BOT bot) {
+public class WheelsConfigs extends Configs {
+    public WheelsConfigs(HardwareMap map, Telemetry telemetry, BOT bot) {
         super(map, telemetry, bot);
     }
 
