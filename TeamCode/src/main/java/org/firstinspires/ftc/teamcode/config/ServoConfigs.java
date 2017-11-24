@@ -100,7 +100,7 @@ public class ServoConfigs {
                 config = new ServoFTCConfig("CL1", true, calMin(cal, 0.67d), calMax(cal, 0.96d));
                 break;
             case "CLAW-BOTTOM":
-                config = new ServoFTCConfig("CL2", true, calMin(cal, 0.11d), calMax(cal, 0.41d));
+                config = new ServoFTCConfig("CL2", true, calMin(cal, 0.47d), calMax(cal, 0.87d));
                 break;
             case "LEFT-INTAKE":
                 config = new ServoFTCConfig("lBumperS", true, calMin(cal, 0.44d), calMax(cal, 0.61d));
@@ -111,4 +111,5 @@ public class ServoConfigs {
         }
         return config;
     }
+
 }
