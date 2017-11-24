@@ -132,8 +132,10 @@ public class VuforiaFTC {
             ((VuforiaTrackableDefaultListener) trackable.getListener()).setPhoneInformation(phoneLocation, parameters.cameraDirection);
         }
 
+        // Start tracking
         targetsRaw.activate();
     }
+
     public void track() {
         for (VuforiaTrackable trackable : targets) {
             // Per-target visibility (somewhat imaginary but still useful)

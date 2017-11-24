@@ -38,7 +38,6 @@ public class Calibration extends OpMode {
         buttons.register("INTAKE-" + INTAKES.LEFT + "-DOWN", gamepad1, BUTTON.x);
         buttons.register("INTERVAL-UP", gamepad1, BUTTON.right_stick_button);
         buttons.register("INTERVAL-DOWN", gamepad1, BUTTON.left_stick_button);
-
     }
 
     @Override

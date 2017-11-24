@@ -21,6 +21,7 @@ public class RevIMU implements Gyro {
     private BNO055IMU gyro = null;
     private boolean ready = false;
     private int offset = 0;
+    private boolean started = false;
 
     public RevIMU(HardwareMap map, Telemetry telemetry, String name) {
         if (name == null || name.isEmpty()) {
@@ -31,6 +32,12 @@ public class RevIMU implements Gyro {
         } catch (Exception e) {
             gyro = null;
             telemetry.log().add(this.getClass().getName() + "No such device: " + name);
+            return;
+        }
+    }
+
+    public void start() {
+        if (!isAvailable() || started) {
             return;
         }
 
@@ -54,10 +61,11 @@ public class RevIMU implements Gyro {
         if (CALIBRATION_FILE != null && !CALIBRATION_FILE.isEmpty()) {
             params.calibrationDataFile = CALIBRATION_FILE;
         }
-        gyro.initialize(params);
 
         // Start the IMU
+        gyro.initialize(params);
         gyro.startAccelerationIntegration(new Position(), new Velocity(), INTEGRATION_INTERVAL);
+        started = true;
     }
 
     public boolean isAvailable() {

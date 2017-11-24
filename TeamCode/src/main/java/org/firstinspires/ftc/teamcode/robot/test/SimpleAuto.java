@@ -55,10 +55,6 @@ public class SimpleAuto extends OpMode {
     }
 
     @Override
-    public void init_loop() {
-    }
-
-    @Override
     public void start() {
         telemetry.clearAll();
     }

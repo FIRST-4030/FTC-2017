@@ -28,7 +28,6 @@ public class Robot {
     public Gyro gyro = null;
     public Switch liftSwitch = null;
     public VuforiaFTC vuforia = null;
-    public VuforiaTrackable vumark = null;
 
     private HardwareMap map;
     private Telemetry telemetry;
@@ -75,12 +74,19 @@ public class Robot {
         MotorConfigs motors = new MotorConfigs(map, telemetry, bot);
         ServoConfigs servos = new ServoConfigs(map, telemetry, bot);
         SwitchConfigs switches = new SwitchConfigs(map, telemetry, bot);
+        telemetry.addData("Init", "Config");
+        telemetry.update();
 
         this.wheels = wheels.init();
         this.wheels.stop();
+        telemetry.addData("Init", "Wheels");
+        telemetry.update();
 
         lift = motors.init(MOTORS.LIFT);
         lift.stop();
+        telemetry.addData("Init", "Lift");
+        telemetry.update();
+
 
         claws = new ServoFTC[CLAWS.values().length];
         claws[CLAWS.TOP.ordinal()] = servos.init(SERVOS.CLAW_TOP);
@@ -88,6 +94,9 @@ public class Robot {
         for (ServoFTC claw : claws) {
             claw.min();
         }
+        telemetry.addData("Init", "Claws");
+        telemetry.update();
+
 
         intakes = new Motor[INTAKES.values().length];
         intakes[INTAKES.RIGHT.ordinal()] = motors.init(MOTORS.INTAKE_RIGHT);
@@ -95,6 +104,9 @@ public class Robot {
         for (Motor intake : intakes) {
             intake.stop();
         }
+        telemetry.addData("Init", "Intake Motors");
+        telemetry.update();
+
 
         intakeArms = new ServoFTC[INTAKES.values().length];
         intakeArms[INTAKES.RIGHT.ordinal()] = servos.init(SERVOS.INTAKE_RIGHT);
@@ -102,13 +114,20 @@ public class Robot {
         for (ServoFTC intake : intakeArms) {
             intake.min();
         }
+        telemetry.addData("Init", "Intake Servos");
+        telemetry.update();
+
+        gyro = gyros.init();
+        telemetry.addData("Init", "Gyro");
+        telemetry.update();
+
+        liftSwitch = switches.init(SWITCHES.LIFT);
+        telemetry.addData("Init", "Switches");
+        telemetry.update();
 
         vuforia = new VuforiaFTC(VuforiaConfigs.AssetName, VuforiaConfigs.TargetCount,
                 VuforiaConfigs.Field(), VuforiaConfigs.Bot());
-        vumark = vuforia.getTrackable(VuforiaConfigs.TargetNames[0]);
-
-        gyro = gyros.init();
-
-        liftSwitch = switches.init(SWITCHES.LIFT);
+        telemetry.addData("Init", "Vuforia");
+        telemetry.update();
     }
 }

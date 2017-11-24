@@ -9,6 +9,7 @@ public class MRGyro implements Gyro {
     private ModernRoboticsI2cGyro gyro;
     private boolean ready = false;
     private int offset = 0;
+    private boolean started = false;
 
     public MRGyro(HardwareMap map, Telemetry telemetry, String name) {
         if (name == null || name.isEmpty()) {
@@ -21,9 +22,15 @@ public class MRGyro implements Gyro {
             telemetry.log().add(this.getClass().getName() + "No such device: " + name);
             return;
         }
+    }
 
+    public void start() {
+        if (!isAvailable() || started) {
+            return;
+        }
         gyro.resetDeviceConfigurationForOpMode();
         gyro.calibrate();
+        started = true;
     }
 
     public boolean isAvailable() {

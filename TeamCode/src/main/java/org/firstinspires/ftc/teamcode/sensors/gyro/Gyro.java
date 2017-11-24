@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode.sensors.gyro;
 import org.firstinspires.ftc.teamcode.utils.Available;
 
 public interface Gyro extends Available {
+    void start();
+
     boolean isReady();
 
     int getHeading();

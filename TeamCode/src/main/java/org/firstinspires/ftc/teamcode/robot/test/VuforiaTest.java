@@ -5,6 +5,7 @@ import android.graphics.Color;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
+import org.firstinspires.ftc.teamcode.field.VuforiaConfigs;
 import org.firstinspires.ftc.teamcode.robot.Robot;
 import org.firstinspires.ftc.teamcode.vuforia.ImageFTC;
 
@@ -32,10 +33,6 @@ public class VuforiaTest extends OpMode {
         // Wait for the game to begin
         telemetry.addData(">", "Ready for game start");
         telemetry.update();
-    }
-
-    @Override
-    public void init_loop() {
     }
 
     @Override
@@ -81,7 +78,7 @@ public class VuforiaTest extends OpMode {
         }
 
         // Read the VuMark
-        lastMark = RelicRecoveryVuMark.from(robot.vumark);
+        lastMark = RelicRecoveryVuMark.from(robot.vuforia.getTrackable(VuforiaConfigs.TargetNames[0]));
 
         // Grab and optionally save an image
         robot.vuforia.capture();
