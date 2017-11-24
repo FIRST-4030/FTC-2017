@@ -174,9 +174,7 @@ public abstract class MechanumOpMode extends OpMode {
         move(direction.getMoveDirection(), speed, 0);
 
     }
-
-    public void jewelArm()
-
+    
     /**
      * Stop moving the robot
      */
