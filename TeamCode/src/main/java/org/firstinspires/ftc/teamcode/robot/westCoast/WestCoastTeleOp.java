@@ -33,8 +33,8 @@ public class WestCoastTeleOp extends OpMode {
         robot = new Robot(hardwareMap, telemetry);
 
         // Register buttons
-        buttons.register("TOP-CLAW", gamepad2, BUTTON.right_bumper);
-        buttons.register("BOTTOM-CLAW", gamepad2, BUTTON.left_bumper);
+        buttons.register("CLAW-" + CLAWS.TOP, gamepad2, BUTTON.right_bumper);
+        buttons.register("CLAW-" + CLAWS.BOTTOM, gamepad2, BUTTON.left_bumper);
         buttons.register("EXTEND-INTAKE", gamepad2, BUTTON.b);
         buttons.register("LOCK-INTAKE", gamepad2, BUTTON.a, BUTTON_TYPE.TOGGLE);
         buttons.register("SLOW-MODE", gamepad1, BUTTON.a, BUTTON_TYPE.TOGGLE);
@@ -43,6 +43,11 @@ public class WestCoastTeleOp extends OpMode {
         telemetry.addData(">", "Init complete");
         telemetry.update();
 
+    }
+
+    @Override
+    public void start() {
+        robot.wheels.setTeleop(true);
     }
 
     @Override
@@ -57,6 +62,8 @@ public class WestCoastTeleOp extends OpMode {
         intakes();
 
         // Driver Feedback
+        telemetry.addData("Wheels", robot.wheels.isAvailable());
+        telemetry.addData("Teleop", robot.wheels.isTeleop());
         telemetry.addData("Slow Mode", buttons.get("SLOW-MODE"));
         telemetry.addData("Intakes Locked", buttons.get("LOCK-INTAKE"));
         telemetry.addData("Top CLaw", robot.claws[CLAWS.TOP.ordinal()].getPostion());

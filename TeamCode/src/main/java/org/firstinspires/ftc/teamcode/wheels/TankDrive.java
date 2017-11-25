@@ -65,7 +65,7 @@ public class TankDrive implements Wheels {
     }
 
     public void setSpeed(double speed) {
-        if (isAvailable()) {
+        if (!isAvailable()) {
             return;
         }
         for (WheelMotor motor : config.motors) {
@@ -74,7 +74,7 @@ public class TankDrive implements Wheels {
     }
 
     public void setSpeed(double speed, MOTOR_SIDE side) {
-        if (isAvailable()) {
+        if (!isAvailable()) {
             return;
         }
         for (WheelMotor motor : config.motors) {
@@ -109,7 +109,7 @@ public class TankDrive implements Wheels {
     }
 
     public void loop(Gamepad pad) {
-        if (isAvailable() || !isTeleop() || pad == null) {
+        if (!isAvailable() || !isTeleop() || pad == null) {
             return;
         }
 
