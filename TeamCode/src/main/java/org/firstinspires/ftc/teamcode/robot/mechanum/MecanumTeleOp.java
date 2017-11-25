@@ -17,8 +17,8 @@ import org.firstinspires.ftc.teamcode.wheels.TankDrive;
  * Created by robotics on 11/25/2017.
  */
 
-@TeleOp(name="MechanumDriveTest", group="MechanumOpMode")
-public class MecanumTeleOp extends OpMode{
+@TeleOp(name = "MechanumDriveTest", group = "MechanumOpMode")
+public class MecanumTeleOp extends OpMode {
 
     // Devices and subsystems
     private Robot robot = null;
@@ -63,15 +63,15 @@ public class MecanumTeleOp extends OpMode{
 
         robot.lift.setPower(-gamepad2.left_stick_y);
 
-        if(buttons.get("TOP-CLAW")){
-            if(topClawOpen) robot.claws[CLAWS.TOP.ordinal()].max();
+        if (buttons.get("TOP-CLAW")) {
+            if (topClawOpen) robot.claws[CLAWS.TOP.ordinal()].max();
             else robot.claws[CLAWS.TOP.ordinal()].min();
 
             topClawOpen = !topClawOpen;
         }
 
-        if(buttons.get("BOTTOM-CLAW")){
-            if(bottomClawOpen) robot.claws[CLAWS.BOTTOM.ordinal()].max();
+        if (buttons.get("BOTTOM-CLAW")) {
+            if (bottomClawOpen) robot.claws[CLAWS.BOTTOM.ordinal()].max();
             else robot.claws[CLAWS.BOTTOM.ordinal()].min();
 
             bottomClawOpen = !bottomClawOpen;
