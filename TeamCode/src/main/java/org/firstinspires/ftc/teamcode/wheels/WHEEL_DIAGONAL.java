@@ -13,7 +13,7 @@ public enum WHEEL_DIAGONAL{
 
     public WheelMotor[] getWheels(WheelsConfig config){
 
-        ArrayList<WheelMotor> wheels = new ArrayList<WheelMotor>();
+        ArrayList<WheelMotor> wheels = new ArrayList<>();
 
         for(WheelMotor motor : config.motors){
 

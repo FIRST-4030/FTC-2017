@@ -31,9 +31,6 @@ public class Voltage implements Switch {
     }
 
     public boolean get() {
-        if (!isAvailable()) {
-            return false;
-        }
-        return (button.getVoltage() < threshold);
+        return isAvailable() && (button.getVoltage() < threshold);
     }
 }

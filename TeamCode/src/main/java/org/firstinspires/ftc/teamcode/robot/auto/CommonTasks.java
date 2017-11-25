@@ -56,7 +56,7 @@ public class CommonTasks implements DriveToListener {
     public final static DriveToComp COMP_FORWARD = DriveToComp.GREATER;
 
     // Runtime
-    private Robot robot;
+    private final Robot robot;
     private LIFT_STATE liftState = LIFT_STATE.INIT;
 
     public CommonTasks(Robot robot) {

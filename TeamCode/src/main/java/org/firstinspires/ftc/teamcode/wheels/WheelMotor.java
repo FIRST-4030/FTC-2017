@@ -5,11 +5,11 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.teamcode.utils.Available;
 
 public class WheelMotor implements Available {
-    public MOTOR_SIDE side;
-    public MOTOR_END end;
-    public String name;
+    public final MOTOR_SIDE side;
+    public final MOTOR_END end;
+    public final String name;
     public DcMotor motor;
-    public boolean reverse;
+    public final boolean reverse;
 
     public WheelMotor(String name, MOTOR_SIDE side) {
         this(name, side, false);

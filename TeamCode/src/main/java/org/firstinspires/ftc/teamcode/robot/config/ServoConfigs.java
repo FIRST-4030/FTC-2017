@@ -24,7 +24,7 @@ public class ServoConfigs extends Configs {
 
     public ServoConfig config(SERVOS servo) {
         super.checkBOT();
-        super.checkNull(servo, SERVOS.class.getName());
+        checkNull(servo, SERVOS.class.getName());
 
         ServoConfig config = null;
         switch (bot) {

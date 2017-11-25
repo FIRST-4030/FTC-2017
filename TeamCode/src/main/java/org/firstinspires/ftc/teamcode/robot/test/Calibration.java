@@ -19,7 +19,7 @@ public class Calibration extends OpMode {
 
     // Driving
     private double servoInterval = 0.01;
-    private ButtonHandler buttons = new ButtonHandler();
+    private final ButtonHandler buttons = new ButtonHandler();
 
     @Override
     public void init() {

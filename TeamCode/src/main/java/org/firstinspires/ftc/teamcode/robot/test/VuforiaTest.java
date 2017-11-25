@@ -98,7 +98,7 @@ public class VuforiaTest extends OpMode {
                 int rgb = image.rgb(
                         new int[]{(i * slice), 0},
                         new int[]{((i + 1) * slice) - 1, image.getHeight() - 1});
-                lastRGBStr.append(" (" + Color.red(rgb) + "," + Color.green(rgb) + "," + Color.blue(rgb) + ")");
+                lastRGBStr.append(" (").append(Color.red(rgb)).append(",").append(Color.green(rgb)).append(",").append(Color.blue(rgb)).append(")");
             }
             lastRGB = lastRGBStr.toString();
         }

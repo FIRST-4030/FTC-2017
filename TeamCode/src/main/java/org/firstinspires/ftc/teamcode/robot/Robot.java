@@ -28,8 +28,8 @@ public class Robot {
     public Switch liftSwitch = null;
     public VuforiaFTC vuforia = null;
 
-    private HardwareMap map;
-    private Telemetry telemetry;
+    private final HardwareMap map;
+    private final Telemetry telemetry;
 
     public Robot(HardwareMap map, Telemetry telemetry) {
         this(map, telemetry, null);

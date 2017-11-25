@@ -28,7 +28,7 @@ public class StraightLine extends OpMode {
     private boolean liftReady = false;
 
     // Init-time config
-    private ButtonHandler buttons = new ButtonHandler();
+    private final ButtonHandler buttons = new ButtonHandler();
     private Field.AllianceColor alliance = Field.AllianceColor.BLUE;
     private DISTANCE distance = DISTANCE.SHORT;
     private DELAY delay = DELAY.NONE;
@@ -202,7 +202,7 @@ public class StraightLine extends OpMode {
         SHORT(965),
         LONG(1016);
 
-        private int millimeters;
+        private final int millimeters;
 
         DISTANCE(int millimeters) {
             this.millimeters = millimeters;
@@ -227,7 +227,7 @@ public class StraightLine extends OpMode {
         SHORT(5000),
         LONG(10000);
 
-        private int milliseconds;
+        private final int milliseconds;
 
         DELAY(int milliseconds) {
             this.milliseconds = milliseconds;

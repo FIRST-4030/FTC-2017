@@ -20,7 +20,7 @@ public class WestCoastTeleOp extends OpMode {
 
     // Devices and subsystems
     private Robot robot = null;
-    private ButtonHandler buttons = new ButtonHandler();
+    private final ButtonHandler buttons = new ButtonHandler();
 
     @Override
     public void init() {

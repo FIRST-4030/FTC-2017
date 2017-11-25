@@ -25,7 +25,7 @@ public class MotorConfigs extends Configs {
 
     public MotorConfig config(MOTORS motor) {
         super.checkBOT();
-        super.checkNull(motor, MOTORS.class.getName());
+        checkNull(motor, MOTORS.class.getName());
 
         MotorConfig config = null;
         switch (bot) {

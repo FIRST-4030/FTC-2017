@@ -20,10 +20,9 @@ class IMUWaiter implements Runnable {
     public static final int INTEGRATION_INTERVAL = 1000;
     public static final BNO055IMU.AccelerationIntegrator INTEGRATOR = new JustLoggingAccelerationIntegrator();
 
-    private long start = 0;
-    private BNO055IMU imu;
-    private RevIMU parent;
-    private Telemetry telemetry;
+    private final BNO055IMU imu;
+    private final RevIMU parent;
+    private final Telemetry telemetry;
 
     public IMUWaiter(RevIMU parent, BNO055IMU imu, Telemetry telemetry) {
         this.parent = parent;
@@ -31,10 +30,11 @@ class IMUWaiter implements Runnable {
         this.telemetry = telemetry;
     }
 
+    @SuppressWarnings("ConstantConditions")
     @Override
     public void run() {
         // Record the start time so we can detect TIMEOUTs
-        start = System.currentTimeMillis();
+        long start = System.currentTimeMillis();
 
         // Basic parameters for the IMU, so we get units we like and whatnot
         BNO055IMU.Parameters params = new BNO055IMU.Parameters();
@@ -84,7 +84,7 @@ public class RevIMU implements Gyro {
         }
 
         // Attempt to init
-        BNO055IMU imu = null;
+        BNO055IMU imu;
         try {
             imu = map.get(BNO055IMU.class, name);
         } catch (Exception e) {

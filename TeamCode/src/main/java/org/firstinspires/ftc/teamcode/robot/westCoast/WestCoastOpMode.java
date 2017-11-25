@@ -48,7 +48,7 @@ public abstract class WestCoastOpMode extends OpMode{
     public int liftMinimum;
 
     //button abstraction stuff
-    public ButtonHandler buttons = new ButtonHandler();
+    public final ButtonHandler buttons = new ButtonHandler();
 
     public void init() {
         // Set Up hardware
