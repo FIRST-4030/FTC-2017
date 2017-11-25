@@ -11,28 +11,30 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 
-public class RevIMU implements Gyro {
-    private static final String LOG_NAME = null;
-    private static final String CALIBRATION_FILE = null;
+class IMUWaiter implements Runnable {
+    public static final int TIMEOUT = 1000;
 
-    private static final int INTEGRATION_INTERVAL = 1000;
-    private static final BNO055IMU.AccelerationIntegrator INTEGRATOR = new JustLoggingAccelerationIntegrator();
+    public static final String LOG_NAME = null;
+    public static final String CALIBRATION_FILE = null;
 
-    private BNO055IMU gyro = null;
-    private boolean ready = false;
-    private int offset = 0;
+    public static final int INTEGRATION_INTERVAL = 1000;
+    public static final BNO055IMU.AccelerationIntegrator INTEGRATOR = new JustLoggingAccelerationIntegrator();
 
-    public RevIMU(HardwareMap map, Telemetry telemetry, String name) {
-        if (name == null || name.isEmpty()) {
-            throw new IllegalArgumentException(this.getClass().getName() + ": Null/empty name");
-        }
-        try {
-            gyro = (BNO055IMU) map.gyroSensor.get(name);
-        } catch (Exception e) {
-            gyro = null;
-            telemetry.log().add(this.getClass().getName() + "No such device: " + name);
-            return;
-        }
+    private long start = 0;
+    private BNO055IMU imu;
+    private RevIMU parent;
+    private Telemetry telemetry;
+
+    public IMUWaiter(RevIMU parent, BNO055IMU imu, Telemetry telemetry) {
+        this.parent = parent;
+        this.imu = imu;
+        this.telemetry = telemetry;
+    }
+
+    @Override
+    public void run() {
+        // Record the start time so we can detect TIMEOUTs
+        start = System.currentTimeMillis();
 
         // Basic parameters for the IMU, so we get units we like and whatnot
         BNO055IMU.Parameters params = new BNO055IMU.Parameters();
@@ -55,9 +57,49 @@ public class RevIMU implements Gyro {
             params.calibrationDataFile = CALIBRATION_FILE;
         }
 
-        // Start the IMU
-        gyro.initialize(params);
-        gyro.startAccelerationIntegration(new Position(), new Velocity(), INTEGRATION_INTERVAL);
+        // Init -- this is where we hang
+        imu.initialize(params);
+        if (System.currentTimeMillis() - start > TIMEOUT) {
+            telemetry.log().add(this.getClass().getName() + ": Failed to initialize");
+            parent.setGyro(null);
+            return;
+        }
+
+        // Start from 0, 0, 0, 0 if things look good
+        imu.startAccelerationIntegration(new Position(), new Velocity(), INTEGRATION_INTERVAL);
+
+        // Make the gyro available
+        parent.setGyro(imu);
+    }
+}
+
+public class RevIMU implements Gyro {
+    private BNO055IMU gyro = null;
+    private boolean ready = false;
+    private int offset = 0;
+
+    public RevIMU(HardwareMap map, Telemetry telemetry, String name) {
+        if (name == null || name.isEmpty()) {
+            throw new IllegalArgumentException(this.getClass().getName() + ": Null/empty name");
+        }
+
+        // Attempt to init
+        BNO055IMU imu = null;
+        try {
+            imu = map.get(BNO055IMU.class, name);
+        } catch (Exception e) {
+            telemetry.log().add(this.getClass().getName() + "No such device: " + name);
+            return;
+        }
+
+        // Start the IMU in a background thread -- it behaves poorly when not available
+        IMUWaiter waiter = new IMUWaiter(this, imu, telemetry);
+        Thread thread = new Thread(waiter);
+        thread.start();
+    }
+
+    protected void setGyro(BNO055IMU gyro) {
+        this.gyro = gyro;
     }
 
     public boolean isAvailable() {
