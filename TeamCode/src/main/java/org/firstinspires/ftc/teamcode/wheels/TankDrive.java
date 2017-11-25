@@ -113,10 +113,11 @@ public class TankDrive implements Wheels {
             return;
         }
 
-        float left = cleanJoystick(pad.left_stick_y);
+        // Negative is forward; this is typically the opposite of native motor config
+        float left = cleanJoystick(-pad.left_stick_y);
         this.setSpeed(left, MOTOR_SIDE.LEFT);
 
-        float right = cleanJoystick(pad.right_stick_y);
+        float right = cleanJoystick(-pad.right_stick_y);
         this.setSpeed(right, MOTOR_SIDE.RIGHT);
     }
 
