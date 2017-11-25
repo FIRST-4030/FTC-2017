@@ -47,12 +47,17 @@ public class ServoConfigs extends Configs {
             case Mecanum:
                 switch (servo) {
                     case CLAW_TOP:
+                        config = new ServoConfig("CL1", false, 0.0d, 1.0d);
                         break;
                     case CLAW_BOTTOM:
+                        config = new ServoConfig("CL2", false, 0.0d, 1.0d);
                         break;
-                    case INTAKE_LEFT:
+                    case INTAKE_LEFT: // No intakes yet
                         break;
                     case INTAKE_RIGHT:
+                        break;
+                    case JEWEL_ARM:
+                        config = new ServoConfig("Jewel Arm", false, 0.0d, 1.0d);
                         break;
                 }
                 break;

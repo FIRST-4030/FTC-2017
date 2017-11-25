@@ -87,23 +87,25 @@ public class Robot {
             claw.min();
         }
 
-        intakes = new Motor[INTAKES.values().length];
-        intakes[INTAKES.RIGHT.ordinal()] = motors.init(MOTORS.INTAKE_RIGHT);
-        intakes[INTAKES.LEFT.ordinal()] = motors.init(MOTORS.INTAKE_LEFT);
-        for (Motor intake : intakes) {
-            intake.stop();
-        }
+        // Disabled for now - intakes aren't on either robot
 
-        intakeArms = new ServoFTC[INTAKES.values().length];
-        intakeArms[INTAKES.RIGHT.ordinal()] = servos.init(SERVOS.INTAKE_RIGHT);
-        intakeArms[INTAKES.LEFT.ordinal()] = servos.init(SERVOS.INTAKE_LEFT);
-        for (ServoFTC intake : intakeArms) {
-            intake.min();
-        }
+//        intakes = new Motor[INTAKES.values().length];
+//        intakes[INTAKES.RIGHT.ordinal()] = motors.init(MOTORS.INTAKE_RIGHT);
+//        intakes[INTAKES.LEFT.ordinal()] = motors.init(MOTORS.INTAKE_LEFT);
+//        for (Motor intake : intakes) {
+//            intake.stop();
+//        }
+//
+//        intakeArms = new ServoFTC[INTAKES.values().length];
+//        intakeArms[INTAKES.RIGHT.ordinal()] = servos.init(SERVOS.INTAKE_RIGHT);
+//        intakeArms[INTAKES.LEFT.ordinal()] = servos.init(SERVOS.INTAKE_LEFT);
+//        for (ServoFTC intake : intakeArms) {
+//            intake.min();
+//        }
 
         gyro = gyros.init();
 
-        liftSwitch = switches.init(SWITCHES.LIFT);
+//        liftSwitch = switches.init(SWITCHES.LIFT);
 
         vuforia = new VuforiaFTC(VuforiaConfigs.AssetName, VuforiaConfigs.TargetCount,
                 VuforiaConfigs.Field(), VuforiaConfigs.Bot());

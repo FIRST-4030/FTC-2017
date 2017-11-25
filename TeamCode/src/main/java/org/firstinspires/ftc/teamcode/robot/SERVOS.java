@@ -4,5 +4,6 @@ public enum SERVOS {
     CLAW_TOP,
     CLAW_BOTTOM,
     INTAKE_LEFT,
-    INTAKE_RIGHT
+    INTAKE_RIGHT,
+    JEWEL_ARM
 }

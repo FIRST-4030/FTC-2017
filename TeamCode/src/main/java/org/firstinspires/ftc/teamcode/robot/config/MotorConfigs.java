@@ -45,8 +45,9 @@ public class MotorConfigs extends Configs {
             case Mecanum:
                 switch (motor) {
                     case LIFT:
+                        config = new MotorConfig("LM1", false);
                         break;
-                    case INTAKE_LEFT:
+                    case INTAKE_LEFT: // No intakes yet
                         break;
                     case INTAKE_RIGHT:
                         break;

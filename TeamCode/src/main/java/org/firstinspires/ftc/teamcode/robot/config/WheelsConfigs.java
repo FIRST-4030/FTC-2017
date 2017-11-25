@@ -8,6 +8,7 @@ import org.firstinspires.ftc.teamcode.config.Configs;
 import org.firstinspires.ftc.teamcode.wheels.DRIVE_TYPE;
 import org.firstinspires.ftc.teamcode.wheels.MOTOR_END;
 import org.firstinspires.ftc.teamcode.wheels.MOTOR_SIDE;
+import org.firstinspires.ftc.teamcode.wheels.MecanumDrive;
 import org.firstinspires.ftc.teamcode.wheels.WheelsConfig;
 import org.firstinspires.ftc.teamcode.wheels.TankDrive;
 import org.firstinspires.ftc.teamcode.wheels.WheelMotor;
@@ -27,6 +28,7 @@ public class WheelsConfigs extends Configs {
                 wheels = new TankDrive(map, telemetry, config);
                 break;
             case MECANUM:
+                wheels = new MecanumDrive(map, telemetry, config);
                 break;
         }
         super.checkAvailable(wheels);
