@@ -11,7 +11,7 @@ public enum WHEEL_DIAGONAL{
     FRONT_LEFT,
     FRONT_RIGHT;
 
-    public WheelMotor[] getWheels(WheelsConfig config){
+    public ArrayList<WheelMotor> getWheels(WheelsConfig config){
 
         ArrayList<WheelMotor> wheels = new ArrayList<>();
 
@@ -28,7 +28,7 @@ public enum WHEEL_DIAGONAL{
 
 
 
-            if(this == FRONT_LEFT && (
+            if(this == FRONT_RIGHT && (
                     (motor.side == MOTOR_SIDE.RIGHT && motor.end == MOTOR_END.FRONT)
                             || (motor.side == MOTOR_SIDE.LEFT && motor.end == MOTOR_END.BACK)
             )) {
@@ -38,7 +38,7 @@ public enum WHEEL_DIAGONAL{
             }
         }
 
-        return (WheelMotor[]) wheels.toArray();
+        return wheels;
 
     }
 

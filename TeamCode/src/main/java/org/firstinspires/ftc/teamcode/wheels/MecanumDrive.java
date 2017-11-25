@@ -9,7 +9,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
  * Created by robotics on 11/24/2017.
  */
 
-public class MecanumDrive extends TankDrive implements Wheels {
+public class MecanumDrive extends TankDrive {
 
     public MecanumDrive(HardwareMap map, Telemetry telemetry, WheelsConfig config) {
         super(map, telemetry, config);
@@ -85,12 +85,17 @@ public class MecanumDrive extends TankDrive implements Wheels {
         else if(pad.dpad_up) setSpeed(1);
         else if(pad.dpad_right) translate(1);
         else if(pad.dpad_left) translate(-1);
+        // single wheels
+        else if(pad.a) setSpeed(1, MOTOR_SIDE.RIGHT, MOTOR_END.BACK);
+        else if(pad.b) setSpeed(1, MOTOR_SIDE.RIGHT, MOTOR_END.FRONT);
+        else if(pad.x) setSpeed(1, MOTOR_SIDE.LEFT, MOTOR_END.BACK);
+        else if(pad.y) setSpeed(1, MOTOR_SIDE.LEFT, MOTOR_END.FRONT);
         // translating in any direction with the joystick
         else {
 
             // get clean x and y
-            double x = cleanJoystick(pad.right_stick_x);
-            double y = -cleanJoystick(pad.right_stick_y); // Negated so that up is positive
+            double x = -cleanJoystick(pad.left_stick_x);
+            double y = -cleanJoystick(pad.left_stick_y); // Negated so that up is positive
 
             if(speedFromStick(x, y) > .1) {
 

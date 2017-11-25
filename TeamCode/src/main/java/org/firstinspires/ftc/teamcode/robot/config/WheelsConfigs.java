@@ -51,11 +51,11 @@ public class WheelsConfigs extends Configs {
                 break;
             case Mecanum:
                 motors = new WheelMotor[4];
-                motors[0] = new WheelMotor("LF", MOTOR_SIDE.LEFT, MOTOR_END.FRONT);
-                motors[1] = new WheelMotor("LR", MOTOR_SIDE.LEFT, MOTOR_END.BACK, true);
-                motors[2] = new WheelMotor("RF", MOTOR_SIDE.RIGHT, MOTOR_END.FRONT);
-                motors[3] = new WheelMotor("RR", MOTOR_SIDE.RIGHT, MOTOR_END.BACK, true);
-                config = new WheelsConfig(DRIVE_TYPE.TANK, motors, 0, 1.0d);
+                motors[0] = new WheelMotor("FL", MOTOR_SIDE.LEFT, MOTOR_END.FRONT);
+                motors[1] = new WheelMotor("BL", MOTOR_SIDE.LEFT, MOTOR_END.BACK);
+                motors[2] = new WheelMotor("FR", MOTOR_SIDE.RIGHT, MOTOR_END.FRONT, true);
+                motors[3] = new WheelMotor("BR", MOTOR_SIDE.RIGHT, MOTOR_END.BACK, true);
+                config = new WheelsConfig(DRIVE_TYPE.MECANUM, motors, 0, 1.0d);
                 break;
         }
         return config;
