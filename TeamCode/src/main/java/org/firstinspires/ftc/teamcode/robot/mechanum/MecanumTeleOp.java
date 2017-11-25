@@ -52,6 +52,13 @@ public class MecanumTeleOp extends OpMode{
 
         buttons.update();
 
+        // Note that if your hardwareMap and related WheelsConfigs lets the code detect which robot
+        // is active it is possible to use the WestCoastOpMode with either robot. The use of
+        // robot.wheels.loop() automatically provides Mechanum vs. Tank wheel controls based on the
+        // configured drive type, and all the other actuators and sensors are similarly abstracted.
+        //
+        // That's one of the ultimate goal of this framework; to allow the same top-level software
+        // to run on a number of different physical robots.
         robot.wheels.loop(gamepad1);
 
         robot.lift.setPower(-gamepad2.left_stick_y);
