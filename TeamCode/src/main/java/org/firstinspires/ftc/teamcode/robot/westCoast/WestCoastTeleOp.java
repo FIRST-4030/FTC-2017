@@ -36,7 +36,6 @@ public class WestCoastTeleOp extends OpMode {
         buttons.register("CLAW-" + CLAWS.TOP, gamepad2, BUTTON.right_bumper);
         buttons.register("CLAW-" + CLAWS.BOTTOM, gamepad2, BUTTON.left_bumper);
         buttons.register("EXTEND-INTAKE", gamepad2, BUTTON.b);
-        buttons.register("LOCK-INTAKE", gamepad2, BUTTON.a, BUTTON_TYPE.TOGGLE);
         buttons.register("SLOW-MODE", gamepad1, BUTTON.a, BUTTON_TYPE.TOGGLE);
 
         // Wait for the game to begin
@@ -90,6 +89,7 @@ public class WestCoastTeleOp extends OpMode {
         for (CLAWS claw : CLAWS.values()) {
             if (buttons.get("CLAW-" + claw)) {
                 robot.claws[claw.ordinal()].toggle();
+                telemetry.addData("CLAW-" + claw, robot.claws[claw.ordinal()].getPostion());
             }
         }
     }
@@ -104,10 +104,8 @@ public class WestCoastTeleOp extends OpMode {
         }
 
         // Intake Motors
-        if (!buttons.get("LOCK-INTAKE")) {
-            for (Motor intake : robot.intakes) {
-                intake.setPower(gamepad2.right_stick_y);
-            }
+        for (Motor intake : robot.intakes) {
+            intake.setPower(gamepad2.right_stick_y);
         }
     }
 }
