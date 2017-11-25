@@ -7,9 +7,9 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class TankDrive implements Wheels {
-    private WheelsConfig config = null;
+    protected WheelsConfig config = null;
     private boolean teleop = false;
-    private double speedScale = 1.0f;
+    protected double speedScale = 1.0f;
     private int[] offsets;
 
     public TankDrive(HardwareMap map, Telemetry telemetry, WheelsConfig config) {
@@ -120,7 +120,7 @@ public class TankDrive implements Wheels {
         this.setSpeed(right, MOTOR_SIDE.RIGHT);
     }
 
-    private float cleanJoystick(float power) {
+    protected float cleanJoystick(float power) {
         power = com.qualcomm.robotcore.util.Range.clip(power, -1f, 1f);
         if (power < 0.1 && power > -0.1) {
             return 0;
