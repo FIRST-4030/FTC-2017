@@ -76,6 +76,7 @@ public class Robot {
         this.wheels = wheels.init();
         this.wheels.stop();
 
+        liftSwitch = switches.init(SWITCHES.LIFT);
         lift = motors.init(MOTORS.LIFT);
         lift.stop();
 
