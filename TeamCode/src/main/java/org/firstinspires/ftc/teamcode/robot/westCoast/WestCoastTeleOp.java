@@ -58,13 +58,11 @@ public class WestCoastTeleOp extends OpMode {
         // Move the robot
         driveBase();
         clawsAndLift();
-        intakes();
 
         // Driver Feedback
         telemetry.addData("Wheels", robot.wheels.isAvailable());
         telemetry.addData("Teleop", robot.wheels.isTeleop());
         telemetry.addData("Slow Mode", buttons.get("SLOW-MODE"));
-        telemetry.addData("Intakes Locked", buttons.get("LOCK-INTAKE"));
         telemetry.addData("Top CLaw", robot.claws[CLAWS.TOP.ordinal()].getPostion());
         telemetry.addData("Bottom Claw", robot.claws[CLAWS.BOTTOM.ordinal()].getPostion());
         telemetry.addData("Lift Height", robot.lift.getEncoder());
@@ -91,21 +89,6 @@ public class WestCoastTeleOp extends OpMode {
                 robot.claws[claw.ordinal()].toggle();
                 telemetry.addData("CLAW-" + claw, robot.claws[claw.ordinal()].getPostion());
             }
-        }
-    }
-
-    public void intakes() {
-
-        // Toggle Intakes
-        if (buttons.get("EXTEND-INTAKE")) {
-            for (ServoFTC intake : robot.intakeArms) {
-                intake.toggle();
-            }
-        }
-
-        // Intake Motors
-        for (Motor intake : robot.intakes) {
-            intake.setPower(gamepad2.right_stick_y);
         }
     }
 }

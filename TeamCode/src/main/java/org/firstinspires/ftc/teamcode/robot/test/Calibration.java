@@ -66,15 +66,6 @@ public class Calibration extends OpMode {
             }
         }
 
-        // Adjust the intake servos
-        for (INTAKES intake : INTAKES.values()) {
-            if (buttons.get("INTAKE-" + intake + "-UP")) {
-                robot.intakeArms[intake.ordinal()].setPositionRaw(robot.intakeArms[intake.ordinal()].getPostion() + servoInterval);
-            } else if (buttons.get("INTAKE-" + intake + "-DOWN")) {
-                robot.intakeArms[intake.ordinal()].setPositionRaw(robot.intakeArms[intake.ordinal()].getPostion() - servoInterval);
-            }
-        }
-
         // Adjust the servo adjustment rate
         if (buttons.get("INTERVAL-UP")) {
             servoInterval += SERVO_INTERVAL_INTERVAL;
@@ -86,9 +77,6 @@ public class Calibration extends OpMode {
         // Feedback
         for (CLAWS claw : CLAWS.values()) {
             telemetry.addData("Claw " + claw, robot.claws[claw.ordinal()].getPostion());
-        }
-        for (INTAKES intake : INTAKES.values()) {
-            telemetry.addData("Intake " + intake, robot.intakeArms[intake.ordinal()].getPostion());
         }
         telemetry.addData("Servo Interval", servoInterval);
         telemetry.addData("Lift", robot.lift.getEncoder());
