@@ -8,6 +8,7 @@ import org.firstinspires.ftc.teamcode.buttons.BUTTON;
 import org.firstinspires.ftc.teamcode.buttons.ButtonHandler;
 import org.firstinspires.ftc.teamcode.robot.CLAWS;
 import org.firstinspires.ftc.teamcode.robot.Robot;
+import org.firstinspires.ftc.teamcode.utils.Round;
 
 @TeleOp(name = "Calibration", group = "Test")
 public class Calibration extends OpMode {
@@ -86,13 +87,13 @@ public class Calibration extends OpMode {
 
         // Feedback
         for (CLAWS claw : CLAWS.values()) {
-            telemetry.addData("Claw " + claw, robot.claws[claw.ordinal()].getPostion());
+            telemetry.addData("Claw " + claw, Round.truncate(robot.claws[claw.ordinal()].getPostion()));
         }
-        telemetry.addData("Servo Interval", servoInterval);
+        telemetry.addData("Servo Interval", Round.truncate(servoInterval));
         telemetry.addData("Lift", robot.lift.getEncoder());
         telemetry.addData("Lift Switch", robot.liftSwitch.get());
         telemetry.addData("Wheels", robot.wheels.getEncoder());
-        telemetry.addData("Arm", robot.jewelArm.getPostion());
+        telemetry.addData("Arm", Round.truncate(robot.jewelArm.getPostion()));
         telemetry.update();
     }
 }
