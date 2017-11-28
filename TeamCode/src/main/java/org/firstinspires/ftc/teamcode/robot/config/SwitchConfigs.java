@@ -48,6 +48,7 @@ public class SwitchConfigs extends Configs {
             case Mecanum:
                 switch (name) {
                     case LIFT:
+                        config = new SwitchConfig(SWITCH_TYPES.VOLTAGE, "LS1");
                         break;
                 }
                 break;
