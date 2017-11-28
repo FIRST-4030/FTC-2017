@@ -35,7 +35,7 @@ public class CommonTasks implements DriveToListener {
     public final static float SPEED_FORWARD_SLOW = SPEED_FORWARD * 0.75f;
     public final static float SPEED_REVERSE = -SPEED_FORWARD;
     // Turn drive speed
-    public final static float SPEED_TURN = SPEED_FORWARD * 0.5f;
+    public final static float SPEED_TURN = SPEED_FORWARD * 0.35f;
     // Lift speed -- Up is motor positive, ticks increasing
     public final static float LIFT_SPEED_UP = 1.0f;
     public final static float LIFT_SPEED_DOWN = -LIFT_SPEED_UP;

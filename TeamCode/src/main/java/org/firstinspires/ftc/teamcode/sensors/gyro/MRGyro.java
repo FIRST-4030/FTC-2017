@@ -4,6 +4,7 @@ import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.utils.Heading;
 
 public class MRGyro implements Gyro {
     private ModernRoboticsI2cGyro gyro;
@@ -58,6 +59,6 @@ public class MRGyro implements Gyro {
     }
 
     public int getHeading() {
-        return (getRaw() + offset);
+        return Heading.normalize(getRaw() + offset);
     }
 }
