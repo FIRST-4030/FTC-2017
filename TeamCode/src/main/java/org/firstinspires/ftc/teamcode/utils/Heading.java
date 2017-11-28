@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.utils;
 public class Heading {
 
     public static final int FULL_CIRCLE = 360;
+    public static final int HALF_CIRCLE = FULL_CIRCLE / 2;
 
     /**
      * @param heading Any heading

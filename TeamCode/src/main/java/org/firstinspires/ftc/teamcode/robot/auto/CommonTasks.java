@@ -35,7 +35,7 @@ public class CommonTasks implements DriveToListener {
     public final static float SPEED_FORWARD_SLOW = SPEED_FORWARD * 0.75f;
     public final static float SPEED_REVERSE = -SPEED_FORWARD;
     // Turn drive speed
-    public final static float SPEED_TURN = SPEED_FORWARD * 0.1f;
+    public final static float SPEED_TURN = SPEED_FORWARD * 0.5f;
     // Lift speed -- Up is motor positive, ticks increasing
     public final static float LIFT_SPEED_UP = 1.0f;
     public final static float LIFT_SPEED_DOWN = -LIFT_SPEED_UP;
@@ -44,7 +44,7 @@ public class CommonTasks implements DriveToListener {
      * Tuned drive constants
      */
     // An estimate of the number of degrees we slip on inertia after calling wheels.stop()
-    public final static int OVERRUN_GYRO = 0; // TBD
+    public final static int OVERRUN_GYRO = 1;
     // An estimate of the number of ricks we slip on inertia after calling wheels.stop()
     public final static int OVERRUN_ENCODER = 10;
 
@@ -139,22 +139,48 @@ public class CommonTasks implements DriveToListener {
 
     public DriveTo turnDegrees(int degrees) {
         DriveToParams param = new DriveToParams(this, SENSOR_TYPE.GYROSCOPE);
-        param.timeout = 100 * 1000;
+        DriveToParams crossing = new DriveToParams(this, SENSOR_TYPE.GYROSCOPE_SLAVE);
+
+        /*
+         * Crossing logic
+         *
+         * Heading -> Target, gyro change; targets
+         *     091 -> 181,    increasing;  >181
+         *     271 -> 001,    increasing;  >001 && <271
+         *     001 -> 271,    decreasing;  <271 && >001
+         *     181 -> 091,    decreasing;  <091
+         */
 
         // Current and target heading in normalized degrees
         int heading = robot.gyro.getHeading();
         int target = Heading.normalize(heading + degrees);
+        // If the heading's turn direction's sign matches the sign of gyro change
+        // This indicates that we'll travel across the 0/360 discontinuity during this turn
+        boolean signMatches = (degrees * (target - heading) > 0);
 
-        // Turn left or right as directed
+        // Turn CW or CCW as selected
+        // Set a crossing target only if we'll cross 0/360
         if (degrees > 0) {
-            robot.telemetry.log().add("Target greater: " + target);
             param.greaterThan(target - OVERRUN_GYRO);
+            if (signMatches) {
+                crossing = null;
+            } else {
+                crossing.lessThan(heading);
+            }
         } else {
-            robot.telemetry.log().add("Target less: " + target);
             param.lessThan(target + OVERRUN_GYRO);
+            if (signMatches) {
+                crossing = null;
+            } else {
+                crossing.greaterThan(heading);
+            }
         }
 
-        return new DriveTo(new DriveToParams[]{param});
+        // Return one or two DriveToParams as selected above
+        if (crossing == null) {
+            return new DriveTo(new DriveToParams[]{param});
+        }
+        return new DriveTo(new DriveToParams[]{param, crossing});
     }
 
     @Override
