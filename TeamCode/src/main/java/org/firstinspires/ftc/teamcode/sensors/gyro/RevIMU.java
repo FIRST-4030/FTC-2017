@@ -58,10 +58,14 @@ class IMUWaiter implements Runnable {
         }
 
         // Init -- this is where we hang
-        imu.initialize(params);
+        try {
+            imu.initialize(params);
+        } catch (Exception e) {
+            fail();
+            return;
+        }
         if (System.currentTimeMillis() - start > TIMEOUT) {
-            telemetry.log().add(this.getClass().getName() + ": Failed to initialize");
-            parent.setGyro(null);
+            fail();
             return;
         }
 
@@ -70,6 +74,11 @@ class IMUWaiter implements Runnable {
 
         // Make the gyro available
         parent.setGyro(imu);
+    }
+
+    private void fail() {
+        telemetry.log().add(this.getClass().getName() + ": Failed to initialize");
+        parent.setGyro(null);
     }
 }
 
