@@ -28,7 +28,11 @@ public class GyroConfigs extends Configs {
                 gyro = new MRGyro(map, telemetry, config.name);
                 break;
         }
-        super.checkAvailable(gyro);
+
+        // Don't check for the REV gyro -- it has delayed init and will log() its own error
+        if (config.type != GYRO_TYPES.REV) {
+            super.checkAvailable(gyro);
+        }
         return gyro;
     }
 
