@@ -25,6 +25,7 @@ public class Robot {
     public Gyro gyro = null;
     public Switch liftSwitch = null;
     public VuforiaFTC vuforia = null;
+    public ServoFTC jewelArm = null;
 
     private final HardwareMap map;
     private final Telemetry telemetry;
@@ -84,6 +85,9 @@ public class Robot {
         for (ServoFTC claw : claws) {
             claw.min();
         }
+
+        jewelArm = servos.init(SERVOS.JEWEL_ARM);
+        jewelArm.min();
 
         gyro = gyros.init();
 

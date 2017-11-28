@@ -36,11 +36,8 @@ public class ServoConfigs extends Configs {
                     case CLAW_BOTTOM:
                         config = new ServoConfig("CL2", true, 0.5d, 0.85d);
                         break;
-                    case INTAKE_LEFT:
-                        config = new ServoConfig("lBumperS", true, 0.44d, 0.61d);
-                        break;
-                    case INTAKE_RIGHT:
-                        config = new ServoConfig("rBumperS", true, 0.59d, 0.83d);
+                    case JEWEL_ARM:
+                        config = new ServoConfig("Jewel Arm", false, 0.0d, 1.0d); // needs calibration
                         break;
                 }
                 break;
@@ -52,13 +49,9 @@ public class ServoConfigs extends Configs {
                     case CLAW_BOTTOM:
                         config = new ServoConfig("CL2", false, 0.5d, 0.6d);
                         break;
-                    case INTAKE_LEFT: // No intakes yet
+                    case JEWEL_ARM:
+                        config = new ServoConfig("Jewel Arm", true, 0.0d, 1.0d); // needs calibration
                         break;
-                    case INTAKE_RIGHT:
-                        break;
-//                    case JEWEL_ARM:
-//                        config = new ServoConfig("Jewel Arm", false, 0.0d, 1.0d);
-//                        break;
                 }
                 break;
         }
