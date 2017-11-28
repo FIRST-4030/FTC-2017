@@ -35,7 +35,7 @@ public class CommonTasks implements DriveToListener {
     public final static float SPEED_FORWARD_SLOW = SPEED_FORWARD * 0.75f;
     public final static float SPEED_REVERSE = -SPEED_FORWARD;
     // Turn drive speed
-    public final static float SPEED_TURN = SPEED_FORWARD * 0.35f;
+    public final static float SPEED_TURN = SPEED_FORWARD * 0.375f;
     // Lift speed -- Up is motor positive, ticks increasing
     public final static float LIFT_SPEED_UP = 1.0f;
     public final static float LIFT_SPEED_DOWN = -LIFT_SPEED_UP;
@@ -44,7 +44,7 @@ public class CommonTasks implements DriveToListener {
      * Tuned drive constants
      */
     // An estimate of the number of degrees we slip on inertia after calling wheels.stop()
-    public final static int OVERRUN_GYRO = 1; // TBD
+    public final static int OVERRUN_GYRO = 0; // TBD
     // An estimate of the number of ricks we slip on inertia after calling wheels.stop()
     public final static int OVERRUN_ENCODER = 10;
 
@@ -165,6 +165,7 @@ public class CommonTasks implements DriveToListener {
     public void driveToStop(DriveToParams param) {
         switch ((SENSOR_TYPE) param.reference) {
             case DRIVE_ENCODER:
+            case GYROSCOPE:
                 robot.wheels.stop();
                 break;
         }
