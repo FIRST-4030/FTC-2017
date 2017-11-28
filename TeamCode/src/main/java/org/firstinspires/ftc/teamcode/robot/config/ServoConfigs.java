@@ -31,10 +31,10 @@ public class ServoConfigs extends Configs {
             case WestCoast:
                 switch (servo) {
                     case CLAW_TOP:
-                        config = new ServoConfig("CL1", true, 0.67d, 0.96d);
+                        config = new ServoConfig("CL1", true, 0.67d, 1.0d);
                         break;
                     case CLAW_BOTTOM:
-                        config = new ServoConfig("CL2", true, 0.11d, 0.41d);
+                        config = new ServoConfig("CL2", true, 0.5d, 0.85d);
                         break;
                     case INTAKE_LEFT:
                         config = new ServoConfig("lBumperS", true, 0.44d, 0.61d);
