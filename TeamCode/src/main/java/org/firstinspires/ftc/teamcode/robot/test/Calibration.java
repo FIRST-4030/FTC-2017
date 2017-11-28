@@ -24,13 +24,13 @@ public class Calibration extends OpMode {
     @Override
     public void init() {
 
-        // Init the common tasks elements in CALIBRATION mode
+        // Init the common tasks elements
         robot = new Robot(hardwareMap, telemetry);
 
-        for(ServoFTC claw : robot.claws){
+        // Put these servos someplace vaguely safe
+        for (ServoFTC claw : robot.claws) {
             claw.setPositionRaw(.5);
         }
-
         robot.jewelArm.setPositionRaw(.5);
 
         // Register buttons
@@ -70,9 +70,9 @@ public class Calibration extends OpMode {
             }
         }
 
-        if(buttons.get("ARM-UP")) {
+        if (buttons.get("ARM-UP")) {
             robot.jewelArm.setPositionRaw(robot.jewelArm.getPostion() + servoInterval);
-        } else if(buttons.get("ARM-DOWN")) {
+        } else if (buttons.get("ARM-DOWN")) {
             robot.jewelArm.setPositionRaw(robot.jewelArm.getPostion() - servoInterval);
         }
 
