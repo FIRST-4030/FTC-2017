@@ -45,7 +45,6 @@ public class SimpleAuto extends OpMode {
 
     @Override
     public void init() {
-        telemetry.clearAll();
         telemetry.addData(">", "Init…");
         telemetry.update();
 
@@ -56,9 +55,8 @@ public class SimpleAuto extends OpMode {
 
     @Override
     public void init_loop() {
-        if (!robot.gyro.isReady()) {
-            telemetry.addData(">", "Calibrating gyro…");
-        } else {
+        telemetry.addData("Gyro", robot.gyro.isReady() ? "Ready" : "Calibrating…");
+        if (robot.gyro.isReady()) {
             telemetry.addData(">", "Ready for game start");
         }
         telemetry.update();

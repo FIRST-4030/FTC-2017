@@ -35,6 +35,8 @@ public class StraightLine extends OpMode {
 
     @Override
     public void init() {
+        telemetry.addData(">", "Init…");
+        telemetry.update();
 
         // Init the robot and common tasks
         robot = new Robot(hardwareMap, telemetry);
@@ -47,10 +49,6 @@ public class StraightLine extends OpMode {
         buttons.register("DISTANCE-DOWN", gamepad1, BUTTON.dpad_left);
         buttons.register("ALLIANCE-" + Field.AllianceColor.RED, gamepad1, BUTTON.b);
         buttons.register("ALLIANCE-" + Field.AllianceColor.BLUE, gamepad1, BUTTON.x);
-
-        // Wait for the game to begin
-        telemetry.addData(">", "Init complete");
-        telemetry.update();
     }
 
     @Override
@@ -58,7 +56,7 @@ public class StraightLine extends OpMode {
 
         // Zero the lift
         if (!liftReady) {
-            // TODO: We need to zero the lift, for now just pretend
+            // TODO: We need to zero the lift if we want useful encoder values, for now just pretend
             liftReady = true;
         }
 
@@ -90,7 +88,11 @@ public class StraightLine extends OpMode {
         telemetry.addData("Delay", delay);
         telemetry.addData("Distance", distance);
         telemetry.addData("Alliance", alliance);
-        telemetry.addData("Lift", liftReady ? "Ready" : "Zeroing");
+        telemetry.addData("Lift", liftReady ? "Ready" : "Zeroing…");
+        telemetry.addData("Gyro", robot.gyro.isReady() ? "Ready" : "Calibrating…");
+        if (liftReady && robot.gyro.isReady()) {
+            telemetry.addData(">", "Ready for game start");
+        }
         telemetry.update();
     }
 
