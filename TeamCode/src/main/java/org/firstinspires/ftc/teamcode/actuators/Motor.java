@@ -4,21 +4,21 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.utils.Available;
 
-public class Motor {
-    private DcMotor motor;
+public class Motor implements Available {
+    private DcMotor motor = null;
     private boolean enabled = true;
     private int offset = 0;
 
-    public Motor(HardwareMap map, MotorConfig config, Telemetry telemetry) {
+    public Motor(HardwareMap map, Telemetry telemetry, MotorConfig config) {
         if (config == null) {
-            if (telemetry != null) {
-                telemetry.log().add(this.getClass().getName() + ": Null config");
-            }
+            telemetry.log().add(this.getClass().getName() + ": Null config");
             return;
         }
         if (config.name == null || config.name.isEmpty()) {
-            throw new IllegalArgumentException(this.getClass().getName() + ": Null/empty name");
+            telemetry.log().add(this.getClass().getName() + ": Null/empty name");
+            return;
         }
         try {
             motor = map.dcMotor.get(config.name);
@@ -26,9 +26,7 @@ public class Motor {
                 motor.setDirection(DcMotor.Direction.REVERSE);
             }
         } catch (Exception e) {
-            if (telemetry != null) {
-                telemetry.log().add(this.getClass().getName() + "No such device: " + config.name);
-            }
+            telemetry.log().add(this.getClass().getName() + "No such device: " + config.name);
             motor = null;
         }
     }

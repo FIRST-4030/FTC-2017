@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.actuators;
 
-public class MotorConfig {
+import org.firstinspires.ftc.teamcode.config.Config;
+
+public class MotorConfig implements Config {
     public final String name;
     public final boolean reverse;
 

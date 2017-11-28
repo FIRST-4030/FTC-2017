@@ -6,27 +6,16 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-public class TankDrive {
-    private static final int MIN_MOTORS = 2;
-
-    private TankMotor[] motors = null;
-    private boolean disabled = true;
+public class TankDrive implements Wheels {
+    protected WheelsConfig config = null;
     private boolean teleop = false;
-    private double speedScale = 1.0f;
-    private int encoderIndex = 0;
-    private double encoderScale = 1.0d;
+    protected double speedScale = 1.0f;
     private int[] offsets;
 
-    public TankDrive(HardwareMap map, TankMotor[] motors, Telemetry telemetry) {
-        if (motors == null || motors.length < MIN_MOTORS) {
-            throw new IllegalArgumentException(this.getClass().getName() + " must configure at least " +
-                    MIN_MOTORS + " motors");
-        }
-        for (TankMotor motor : motors) {
+    public TankDrive(HardwareMap map, Telemetry telemetry, WheelsConfig config) {
+        for (WheelMotor motor : config.motors) {
             if (motor == null) {
-                if (telemetry != null) {
-                    telemetry.log().add(this.getClass().getName() + ": Null motor");
-                }
+                telemetry.log().add(this.getClass().getName() + ": Null motor");
                 break;
             }
             if (motor.name == null || motor.name.isEmpty()) {
@@ -38,34 +27,23 @@ public class TankDrive {
                     motor.motor.setDirection(DcMotorSimple.Direction.REVERSE);
                 }
             } catch (Exception e) {
-                if (telemetry != null) {
-                    telemetry.log().add(this.getClass().getName() + ": No such device: " + motor.name);
-                }
+                telemetry.log().add(this.getClass().getName() + ": No such device: " + motor.name);
                 return;
             }
         }
-        this.offsets = new int[motors.length];
-        for (int i = 0; i < motors.length; i++) {
+        this.offsets = new int[config.motors.length];
+        for (int i = 0; i < config.motors.length; i++) {
             offsets[i] = 0;
         }
-        this.motors = motors;
-        this.disabled = false;
-    }
-
-    public void setEncoderScale(double scale) {
-        this.encoderScale = scale;
-    }
-
-    public void setEncoderIndex(int index) {
-        this.encoderIndex = index;
+        this.config = config;
     }
 
     public boolean isAvailable() {
-        return motors != null;
+        return config != null;
     }
 
     public void resetEncoder() {
-        resetEncoder(encoderIndex);
+        resetEncoder(config.index);
     }
 
     public void resetEncoder(int index) {
@@ -73,33 +51,33 @@ public class TankDrive {
     }
 
     public int getEncoder() {
-        return getEncoder(encoderIndex);
+        return getEncoder(config.index);
     }
 
     public int getEncoder(int index) {
         if (!isAvailable()) {
             return 0;
         }
-        if (index < 0 || index >= motors.length) {
+        if (index < 0 || index >= config.motors.length) {
             throw new ArrayIndexOutOfBoundsException(this.getClass().getName() + ": Invalid index: " + index);
         }
-        return (int) ((double) (motors[index].motor.getCurrentPosition() + offsets[index]) * encoderScale);
+        return (int) ((double) (config.motors[index].motor.getCurrentPosition() + offsets[index]) * config.scale);
     }
 
     public void setSpeed(double speed) {
-        if (isDisabled()) {
+        if (!isAvailable()) {
             return;
         }
-        for (TankMotor motor : motors) {
+        for (WheelMotor motor : config.motors) {
             motor.motor.setPower(speed * speedScale);
         }
     }
 
-    public void setSpeed(double speed, MotorSide side) {
-        if (isDisabled()) {
+    public void setSpeed(double speed, MOTOR_SIDE side) {
+        if (!isAvailable()) {
             return;
         }
-        for (TankMotor motor : motors) {
+        for (WheelMotor motor : config.motors) {
             if (motor.side == side) {
                 motor.motor.setPower(speed * speedScale);
             }
@@ -110,27 +88,9 @@ public class TankDrive {
         if (!isAvailable()) {
             return;
         }
-        for (TankMotor motor : motors) {
+        for (WheelMotor motor : config.motors) {
             motor.motor.setPower(0.0d);
         }
-    }
-
-    public int numMotors() {
-        if (!isAvailable()) {
-            return 0;
-        }
-        return motors.length;
-    }
-
-    public boolean isDisabled() {
-        return !isAvailable() || this.disabled;
-    }
-
-    public void setDisabled(boolean disabled) {
-        if (!this.disabled && disabled) {
-            stop();
-        }
-        this.disabled = disabled;
     }
 
     public boolean isTeleop() {
@@ -149,18 +109,19 @@ public class TankDrive {
     }
 
     public void loop(Gamepad pad) {
-        if (isDisabled() || !isTeleop() || pad == null) {
+        if (!isAvailable() || !isTeleop() || pad == null) {
             return;
         }
 
-        float left = cleanJoystick(pad.left_stick_y);
-        this.setSpeed(left, MotorSide.LEFT);
+        // Negative is forward; this is typically the opposite of native motor config
+        float left = cleanJoystick(-pad.left_stick_y);
+        this.setSpeed(left, MOTOR_SIDE.LEFT);
 
-        float right = cleanJoystick(pad.right_stick_y);
-        this.setSpeed(right, MotorSide.RIGHT);
+        float right = cleanJoystick(-pad.right_stick_y);
+        this.setSpeed(right, MOTOR_SIDE.RIGHT);
     }
 
-    private float cleanJoystick(float power) {
+    protected float cleanJoystick(float power) {
         power = com.qualcomm.robotcore.util.Range.clip(power, -1f, 1f);
         if (power < 0.1 && power > -0.1) {
             return 0;
