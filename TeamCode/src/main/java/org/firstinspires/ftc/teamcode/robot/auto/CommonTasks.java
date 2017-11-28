@@ -24,6 +24,9 @@ public class CommonTasks implements DriveToListener {
     private static final double LIFT_DELAY = 0.75;
     private static final double CLAW_DELAY = 0.25;
 
+    // Jewel arm post-start retracted position
+    public static final double JEWEL_ARM_RETRACT = 0.25d;
+
     /**
      * Configured drive constants
      */

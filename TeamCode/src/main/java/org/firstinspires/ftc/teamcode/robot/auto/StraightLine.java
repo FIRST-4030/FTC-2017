@@ -101,6 +101,9 @@ public class StraightLine extends OpMode {
         // Disable the lift if it isn't ready
         robot.lift.setEnabled(liftReady);
 
+        // Bring the arm to the runtime retracted position
+        robot.jewelArm.setPosition(CommonTasks.JEWEL_ARM_RETRACT);
+
         // Steady...
         state = AUTO_STATE.values()[0];
     }
