@@ -130,7 +130,7 @@ public class CommonTasks implements DriveToListener {
         distance = -Math.abs(distance);
         DriveToParams param = new DriveToParams(this, SENSOR_TYPE.DRIVE_ENCODER);
         int ticks = (int) ((float) distance * ENCODER_PER_MM);
-        param.lessThan(-1 * (ticks + robot.wheels.getEncoder() - OVERRUN_ENCODER));
+        param.lessThan(ticks + robot.wheels.getEncoder() - OVERRUN_ENCODER);
         return new DriveTo(new DriveToParams[]{param});
     }
 
