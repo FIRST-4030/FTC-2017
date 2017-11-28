@@ -92,6 +92,7 @@ public class Calibration extends OpMode {
         telemetry.addData("Lift", robot.lift.getEncoder());
         telemetry.addData("Lift Switch", robot.liftSwitch.get());
         telemetry.addData("Wheels", robot.wheels.getEncoder());
+        telemetry.addData("Arm", robot.jewelArm.getPostion());
         telemetry.update();
     }
 }
