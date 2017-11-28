@@ -11,8 +11,8 @@ import org.firstinspires.ftc.teamcode.buttons.ButtonHandler;
 import org.firstinspires.ftc.teamcode.robot.CLAWS;
 import org.firstinspires.ftc.teamcode.robot.Robot;
 
-@TeleOp(name = "The Real WCTeleOp", group = "WestCoastOpMode")
-public class WestCoastTeleOp extends OpMode {
+@TeleOp(name = "TeleOp")
+public class TeleOpMode extends OpMode {
 
     // Drive speeds
     private final static double SCALE_FULL = 1.0d;
