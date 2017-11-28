@@ -24,6 +24,10 @@ public class CommonTasks implements DriveToListener {
     private static final double LIFT_DELAY = 0.75;
     private static final double CLAW_DELAY = 0.25;
 
+    // Jewel Arm intermediates
+    public static final double MECANUM_ARM_MIDDLE_POS = 0.5d; // needs calibration
+    public static final double WEST_COAST_ARM_MIDDLE_POS = 0.5d; // needs calibration
+
     /**
      * Configured drive constants
      */
