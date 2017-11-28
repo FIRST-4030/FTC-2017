@@ -3,10 +3,10 @@ package org.firstinspires.ftc.teamcode.robot.test;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.actuators.ServoFTC;
 import org.firstinspires.ftc.teamcode.buttons.BUTTON;
 import org.firstinspires.ftc.teamcode.buttons.ButtonHandler;
 import org.firstinspires.ftc.teamcode.robot.CLAWS;
-import org.firstinspires.ftc.teamcode.robot.INTAKES;
 import org.firstinspires.ftc.teamcode.robot.Robot;
 
 @TeleOp(name = "Calibration", group = "Test")
@@ -27,15 +27,19 @@ public class Calibration extends OpMode {
         // Init the common tasks elements in CALIBRATION mode
         robot = new Robot(hardwareMap, telemetry);
 
+        for(ServoFTC claw : robot.claws){
+            claw.setPositionRaw(.5);
+        }
+
+        robot.jewelArm.setPositionRaw(.5);
+
         // Register buttons
         buttons.register("CLAW-" + CLAWS.TOP + "-UP", gamepad1, BUTTON.dpad_up);
         buttons.register("CLAW-" + CLAWS.TOP + "-DOWN", gamepad1, BUTTON.dpad_down);
         buttons.register("CLAW-" + CLAWS.BOTTOM + "-UP", gamepad1, BUTTON.dpad_right);
         buttons.register("CLAW-" + CLAWS.BOTTOM + "-DOWN", gamepad1, BUTTON.dpad_left);
-        buttons.register("INTAKE-" + INTAKES.RIGHT + "-UP", gamepad1, BUTTON.b);
-        buttons.register("INTAKE-" + INTAKES.RIGHT + "-DOWN", gamepad1, BUTTON.a);
-        buttons.register("INTAKE-" + INTAKES.LEFT + "-UP", gamepad1, BUTTON.y);
-        buttons.register("INTAKE-" + INTAKES.LEFT + "-DOWN", gamepad1, BUTTON.x);
+        buttons.register("ARM-UP", gamepad1, BUTTON.a);
+        buttons.register("ARM-DOWN", gamepad1, BUTTON.b);
         buttons.register("INTERVAL-UP", gamepad1, BUTTON.right_stick_button);
         buttons.register("INTERVAL-DOWN", gamepad1, BUTTON.left_stick_button);
     }
@@ -64,6 +68,12 @@ public class Calibration extends OpMode {
             } else if (buttons.get("CLAW-" + claw + "-DOWN")) {
                 robot.claws[claw.ordinal()].setPositionRaw(robot.claws[claw.ordinal()].getPostion() - servoInterval);
             }
+        }
+
+        if(buttons.get("ARM-UP")) {
+            robot.jewelArm.setPositionRaw(robot.jewelArm.getPostion() + servoInterval);
+        } else if(buttons.get("ARM-DOWN")) {
+            robot.jewelArm.setPositionRaw(robot.jewelArm.getPostion() - servoInterval);
         }
 
         // Adjust the servo adjustment rate
