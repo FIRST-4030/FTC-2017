@@ -161,8 +161,7 @@ public class JewelPivot extends OpMode {
                 state = state.next();
                 break;
             case WAIT_FOR_IMAGE:
-                if(robot.vuforia.getImage() != null)
-                {
+                if (robot.vuforia.getImage() != null) {
                     state.next();
                 }
                 break;
@@ -175,27 +174,21 @@ public class JewelPivot extends OpMode {
                 break;
             case PARSE_JEWEL:
                 //parse the jewel
-                boolean redLeft = common.leftJewelRed();
+                boolean redLeft = common.leftJewelRed(null);
                 //lower the arm
                 robot.jewelArm.max();
-                switch (alliance)
-                {
+                switch (alliance) {
                     case RED:
-                        if(redLeft)
-                        {
+                        if (redLeft) {
                             common.turnDegrees(245);
-                        }
-                        else
-                        {
+                        } else {
                             common.turnDegrees(115);
                         }
                         break;
                     case BLUE:
-                        if(redLeft)
-                        {
+                        if (redLeft) {
                             common.turnDegrees(115);
-                                                  }
-                        else {
+                        } else {
                             common.turnDegrees(245);
                         }
                         break;
