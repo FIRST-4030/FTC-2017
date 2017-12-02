@@ -29,10 +29,8 @@ public class CommonTasks implements DriveToListener {
     private static final double CLAW_DELAY = 0.25;
 
     // Jewel parse constants
-    private static final int[] JEWEL_LEFT_TOP_RIGHT = new int[]{};
-    private static final int[] JEWEL_LEFT_BOTTOM_LEFT = new int[]{};
-    private static final int[] JEWEL_RIGHT_TOP_RIGHT = new int[]{};
-    private static final int[] JEWEL_RIGHT_BOTTOM_LEFT = new int[]{};
+    private static final int[] JEWEL_UPPER_LEFT = new int[]{};
+    private static final int[] JEWEL_LOWER_RIGHT = new int[]{1279, 719};
 
     // Jewel arm post-start retracted position
     public static final double JEWEL_ARM_RETRACT = 0.25d;
@@ -245,8 +243,10 @@ public class CommonTasks implements DriveToListener {
 
         ImageFTC image = robot.vuforia.getImage();
 
-        int leftRGB = image.rgb(JEWEL_LEFT_TOP_RIGHT, JEWEL_LEFT_BOTTOM_LEFT);
-        int rightRGB = image.rgb(JEWEL_RIGHT_TOP_RIGHT, JEWEL_RIGHT_BOTTOM_LEFT);
+        int middleX = (JEWEL_LOWER_RIGHT[0] + JEWEL_UPPER_LEFT[0]) / 2;
+
+        int leftRGB = image.rgb(JEWEL_UPPER_LEFT, new int[]{middleX, JEWEL_LOWER_RIGHT[1]});
+        int rightRGB = image.rgb(new int[]{middleX + 1, JEWEL_UPPER_LEFT[1]}, JEWEL_LOWER_RIGHT);
 
         return (Color.red(leftRGB) > Color.red(rightRGB));
 

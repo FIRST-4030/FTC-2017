@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 import org.firstinspires.ftc.teamcode.field.VuforiaConfigs;
 import org.firstinspires.ftc.teamcode.robot.Robot;
+import org.firstinspires.ftc.teamcode.robot.auto.CommonTasks;
 import org.firstinspires.ftc.teamcode.vuforia.ImageFTC;
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "Vuforia Test", group = "Test")
@@ -15,6 +16,7 @@ public class VuforiaTest extends OpMode {
 
     // Devices and subsystems
     private Robot robot = null;
+    private CommonTasks common = null;
 
     // Dynamic things we need to remember
     private int lastBearing = 0;
@@ -29,6 +31,7 @@ public class VuforiaTest extends OpMode {
 
         // Init the robot
         robot = new Robot(hardwareMap, telemetry);
+        common = new CommonTasks(robot);
 
         // Wait for the game to begin
         telemetry.addData(">", "Ready for game start");
@@ -53,6 +56,7 @@ public class VuforiaTest extends OpMode {
         telemetry.addData("RGB", lastRGB);
         telemetry.addData("Target (" + lastTarget + ")", lastDistance + "mm @ " + lastBearing + "°");
         telemetry.addData("Image", lastImage);
+        telemetry.addData("Left", common.leftJewelRed() ? "Red" : "Blue");
         telemetry.update();
 
         // Update our location and target info
