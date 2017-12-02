@@ -241,8 +241,26 @@ public class CommonTasks implements DriveToListener {
         }
     }
 
+    public void drawJewelOutline(ImageFTC image) {
+        // Vertical lines at jewelUL[x] and jewelLR[x]
+        for (int i = jewelUL[1]; i <= jewelLR[1]; i++) {
+            image.getBitmap().setPixel(jewelUL[0], i, Color.BLACK);
+            image.getBitmap().setPixel(jewelLR[0], i, Color.BLACK);
+        }
+        // Horizontal lines at jewelUL[y] and jewelLR[y]
+        for (int i = jewelUL[0]; i <= jewelLR[0]; i++) {
+            image.getBitmap().setPixel(i, jewelUL[1], Color.BLACK);
+            image.getBitmap().setPixel(i, jewelLR[1], Color.BLACK);
+        }
+        // Vertical line at the center divsion
+        int middleX = ((jewelLR[0] - jewelUL[0]) / 2) + jewelUL[0];
+        for (int i = jewelUL[1]; i <= jewelLR[1]; i++) {
+            image.getBitmap().setPixel(middleX, i, Color.RED);
+            image.getBitmap().setPixel(middleX, i, Color.RED);
+        }
+    }
 
-    public boolean leftJewelRed(ImageFTC image){
+    public boolean leftJewelRed(ImageFTC image) {
 
         // Perhaps you mean ((jewelLR[0] - jewelUL[0]) / 2) + jewelUL[0];
         // To get half the rectangle width plus the offset of the left side
@@ -255,7 +273,7 @@ public class CommonTasks implements DriveToListener {
 
     }
 
-    public void setJewelUL(int[] jewelUL){
+    public void setJewelUL(int[] jewelUL) {
 
         int modifiedX = Math.max(0, Math.min(jewelLR[0] - 1, jewelUL[0]));
         int modifiedY = Math.max(0, Math.min(jewelLR[1] - 1, jewelUL[1]));
@@ -263,7 +281,7 @@ public class CommonTasks implements DriveToListener {
         this.jewelUL = new int[]{modifiedX, modifiedY};
     }
 
-    public void setJewelLR(int[] jewelLR){
+    public void setJewelLR(int[] jewelLR) {
 
         int modifiedX = Math.max(jewelUL[0] + 1, Math.min(VUFORIA_MAX_X, jewelLR[0]));
         int modifiedY = Math.max(jewelUL[1] + 1, Math.min(VUFORIA_MAX_Y, jewelLR[1]));
