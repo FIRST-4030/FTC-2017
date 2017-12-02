@@ -62,6 +62,9 @@ public class JewelPivot extends OpMode {
         // Wait for the game to begin
         telemetry.addData(">", "Init complete");
         telemetry.update();
+
+        robot.vuforia.start();
+        robot.vuforia.enableCapture(true);
     }
 
     @Override
@@ -114,6 +117,9 @@ public class JewelPivot extends OpMode {
 
         // Steady...
         state = JewelPivot.AUTO_STATE.values()[0];
+
+        //capture an image and store it for use in jewel parsing later.
+
     }
 
     @Override
