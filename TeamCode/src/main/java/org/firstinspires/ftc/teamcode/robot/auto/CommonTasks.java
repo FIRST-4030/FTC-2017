@@ -36,7 +36,7 @@ public class CommonTasks implements DriveToListener {
     public static int[] jewelLR = new int[]{VUFORIA_MAX_X, VUFORIA_MAX_Y};
 
     // Jewel arm post-start retracted position
-    public static final double JEWEL_ARM_RETRACT = 0.25d;
+    public static final double JEWEL_ARM_RETRACT = 0.40d;
 
     /**
      * Configured drive constants
