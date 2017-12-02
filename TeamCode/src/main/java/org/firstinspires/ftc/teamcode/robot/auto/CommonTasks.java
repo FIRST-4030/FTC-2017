@@ -244,6 +244,8 @@ public class CommonTasks implements DriveToListener {
 
     public boolean leftJewelRed(ImageFTC image){
 
+        // Perhaps you mean ((jewelLR[0] - jewelUL[0]) / 2) + jewelUL[0];
+        // To get half the rectangle width plus the offset of the left side
         int middleX = (jewelLR[0] + jewelUL[0]) / 2;
 
         int leftRGB = image.rgb(jewelUL, new int[]{middleX, jewelLR[1]});
