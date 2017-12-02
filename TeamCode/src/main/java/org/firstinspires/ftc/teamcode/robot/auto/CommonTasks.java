@@ -1,15 +1,19 @@
 package org.firstinspires.ftc.teamcode.robot.auto;
 
+import android.graphics.Color;
+
 import org.firstinspires.ftc.teamcode.driveto.DriveTo;
 import org.firstinspires.ftc.teamcode.driveto.DriveToComp;
 import org.firstinspires.ftc.teamcode.driveto.DriveToListener;
 import org.firstinspires.ftc.teamcode.driveto.DriveToParams;
+import org.firstinspires.ftc.teamcode.field.Field;
 import org.firstinspires.ftc.teamcode.robot.CLAWS;
 import org.firstinspires.ftc.teamcode.robot.Robot;
 import org.firstinspires.ftc.teamcode.driveto.AutoDriver;
 import org.firstinspires.ftc.teamcode.utils.Heading;
 import org.firstinspires.ftc.teamcode.utils.OrderedEnum;
 import org.firstinspires.ftc.teamcode.utils.OrderedEnumHelper;
+import org.firstinspires.ftc.teamcode.vuforia.ImageFTC;
 import org.firstinspires.ftc.teamcode.wheels.MOTOR_SIDE;
 
 /*
@@ -23,6 +27,12 @@ public class CommonTasks implements DriveToListener {
     // LiftAutoStart constants
     private static final double LIFT_DELAY = 0.75;
     private static final double CLAW_DELAY = 0.25;
+
+    // Jewel parse constants
+    private static final int[] JEWEL_LEFT_TOP_RIGHT = new int[]{};
+    private static final int[] JEWEL_LEFT_BOTTOM_LEFT = new int[]{};
+    private static final int[] JEWEL_RIGHT_TOP_RIGHT = new int[]{};
+    private static final int[] JEWEL_RIGHT_BOTTOM_LEFT = new int[]{};
 
     // Jewel arm post-start retracted position
     public static final double JEWEL_ARM_RETRACT = 0.25d;
@@ -229,4 +239,17 @@ public class CommonTasks implements DriveToListener {
                 break;
         }
     }
+
+
+    public boolean leftJewelRed(){
+
+        ImageFTC image = robot.vuforia.getImage();
+
+        int leftRGB = image.rgb(JEWEL_LEFT_TOP_RIGHT, JEWEL_LEFT_BOTTOM_LEFT);
+        int rightRGB = image.rgb(JEWEL_RIGHT_TOP_RIGHT, JEWEL_RIGHT_BOTTOM_LEFT);
+
+        return (Color.red(leftRGB) > Color.red(rightRGB));
+
+    }
+
 }
