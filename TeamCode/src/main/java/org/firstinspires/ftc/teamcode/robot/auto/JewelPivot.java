@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.robot.auto;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.buttons.ButtonHandler;
@@ -8,6 +9,7 @@ import org.firstinspires.ftc.teamcode.field.Field;
 import org.firstinspires.ftc.teamcode.robot.Robot;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.sun.tools.javac.tree.JCTree;
 
 import org.firstinspires.ftc.teamcode.actuators.ServoFTC;
 import org.firstinspires.ftc.teamcode.buttons.BUTTON;
@@ -18,12 +20,14 @@ import org.firstinspires.ftc.teamcode.driveto.AutoDriver;
 import org.firstinspires.ftc.teamcode.utils.OrderedEnum;
 import org.firstinspires.ftc.teamcode.utils.OrderedEnumHelper;
 
+@Disabled
 @com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "Jewel Pivot", group = "Auto")
 public class JewelPivot extends OpMode {
 
     // Auto constants
     private static final int RELEASE_REVERSE_MM = 250;
     private static final double RELEASE_DELAY = 0.5d;
+    private static final int JEWEL_PIOVT_DEGREES = 5;
 
     // Devices and subsystems
     private Robot robot = null;
@@ -39,6 +43,7 @@ public class JewelPivot extends OpMode {
     private Field.AllianceColor alliance = Field.AllianceColor.BLUE;
     private org.firstinspires.ftc.teamcode.robot.auto.JewelPivot.DISTANCE distance = DISTANCE.SHORT;
     private org.firstinspires.ftc.teamcode.robot.auto.JewelPivot.DELAY delay = org.firstinspires.ftc.teamcode.robot.auto.JewelPivot.DELAY.NONE;
+
 
     @Override
     public void init() {
@@ -155,22 +160,66 @@ public class JewelPivot extends OpMode {
                 driver.done = false;
                 state = state.next();
                 break;
+            case WAIT_FOR_IMAGE:
+                if(robot.vuforia.getImage() != null)
+                {
+                    state.next();
+                }
+                break;
             case LIFT_INIT:
                 driver = delegateDriver(common.liftAutoStart(), state.next());
-                break;
-            case PARSE_JEWEL:
-                //start vuforia and enable image capture
-                
-                state = state.next();
                 break;
             case DELAY:
                 driver.interval = delay.seconds();
                 state = state.next();
                 break;
-            /*case HIT_JEWEL:
+            case PARSE_JEWEL:
+                //parse the jewel
+                boolean redLeft = common.leftJewelRed();
+                //lower the arm
+                robot.jewelArm.max();
+                switch (alliance)
+                {
+                    case RED:
+                        if(redLeft)
+                        {
+                            common.turnDegrees(245);
+                        }
+                        else
+                        {
+                            common.turnDegrees(115);
+                        }
+                        break;
+                    case BLUE:
+                        if(redLeft)
+                        {
+                            common.turnDegrees(115);
+                                                  }
+                        else {
+                            common.turnDegrees(245);
+                        }
+                        break;
+                }
                 state = state.next();
-                break;*/
+                break;
             /*case PIVOT_BACK:
+                //retract Jewel arm
+                robot.jewelArm.min();
+                //this is the number of degrees we gotta turn back
+                int pivotDegrees;
+                //set pivot degrees
+                if(distance == DISTANCE.SHORT)
+                {
+                    if(robot.gyro.getHeading() > 180) pivotDegrees = 90 + JEWEL_PIOVT_DEGREES;
+                    else pivotDegrees = 90 - JEWEL_PIOVT_DEGREES;
+                    driver.drive = common.turnDegrees(pivotDegrees);
+                }
+                else
+                {
+                    if(robot.gyro.getHeading() > 180) pivotDegrees = -JEWEL_PIOVT_DEGREES;
+                    else pivotDegrees = +JEWEL_PIOVT_DEGREES;
+                    driver.drive = common.turnDegrees(pivotDegrees);
+                }
                 state = state.next();
                 break;*/
             case DRIVE_FORWARD:
@@ -215,11 +264,11 @@ public class JewelPivot extends OpMode {
     // Define the order of auto routine components
     enum AUTO_STATE implements OrderedEnum {
         INIT,               //initiate stuff
+        WAIT_FOR_IMAGE,     //wait for vuforia to return an image.
         LIFT_INIT,          //intiate lift
+        DELAY,              //delay? we likely won't need this in the final version but just in case..
         PARSE_JEWEL,        //parse which jewel is on which side
-        DELAY,              //delay? we likely won't need this in the final version but just in case...
-        HIT_JEWEL,          //pivot to hit the jewel
-        PIVOT_BACK,         //pivot back to correct position? might not need this step
+        //PIVOT_BACK,         //pivot back to correct position? might not need this step
         DRIVE_FORWARD,      //drive forward to approprate point
         PIVOT_TO_FACE,      //pivot to align with the desired box
         DRIVE_TO_BOX,       //drive up to the box
