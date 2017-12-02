@@ -6,7 +6,6 @@ import org.firstinspires.ftc.teamcode.driveto.DriveTo;
 import org.firstinspires.ftc.teamcode.driveto.DriveToComp;
 import org.firstinspires.ftc.teamcode.driveto.DriveToListener;
 import org.firstinspires.ftc.teamcode.driveto.DriveToParams;
-import org.firstinspires.ftc.teamcode.field.Field;
 import org.firstinspires.ftc.teamcode.robot.CLAWS;
 import org.firstinspires.ftc.teamcode.robot.Robot;
 import org.firstinspires.ftc.teamcode.driveto.AutoDriver;
@@ -28,9 +27,13 @@ public class CommonTasks implements DriveToListener {
     private static final double LIFT_DELAY = 0.75;
     private static final double CLAW_DELAY = 0.25;
 
-    // Jewel parse constants
-    private static final int[] JEWEL_UPPER_LEFT = new int[]{};
-    private static final int[] JEWEL_LOWER_RIGHT = new int[]{1279, 719};
+    // Image constants
+    private static final int VUFORIA_MAX_X = 1279;
+    private static final int VUFORIA_MAX_Y = 719;
+
+    // Jewel parse default values
+    public static int[] jewelUL = new int[]{340, 360};
+    public static int[] jewelLR = new int[]{VUFORIA_MAX_X, VUFORIA_MAX_Y};
 
     // Jewel arm post-start retracted position
     public static final double JEWEL_ARM_RETRACT = 0.25d;
@@ -239,16 +242,31 @@ public class CommonTasks implements DriveToListener {
     }
 
 
-    public boolean leftJewelRed(){
+    public boolean leftJewelRed(ImageFTC image){
 
-        ImageFTC image = robot.vuforia.getImage();
+        int middleX = (jewelLR[0] + jewelUL[0]) / 2;
 
-        int middleX = (JEWEL_LOWER_RIGHT[0] + JEWEL_UPPER_LEFT[0]) / 2;
-
-        int leftRGB = image.rgb(JEWEL_UPPER_LEFT, new int[]{middleX, JEWEL_LOWER_RIGHT[1]});
-        int rightRGB = image.rgb(new int[]{middleX + 1, JEWEL_UPPER_LEFT[1]}, JEWEL_LOWER_RIGHT);
+        int leftRGB = image.rgb(jewelUL, new int[]{middleX, jewelLR[1]});
+        int rightRGB = image.rgb(new int[]{middleX + 1, jewelUL[1]}, jewelLR);
 
         return (Color.red(leftRGB) > Color.red(rightRGB));
+
+    }
+
+    public void setJewelUL(int[] jewelUL){
+
+        int modifiedX = Math.max(0, Math.min(jewelLR[0] - 1, jewelUL[0]));
+        int modifiedY = Math.max(0, Math.min(jewelLR[1] - 1, jewelUL[1]));
+
+        this.jewelUL = new int[]{modifiedX, modifiedY};
+    }
+
+    public void setJewelLR(int[] jewelLR){
+
+        int modifiedX = Math.max(jewelUL[0] + 1, Math.min(VUFORIA_MAX_X, jewelLR[0]));
+        int modifiedY = Math.max(jewelUL[1] + 1, Math.min(VUFORIA_MAX_Y, jewelLR[1]));
+
+        this.jewelLR = new int[]{modifiedX, modifiedY};
 
     }
 
