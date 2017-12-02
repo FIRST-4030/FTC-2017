@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.utils.OrderedEnumHelper;
 public class StraightLine extends OpMode {
 
     // Auto constants
-    private static final int RELEASE_REVERSE_MM = 250;
+    private static final int RELEASE_REVERSE_MM = 125;
     private static final double RELEASE_DELAY = 0.5d;
 
     // Devices and subsystems
