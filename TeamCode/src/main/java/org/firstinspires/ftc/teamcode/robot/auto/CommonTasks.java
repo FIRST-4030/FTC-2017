@@ -33,7 +33,7 @@ public class CommonTasks implements DriveToListener {
     private static final int[] JEWEL_LOWER_RIGHT = new int[]{1279, 719};
 
     // Jewel arm post-start retracted position
-    public static final double JEWEL_ARM_RETRACT = 0.25d;
+    public static final double JEWEL_ARM_RETRACT = 0.40d;
 
     /**
      * Configured drive constants
