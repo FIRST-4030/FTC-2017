@@ -31,7 +31,7 @@ public class DriveTo {
     public boolean isTimeout() {
         long now = System.currentTimeMillis();
         for (DriveToParams param : params) {
-            if (started + param.timeout < now) {
+            if (now - started > param.timeout) {
                 return true;
             }
         }

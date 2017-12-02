@@ -27,8 +27,8 @@ public class Robot {
     public VuforiaFTC vuforia = null;
     public ServoFTC jewelArm = null;
 
-    private final HardwareMap map;
-    private final Telemetry telemetry;
+    public final HardwareMap map;
+    public final Telemetry telemetry;
 
     public Robot(HardwareMap map, Telemetry telemetry) {
         this(map, telemetry, null);

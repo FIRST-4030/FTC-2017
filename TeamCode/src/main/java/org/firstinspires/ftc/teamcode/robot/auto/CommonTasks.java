@@ -24,9 +24,8 @@ public class CommonTasks implements DriveToListener {
     private static final double LIFT_DELAY = 0.75;
     private static final double CLAW_DELAY = 0.25;
 
-    // Jewel Arm intermediates
-    public static final double MECANUM_ARM_MIDDLE_POS = 0.5d; // needs calibration
-    public static final double WEST_COAST_ARM_MIDDLE_POS = 0.5d; // needs calibration
+    // Jewel arm post-start retracted position
+    public static final double JEWEL_ARM_RETRACT = 0.25d;
 
     /**
      * Configured drive constants
@@ -36,7 +35,7 @@ public class CommonTasks implements DriveToListener {
     public final static float SPEED_FORWARD_SLOW = SPEED_FORWARD * 0.75f;
     public final static float SPEED_REVERSE = -SPEED_FORWARD;
     // Turn drive speed
-    public final static float SPEED_TURN = SPEED_FORWARD * 0.5f;
+    public final static float SPEED_TURN = SPEED_FORWARD * 0.1f;
     // Lift speed -- Up is motor positive, ticks increasing
     public final static float LIFT_SPEED_UP = 1.0f;
     public final static float LIFT_SPEED_DOWN = -LIFT_SPEED_UP;
@@ -45,7 +44,7 @@ public class CommonTasks implements DriveToListener {
      * Tuned drive constants
      */
     // An estimate of the number of degrees we slip on inertia after calling wheels.stop()
-    public final static int OVERRUN_GYRO = 1; // TBD
+    public final static int OVERRUN_GYRO = 0; // TBD
     // An estimate of the number of ricks we slip on inertia after calling wheels.stop()
     public final static int OVERRUN_ENCODER = 10;
 
@@ -139,33 +138,30 @@ public class CommonTasks implements DriveToListener {
     }
 
     public DriveTo turnDegrees(int degrees) {
-        DriveToParams[] params = new DriveToParams[2];
-        params[0] = new DriveToParams(this, SENSOR_TYPE.GYROSCOPE_SLAVE);
-        params[1] = new DriveToParams(this, SENSOR_TYPE.GYROSCOPE);
+        DriveToParams param = new DriveToParams(this, SENSOR_TYPE.GYROSCOPE);
+        param.timeout = 100 * 1000;
 
         // Current and target heading in normalized degrees
         int heading = robot.gyro.getHeading();
         int target = Heading.normalize(heading + degrees);
-        int opposite = Heading.normalize(target + (Heading.FULL_CIRCLE / 2));
 
-        // Match both the target and its opposite to ensure we can turn through 0 degrees
-        // Set the sensor type to GYRO_SLAVE for the opposite so we don't drive with it
+        // Turn left or right as directed
         if (degrees > 0) {
-            params[0].lessThan(opposite);
-            params[1].greaterThan(target - OVERRUN_GYRO);
+            robot.telemetry.log().add("Target greater: " + target);
+            param.greaterThan(target - OVERRUN_GYRO);
         } else {
-            params[0].greaterThan(opposite);
-            params[1].lessThan(target + OVERRUN_GYRO);
+            robot.telemetry.log().add("Target less: " + target);
+            param.lessThan(target + OVERRUN_GYRO);
         }
 
-        // Default match mode is "all", so both parameters must match as the same time
-        return new DriveTo(params);
+        return new DriveTo(new DriveToParams[]{param});
     }
 
     @Override
     public void driveToStop(DriveToParams param) {
         switch ((SENSOR_TYPE) param.reference) {
             case DRIVE_ENCODER:
+            case GYROSCOPE:
                 robot.wheels.stop();
                 break;
         }

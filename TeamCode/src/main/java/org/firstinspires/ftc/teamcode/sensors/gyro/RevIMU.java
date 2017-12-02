@@ -10,9 +10,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
+import org.firstinspires.ftc.teamcode.utils.Heading;
 
 class IMUWaiter implements Runnable {
-    public static final int TIMEOUT = 1000;
+    public static final int TIMEOUT = 2500;
 
     public static final String LOG_NAME = null;
     public static final String CALIBRATION_FILE = null;
@@ -136,6 +137,6 @@ public class RevIMU implements Gyro {
     }
 
     public int getHeading() {
-        return (getRaw() + offset);
+        return Heading.normalize(getRaw() + offset);
     }
 }

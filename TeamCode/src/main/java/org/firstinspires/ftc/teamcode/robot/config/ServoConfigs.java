@@ -37,7 +37,7 @@ public class ServoConfigs extends Configs {
                         config = new ServoConfig("CL2", true, 0.5d, 0.85d);
                         break;
                     case JEWEL_ARM:
-                        config = new ServoConfig("Jewel Arm", false, 0.0d, 1.0d); // needs calibration
+                        config = new ServoConfig("Jewel Arm", true, 0.2d, 1.0d); // needs calibration
                         break;
                 }
                 break;

@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.robot.test;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpModeRegistrar;
 
 import org.firstinspires.ftc.teamcode.driveto.AutoDriver;
 import org.firstinspires.ftc.teamcode.robot.auto.CommonTasks;
@@ -44,13 +45,22 @@ public class SimpleAuto extends OpMode {
 
     @Override
     public void init() {
+        telemetry.clearAll();
+        telemetry.addData(">", "Init…");
+        telemetry.update();
 
         // Common init
         robot = new Robot(hardwareMap, telemetry);
         common = new CommonTasks(robot);
+    }
 
-        // Wait for the game to begin
-        telemetry.addData(">", "Ready for game start");
+    @Override
+    public void init_loop() {
+        if (!robot.gyro.isReady()) {
+            telemetry.addData(">", "Calibrating gyro…");
+        } else {
+            telemetry.addData(">", "Ready for game start");
+        }
         telemetry.update();
     }
 

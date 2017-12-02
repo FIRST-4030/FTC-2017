@@ -10,6 +10,7 @@ import org.firstinspires.ftc.teamcode.buttons.BUTTON;
 import org.firstinspires.ftc.teamcode.buttons.ButtonHandler;
 import org.firstinspires.ftc.teamcode.robot.CLAWS;
 import org.firstinspires.ftc.teamcode.robot.Robot;
+import org.firstinspires.ftc.teamcode.robot.auto.CommonTasks;
 
 @TeleOp(name = "TeleOp")
 public class TeleOpMode extends OpMode {
@@ -47,6 +48,7 @@ public class TeleOpMode extends OpMode {
     @Override
     public void start() {
         robot.wheels.setTeleop(true);
+        robot.jewelArm.setPosition(CommonTasks.JEWEL_ARM_RETRACT);
     }
 
     @Override
