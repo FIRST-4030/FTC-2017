@@ -124,6 +124,7 @@ public class JewelPivot extends OpMode {
         state = JewelPivot.AUTO_STATE.values()[0];
 
         //capture an image and store it for use in jewel parsing later.
+        robot.vuforia.capture();
 
     }
 
@@ -161,7 +162,8 @@ public class JewelPivot extends OpMode {
                 state = state.next();
                 break;
             case WAIT_FOR_IMAGE:
-                if (robot.vuforia.getImage() != null) {
+                if(robot.vuforia.getImage() != null)
+                {
                     state.next();
                 }
                 break;
@@ -174,24 +176,46 @@ public class JewelPivot extends OpMode {
                 break;
             case PARSE_JEWEL:
                 //parse the jewel
-                boolean redLeft = common.leftJewelRed(null);
+                boolean redLeft = common.leftJewelRed(robot.vuforia.getImage());
                 //lower the arm
                 robot.jewelArm.max();
-                switch (alliance) {
-                    case RED:
-                        if (redLeft) {
-                            common.turnDegrees(245);
-                        } else {
-                            common.turnDegrees(115);
-                        }
-                        break;
-                    case BLUE:
-                        if (redLeft) {
-                            common.turnDegrees(115);
-                        } else {
-                            common.turnDegrees(245);
-                        }
-                        break;
+
+                //switch based on which platform we're on
+                if(distance == DISTANCE.SHORT) {
+                    switch (alliance) {
+                        case RED:
+                            if (redLeft) {
+                                driver.drive = common.turnDegrees(-245);
+                            } else {
+                                driver.drive = common.turnDegrees(115);
+                            }
+                            break;
+                        case BLUE:
+                            if (redLeft) {
+                                driver.drive = common.turnDegrees(115);
+                            } else {
+                                driver.drive = common.turnDegrees(-245);
+                            }
+                            break;
+                    }
+                }
+                else {                                                  //if we're on the long platform
+                    switch (alliance){
+                        case RED:
+                            if(redLeft) {                               //if we're red and the red ball is to the left, rotate left to center box
+                                driver.drive = common.turnDegrees(-284);
+                            } else {                                    //if we're red and the red ball is to the right, rotate right to the same position
+                                driver.drive = common.turnDegrees(76);
+                            }
+                            break;
+                        case BLUE:
+                            if(redLeft) {
+                                driver.drive = common.turnDegrees(76);
+                            } else {
+                                driver.drive = common.turnDegrees(-284);
+                            }
+                            break;
+                    }
                 }
                 state = state.next();
                 break;
@@ -216,6 +240,7 @@ public class JewelPivot extends OpMode {
                 state = state.next();
                 break;*/
             case DRIVE_FORWARD:
+                robot.jewelArm.setPosition(CommonTasks.JEWEL_ARM_RETRACT);
                 driver.drive = common.driveForward(distance.millimeters());
                 state = state.next();
                 break;

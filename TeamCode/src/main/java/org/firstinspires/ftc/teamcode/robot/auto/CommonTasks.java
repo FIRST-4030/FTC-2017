@@ -32,8 +32,8 @@ public class CommonTasks implements DriveToListener {
     private static final int VUFORIA_MAX_Y = 719;
 
     // Jewel parse default values
-    public static int[] jewelUL = new int[]{340, 360};
-    public static int[] jewelLR = new int[]{VUFORIA_MAX_X, VUFORIA_MAX_Y};
+    public static int[] jewelUL = new int[]{100, 0}; // 340, 360
+    public static int[] jewelLR = new int[]{1000, 200}; // maxX and MaxY
 
     // Jewel arm post-start retracted position
     public static final double JEWEL_ARM_RETRACT = 0.40d;
@@ -244,32 +244,43 @@ public class CommonTasks implements DriveToListener {
     public void drawJewelOutline(ImageFTC image) {
         // Vertical lines at jewelUL[x] and jewelLR[x]
         for (int i = jewelUL[1]; i <= jewelLR[1]; i++) {
-            image.getBitmap().setPixel(jewelUL[0], i, Color.BLACK);
-            image.getBitmap().setPixel(jewelLR[0], i, Color.BLACK);
+            image.getBitmap().setPixel(jewelUL[0], i, Color.GREEN);
+            image.getBitmap().setPixel(jewelUL[0] + 1, i, Color.GREEN);
+            image.getBitmap().setPixel(jewelLR[0], i, Color.GREEN);
+            image.getBitmap().setPixel(jewelLR[0] - 1, i, Color.GREEN);
         }
         // Horizontal lines at jewelUL[y] and jewelLR[y]
         for (int i = jewelUL[0]; i <= jewelLR[0]; i++) {
-            image.getBitmap().setPixel(i, jewelUL[1], Color.BLACK);
-            image.getBitmap().setPixel(i, jewelLR[1], Color.BLACK);
+            image.getBitmap().setPixel(i, jewelUL[1], Color.GREEN);
+            image.getBitmap().setPixel(i, jewelUL[1] + 1, Color.GREEN);
+            image.getBitmap().setPixel(i, jewelLR[1], Color.GREEN);
+            image.getBitmap().setPixel(i, jewelLR[1] - 1, Color.GREEN);
         }
         // Vertical line at the center divsion
         int middleX = ((jewelLR[0] - jewelUL[0]) / 2) + jewelUL[0];
         for (int i = jewelUL[1]; i <= jewelLR[1]; i++) {
             image.getBitmap().setPixel(middleX, i, Color.RED);
-            image.getBitmap().setPixel(middleX, i, Color.RED);
+            image.getBitmap().setPixel(middleX + 1, i, Color.RED);
         }
     }
 
-    public boolean leftJewelRed(ImageFTC image) {
+    public int[] getJewelReds(ImageFTC image){
 
         // Perhaps you mean ((jewelLR[0] - jewelUL[0]) / 2) + jewelUL[0];
         // To get half the rectangle width plus the offset of the left side
         int middleX = (jewelLR[0] + jewelUL[0]) / 2;
 
-        int leftRGB = image.rgb(jewelUL, new int[]{middleX, jewelLR[1]});
-        int rightRGB = image.rgb(new int[]{middleX + 1, jewelUL[1]}, jewelLR);
+        return new int[]{
+                Color.red(image.rgb(new int[]{middleX + 1, jewelUL[1]}, jewelLR)),
+                Color.red(image.rgb(jewelUL, new int[]{middleX, jewelLR[1]}))};
 
-        return (Color.red(leftRGB) > Color.red(rightRGB));
+    }
+
+    public boolean leftJewelRed(ImageFTC image) {
+
+        int[] sideReds = getJewelReds(image);
+
+        return (sideReds[0] > sideReds[1]);
 
     }
 

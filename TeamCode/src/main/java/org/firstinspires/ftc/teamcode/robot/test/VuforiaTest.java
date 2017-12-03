@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.robot.test;
 
+import android.graphics.Bitmap;
+
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
@@ -65,6 +67,8 @@ public class VuforiaTest extends OpMode {
     @Override
     public void loop() {
 
+        buttons.update();
+
         // Update our location and target info
         robot.vuforia.track();
 
@@ -95,13 +99,18 @@ public class VuforiaTest extends OpMode {
         ImageFTC image = robot.vuforia.getImage();
         if (image != null) {
             lastImage = "(" + image.getWidth() + "," + image.getHeight() + ") " + image.getTimestamp();
-            if (gamepad1.a) {
+            if (gamepad1.right_bumper) {
                 common.drawJewelOutline(image);
                 image.savePNG("vuforia-" + image.getTimestamp() + ".png");
             }
         }
 
         handleInput();
+
+//        if(image != null) common.drawJewelOutline(image);
+
+        // store the red values for later use in telemetry
+        int[] sideReds = image != null ? common.getJewelReds(image) : new int[]{0, 0};
 
         // Driver feedback
         robot.vuforia.display(telemetry);
@@ -111,7 +120,9 @@ public class VuforiaTest extends OpMode {
         telemetry.addData("UL/LR Interval", cornerInterval);
         telemetry.addData("UL X,Y", CommonTasks.jewelUL[0] + ", " + CommonTasks.jewelUL[1]);
         telemetry.addData("LR X,Y", CommonTasks.jewelLR[0] + ", " + CommonTasks.jewelLR[1]);
-        if (image != null) telemetry.addData("Left", common.leftJewelRed(image) ? "Red" : "Blue");
+        telemetry.addData("Left", sideReds[0]);
+        telemetry.addData("Right", sideReds[1]);
+        if(image != null) telemetry.addData("Reddest Side", common.leftJewelRed(image) ? "Left" : "Right");
         telemetry.addData("", "");
         telemetry.update();
 
@@ -123,25 +134,25 @@ public class VuforiaTest extends OpMode {
 
         if (buttons.get("UL-INCREASE-X"))
             common.setJewelUL(new int[]{CommonTasks.jewelUL[0] + cornerInterval, CommonTasks.jewelUL[0]});
-        if (buttons.get("UL-DECREASE-X"))
+        else if (buttons.get("UL-DECREASE-X"))
             common.setJewelUL(new int[]{CommonTasks.jewelUL[0] - cornerInterval, CommonTasks.jewelUL[0]});
         if (buttons.get("UL-INCREASE-Y"))
             common.setJewelUL(new int[]{CommonTasks.jewelUL[1], CommonTasks.jewelUL[1] + cornerInterval});
-        if (buttons.get("UL-DECREASE-Y"))
+        else if (buttons.get("UL-DECREASE-Y"))
             common.setJewelUL(new int[]{CommonTasks.jewelUL[1], CommonTasks.jewelUL[1] - cornerInterval});
 
         if (buttons.get("LR-INCREASE-X"))
             common.setJewelLR(new int[]{CommonTasks.jewelLR[0] + cornerInterval, CommonTasks.jewelLR[0]});
-        if (buttons.get("LR-DECREASE-X"))
+        else if (buttons.get("LR-DECREASE-X"))
             common.setJewelLR(new int[]{CommonTasks.jewelLR[0] - cornerInterval, CommonTasks.jewelLR[0]});
         if (buttons.get("LR-INCREASE-Y"))
             common.setJewelLR(new int[]{CommonTasks.jewelLR[1], CommonTasks.jewelLR[1] + cornerInterval});
-        if (buttons.get("LR-DECREASE-Y"))
+        else if (buttons.get("LR-DECREASE-Y"))
             common.setJewelLR(new int[]{CommonTasks.jewelLR[1], CommonTasks.jewelLR[1] - cornerInterval});
 
         if (buttons.get("INCREASE-CHANGE-RATE")) cornerInterval += 1;
-        if (buttons.get("DECREASE-CHANGE-RATE"))
-            cornerInterval = Math.max(1, cornerInterval);
+        else if (buttons.get("DECREASE-CHANGE-RATE"))
+            cornerInterval = Math.max(1, cornerInterval - 1);
 
     }
 
