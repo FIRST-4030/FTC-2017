@@ -171,14 +171,14 @@ public class JewelPivot extends OpMode {
                 driver = delegateDriver(common.liftAutoStart(), state.next());
                 break;
             case DELAY:
+                // Lower the arm so that it is ready for the next step
+                robot.jewelArm.max();
                 driver.interval = delay.seconds();
                 state = state.next();
                 break;
             case PARSE_JEWEL:
                 //parse the jewel
                 boolean redLeft = common.leftJewelRed(robot.vuforia.getImage());
-                //lower the arm
-                robot.jewelArm.max();
 
                 //switch based on which platform we're on
                 if(distance == DISTANCE.SHORT) {
@@ -217,6 +217,7 @@ public class JewelPivot extends OpMode {
                             break;
                     }
                 }
+
                 state = state.next();
                 break;
             /*case PIVOT_BACK:
@@ -285,6 +286,7 @@ public class JewelPivot extends OpMode {
         WAIT_FOR_IMAGE,     //wait for vuforia to return an image.
         LIFT_INIT,          //intiate lift
         DELAY,              //delay? we likely won't need this in the final version but just in case..
+                            //we might need this in the final to let the arm come all the way down
         PARSE_JEWEL,        //parse which jewel is on which side
         //PIVOT_BACK,         //pivot back to correct position? might not need this step
         DRIVE_FORWARD,      //drive forward to approprate point

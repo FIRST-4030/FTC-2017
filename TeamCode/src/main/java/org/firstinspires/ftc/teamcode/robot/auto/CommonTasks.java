@@ -27,6 +27,10 @@ public class CommonTasks implements DriveToListener {
     private static final double LIFT_DELAY = 0.75;
     private static final double CLAW_DELAY = 0.25;
 
+    // Initial rotation constants
+    public static final int FRONT_TURN = 115;
+//    public static final int
+
     // Image constants
     private static final int VUFORIA_MAX_X = 1279;
     private static final int VUFORIA_MAX_Y = 719;
