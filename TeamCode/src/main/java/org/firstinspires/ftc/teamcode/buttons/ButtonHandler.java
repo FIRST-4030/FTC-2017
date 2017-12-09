@@ -52,25 +52,57 @@ public class ButtonHandler {
         }
     }
 
-    // Update all buttons
+    // Update stored state for all buttons, typically called once per OpMode loop()
     public void update() {
-        for (Button b : buttons.values()) {
-            try {
-                Field field = b.gamepad.getClass().getField(b.button.name());
-                b.listener.update(field.getBoolean(b.gamepad));
-            } catch (Exception e) {
-                // We checked this when registering so this shouldn't happen, but log if it does
-                System.err.println("Unable to update button: " + b.button);
+        for (String name : buttons.keySet()) {
+            Button b = buttons.get(name);
+            if (b != null) {
+                b.listener.update(read(b));
             }
         }
     }
 
+    // Directly read the underlying button state
+    private boolean read(Button b) {
+        boolean pressed = false;
+        try {
+            Field field = b.gamepad.getClass().getField(b.button.name());
+            pressed = field.getBoolean(b.gamepad);
+        } catch (Exception e) {
+            // We checked this when registering so this shouldn't happen, but log if it does
+            System.err.println("Unable to read button: " + b.button);
+        }
+        return pressed;
+    }
+
+    // Live state of the button
+    public boolean raw(String name) {
+        Button button = buttons.get(name);
+        if (button == null) {
+            System.err.println("Unregistered button name: " + name);
+            return false;
+        }
+        return read(button);
+    }
+
+    // Stored state of the button
     public boolean get(String name) {
-        if (!buttons.containsKey(name)) {
+        Button button = buttons.get(name);
+        if (button == null) {
             System.err.println("Unregistered button name: " + name);
             return false;
         }
         return buttons.get(name).listener.active();
+    }
+
+    // Stored hold state of the button
+    public boolean held(String name) {
+        Button button = buttons.get(name);
+        if (button == null) {
+            System.err.println("Unregistered button name: " + name);
+            return false;
+        }
+        return button.listener.held();
     }
 
     private class Button {

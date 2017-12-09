@@ -24,4 +24,9 @@ public class ToggleButton implements ButtonHandlerListener {
     public boolean active() {
         return active;
     }
+
+    // Toggle natively simulates holding
+    public boolean held() {
+        return active();
+    }
 }

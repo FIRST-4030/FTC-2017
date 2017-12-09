@@ -31,4 +31,9 @@ public class SinglePressButton implements ButtonHandlerListener {
     public boolean active() {
         return active;
     }
+
+    // Released is set when the button is up
+    public boolean held() {
+        return !released;
+    }
 }
