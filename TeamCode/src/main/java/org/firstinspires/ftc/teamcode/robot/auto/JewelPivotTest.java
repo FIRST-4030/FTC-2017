@@ -153,7 +153,7 @@ public class JewelPivotTest extends OpMode {
             return;
         }
 
-        // Main state machine
+        // Main state machine, see enum for description of each state
         switch (state) {
             case INIT:
                 driver.done = false;
@@ -188,10 +188,12 @@ public class JewelPivotTest extends OpMode {
                 state = state.next();
                 break;
             case PARSE_JEWEL:
+                //determine if we need to pivot left or right. 
                 pivotLeft = (common.leftJewelRed(robot.vuforia.getImage())) == (alliance == Field.AllianceColor.BLUE);
                 state = state.next();
                 break;
             case HIT_JEWEL:
+                //turns -90 if we're hitting the left jewel, 90 if we're hitting the right.
                 driver.drive = common.turnDegrees((pivotLeft ? -1 : 1) * JEWEL_PIVOT_DEGREES);
                 state = state.next();
                 break;
@@ -248,7 +250,7 @@ public class JewelPivotTest extends OpMode {
     enum AUTO_STATE implements OrderedEnum {
         INIT,               // Initiate stuff
         ENABLE_CAPTURE,     // Enable vuforia image capture
-        WAIT_FOR_IMAGE,     // Wait for vuforia to return an image.
+        WAIT_FOR_IMAGE,     // Make sure we don't try to do anything before Vuforia returns an image to analyze.
         DISABLE_CAPTURE,    // Disable vuforia capture so we run faster (?)
                             // Also maybe save the image (how do we wait until that is done?)
         GRAB_BLOCK,         // Grab the block in front of us
@@ -259,6 +261,8 @@ public class JewelPivotTest extends OpMode {
         PARSE_JEWEL,        // Parse which jewel is on which side
         HIT_JEWEL,          // Pivot to hit the correct jewel
         RETRACT_ARM,        // Retract the arm so we don't accidentally hit the jewels again
+        //should we add a true "Pivot_Back" state which returns us to 0 heading before doing other stuff?
+        //it may be eaiser to do given that turning on the balance board kinda sucks.
         PIVOT_BACK,         // Pivot back so we face towards the rack
         DRIVE_FORWARD,      // Drive forward to appropriate point
         PIVOT_TO_FACE,      // Pivot to align with the desired rack

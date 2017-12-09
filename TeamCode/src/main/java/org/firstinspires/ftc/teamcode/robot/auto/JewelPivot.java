@@ -162,6 +162,8 @@ public class JewelPivot extends OpMode {
                 state = state.next();
                 break;
             case WAIT_FOR_IMAGE:
+                //saftey stop
+                robot.wheels.stop();
                 if(robot.vuforia.getImage() != null)
                 {
                     state.next();
