@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 import org.firstinspires.ftc.teamcode.buttons.BUTTON;
+import org.firstinspires.ftc.teamcode.buttons.BUTTON_TYPE;
 import org.firstinspires.ftc.teamcode.buttons.ButtonHandler;
 import org.firstinspires.ftc.teamcode.field.VuforiaConfigs;
 import org.firstinspires.ftc.teamcode.robot.Robot;
@@ -25,6 +26,7 @@ public class VuforiaTest extends OpMode {
     private RelicRecoveryVuMark lastMark = RelicRecoveryVuMark.UNKNOWN;
     private String lastImage = "<None>";
     private int cornerInterval = 10;
+    private long lastTimestamp = 0;
 
     @Override
     public void init() {
@@ -47,6 +49,9 @@ public class VuforiaTest extends OpMode {
         buttons.register("INCREASE-CHANGE-RATE", gamepad1, BUTTON.right_stick_button);
         buttons.register("DECREASE-CHANGE-RATE", gamepad1, BUTTON.left_stick_button);
 
+        // Image capture
+        buttons.register("CAPTURE", gamepad1, BUTTON.left_bumper, BUTTON_TYPE.TOGGLE);
+        buttons.register("SAVE", gamepad1, BUTTON.right_bumper);
 
         // Wait for the game to begin
         telemetry.addData(">", "Ready for game start");
@@ -59,13 +64,12 @@ public class VuforiaTest extends OpMode {
 
         // Start Vuforia tracking and capture
         robot.vuforia.start();
-        robot.vuforia.enableCapture(true);
     }
 
     @Override
     public void loop() {
-
         buttons.update();
+        handleInput();
 
         // Update our location and target info
         robot.vuforia.track();
@@ -92,20 +96,23 @@ public class VuforiaTest extends OpMode {
         // Read the VuMark
         lastMark = RelicRecoveryVuMark.from(robot.vuforia.getTrackable(VuforiaConfigs.TargetNames[0]));
 
-        // Grab and save an image from the Vuforia feed
-        if (gamepad1.left_bumper) {
+        // Mirror changes in our capture mode to vuforia
+        if (robot.vuforia.capturing() != buttons.get("CAPTURE")) {
+            robot.vuforia.enableCapture(buttons.get("CAPTURE"));
+        }
+        // Capture when enabled
+        if (buttons.get("CAPTURE")) {
             robot.vuforia.capture();
         }
+        // Process the capture if we've got one
         ImageFTC image = robot.vuforia.getImage();
-        if (image != null) {
+        if (image != null && image.getTimestamp() != lastTimestamp) {
             lastImage = "(" + image.getWidth() + "," + image.getHeight() + ") " + image.getTimestamp();
-            if (gamepad1.right_bumper) {
+            if (buttons.held("SAVE")) {
                 common.drawJewelOutline(image);
                 image.savePNG("vuforia-" + image.getTimestamp() + ".png");
             }
         }
-
-        handleInput();
 
         // store the red values for later use in telemetry
         int[] sideReds = image != null ? common.getJewelReds(image) : new int[]{0, 0};
