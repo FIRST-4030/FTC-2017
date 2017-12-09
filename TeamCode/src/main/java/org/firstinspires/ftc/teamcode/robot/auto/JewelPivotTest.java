@@ -140,6 +140,8 @@ public class JewelPivotTest extends OpMode {
 
         // Driver feedback
         telemetry.addData("State", state);
+        telemetry.addData("PivotLeft", pivotLeft); // will be false for the first bit
+        telemetry.addData("Gyro", robot.gyro.getHeading());
         telemetry.addData("Encoder", robot.wheels.getEncoder());
         telemetry.update();
 
