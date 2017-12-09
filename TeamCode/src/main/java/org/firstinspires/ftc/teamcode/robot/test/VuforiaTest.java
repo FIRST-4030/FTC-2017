@@ -130,22 +130,22 @@ public class VuforiaTest extends OpMode {
     private void handleInput() {
 
         if (buttons.get("UL-INCREASE-X"))
-            common.setJewelUL(new int[]{CommonTasks.jewelUL[0] + cornerInterval, CommonTasks.jewelUL[0]});
+            common.setJewelUL(new int[]{CommonTasks.jewelUL[0] + cornerInterval, CommonTasks.jewelUL[1]});
         else if (buttons.get("UL-DECREASE-X"))
-            common.setJewelUL(new int[]{CommonTasks.jewelUL[0] - cornerInterval, CommonTasks.jewelUL[0]});
+            common.setJewelUL(new int[]{CommonTasks.jewelUL[0] - cornerInterval, CommonTasks.jewelUL[1]});
         if (buttons.get("UL-INCREASE-Y"))
-            common.setJewelUL(new int[]{CommonTasks.jewelUL[1], CommonTasks.jewelUL[1] + cornerInterval});
+            common.setJewelUL(new int[]{CommonTasks.jewelUL[0], CommonTasks.jewelUL[1] + cornerInterval});
         else if (buttons.get("UL-DECREASE-Y"))
-            common.setJewelUL(new int[]{CommonTasks.jewelUL[1], CommonTasks.jewelUL[1] - cornerInterval});
+            common.setJewelUL(new int[]{CommonTasks.jewelUL[0], CommonTasks.jewelUL[1] - cornerInterval});
 
         if (buttons.get("LR-INCREASE-X"))
-            common.setJewelLR(new int[]{CommonTasks.jewelLR[0] + cornerInterval, CommonTasks.jewelLR[0]});
+            common.setJewelLR(new int[]{CommonTasks.jewelLR[0] + cornerInterval, CommonTasks.jewelLR[1]});
         else if (buttons.get("LR-DECREASE-X"))
-            common.setJewelLR(new int[]{CommonTasks.jewelLR[0] - cornerInterval, CommonTasks.jewelLR[0]});
+            common.setJewelLR(new int[]{CommonTasks.jewelLR[0] - cornerInterval, CommonTasks.jewelLR[1]});
         if (buttons.get("LR-INCREASE-Y"))
-            common.setJewelLR(new int[]{CommonTasks.jewelLR[1], CommonTasks.jewelLR[1] + cornerInterval});
+            common.setJewelLR(new int[]{CommonTasks.jewelLR[0], CommonTasks.jewelLR[1] + cornerInterval});
         else if (buttons.get("LR-DECREASE-Y"))
-            common.setJewelLR(new int[]{CommonTasks.jewelLR[1], CommonTasks.jewelLR[1] - cornerInterval});
+            common.setJewelLR(new int[]{CommonTasks.jewelLR[0], CommonTasks.jewelLR[1] - cornerInterval});
 
         if (buttons.get("INCREASE-CHANGE-RATE")) cornerInterval += 1;
         else if (buttons.get("DECREASE-CHANGE-RATE"))
