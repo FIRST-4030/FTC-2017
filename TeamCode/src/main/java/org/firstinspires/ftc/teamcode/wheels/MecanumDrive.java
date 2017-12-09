@@ -42,9 +42,9 @@ public class MecanumDrive extends TankDrive {
 
     @Override
     public void loop(Gamepad pad) {
-        double lStickX = cleanJoystick(pad.left_stick_x);
-        double lStickY = cleanJoystick(-pad.left_stick_y);
-        double rStickX = cleanJoystick(pad.right_stick_x);
+        double lStickX = cleanJoystick(pad.right_stick_x);
+        double lStickY = cleanJoystick(-pad.right_stick_y);
+        double rStickX = cleanJoystick(pad.left_stick_x);
 
         translate(lStickX, lStickY, rStickX);
     }
