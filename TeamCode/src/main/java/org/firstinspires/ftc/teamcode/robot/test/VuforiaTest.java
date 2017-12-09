@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.robot.test;
 
-import android.graphics.Bitmap;
-
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
@@ -26,7 +24,7 @@ public class VuforiaTest extends OpMode {
     private String lastTarget = "<None>";
     private RelicRecoveryVuMark lastMark = RelicRecoveryVuMark.UNKNOWN;
     private String lastImage = "<None>";
-    private int cornerInterval = 1;
+    private int cornerInterval = 10;
 
     @Override
     public void init() {
@@ -107,8 +105,6 @@ public class VuforiaTest extends OpMode {
 
         handleInput();
 
-//        if(image != null) common.drawJewelOutline(image);
-
         // store the red values for later use in telemetry
         int[] sideReds = image != null ? common.getJewelReds(image) : new int[]{0, 0};
 
@@ -122,7 +118,8 @@ public class VuforiaTest extends OpMode {
         telemetry.addData("LR X,Y", CommonTasks.jewelLR[0] + ", " + CommonTasks.jewelLR[1]);
         telemetry.addData("Left", sideReds[0]);
         telemetry.addData("Right", sideReds[1]);
-        if(image != null) telemetry.addData("Reddest Side", common.leftJewelRed(image) ? "Left" : "Right");
+        if (image != null)
+            telemetry.addData("Reddest Side", common.leftJewelRed(image) ? "Left" : "Right");
         telemetry.addData("", "");
         telemetry.update();
 

@@ -29,15 +29,14 @@ public class CommonTasks implements DriveToListener {
 
     // Initial rotation constants
     public static final int FRONT_TURN = 115;
-//    public static final int
 
     // Image constants
     private static final int VUFORIA_MAX_X = 1279;
     private static final int VUFORIA_MAX_Y = 719;
 
     // Jewel parse default values
-    public static int[] jewelUL = new int[]{100, 0}; // 340, 360
-    public static int[] jewelLR = new int[]{1000, 200}; // maxX and MaxY
+    public static int[] jewelUL = new int[]{0, 0};
+    public static int[] jewelLR = new int[]{800, 300};
 
     // Jewel arm post-start retracted position
     public static final double JEWEL_ARM_RETRACT = 0.40d;
@@ -268,7 +267,7 @@ public class CommonTasks implements DriveToListener {
         }
     }
 
-    public int[] getJewelReds(ImageFTC image){
+    public int[] getJewelReds(ImageFTC image) {
 
         // Perhaps you mean ((jewelLR[0] - jewelUL[0]) / 2) + jewelUL[0];
         // To get half the rectangle width plus the offset of the left side
