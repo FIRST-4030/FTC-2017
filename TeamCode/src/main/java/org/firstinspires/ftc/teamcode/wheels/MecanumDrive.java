@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.robot.Robot;
 
 /**
  * Created by robotics on 11/24/2017.
@@ -26,26 +27,6 @@ public class MecanumDrive extends TankDrive {
         }
     }
 
-    public void translate(double speed, double angle) {
-
-        // First, change the angle to be pi/4 less than before to account for the diagonal wheels
-        angle = angle - Math.PI / 4;
-        if (angle < -Math.PI) angle = angle + 2 * Math.PI;
-
-        // THIS ASSUMES THAT THE WHEEL BOTTOMS MAKE A DIAMOND, AND NOT AN X
-        // Now the front-right and back-left wheels govern the x-axis speed
-        // and the front-left and back-right wheels govern the y-axis speed
-
-        // Figure out the x and y speeds based on the angle and raw speed with trig
-        double xSpeed = Math.cos(angle) * speed;
-        double ySpeed = Math.sin(angle) * speed;
-
-        // Set the diagonals to the power
-        setSpeed(xSpeed, WHEEL_DIAGONAL.FRONT_RIGHT);
-        setSpeed(ySpeed, WHEEL_DIAGONAL.FRONT_LEFT);
-
-    }
-
     public void setSpeed(double speed, WHEEL_DIAGONAL diagonal) {
         if (!isAvailable()) {
             return;
@@ -57,60 +38,35 @@ public class MecanumDrive extends TankDrive {
 
     }
 
-    /**
-     * Translates the robot, where right is a positive speed, and left is a negative speed.
-     * @param speed The speed at which the robot should translate. Positive speed indicates translating to the right.
-     */
-    public void translate(double speed){
-        if(!isAvailable()){
-            return;
-        }
-        setSpeed(-speed, WHEEL_DIAGONAL.FRONT_LEFT);
-        setSpeed(speed, WHEEL_DIAGONAL.FRONT_RIGHT);
+    public void translate(double xMagnitude, double yMagnitude, double rotation){
+
+        // modified code from https://ftcforum.usfirst.org/forum/ftc-technology/android-studio/6361-mecanum-wheels-drive-code-example
+        // from dmssargent
+
+        double r = Math.hypot(xMagnitude, yMagnitude);
+        double robotAngle = Math.atan2(yMagnitude, xMagnitude) - Math.PI / 4;
+        final double v1 = (r * Math.cos(robotAngle)) + rotation;
+        final double v2 = (r * Math.sin(robotAngle)) - rotation;
+        final double v3 = (r * Math.sin(robotAngle)) + rotation;
+        final double v4 = (r * Math.cos(robotAngle)) - rotation;
+
+        // except for this, this is mine
+
+        setSpeed(v1, MOTOR_SIDE.LEFT, MOTOR_END.FRONT);
+        setSpeed(v2, MOTOR_SIDE.RIGHT, MOTOR_END.FRONT);
+        setSpeed(v3, MOTOR_SIDE.LEFT, MOTOR_END.BACK);
+        setSpeed(v4, MOTOR_SIDE.RIGHT, MOTOR_END.BACK);
+
     }
 
     @Override
     public void loop(Gamepad pad) {
 
-        // rotation
-        if(pad.left_trigger > .05) {
-            setSpeed(-pad.left_trigger, MOTOR_SIDE.LEFT);
-            setSpeed(pad.left_trigger, MOTOR_SIDE.RIGHT);
-        } else if(pad.right_trigger > .05) {
-            setSpeed(pad.right_trigger, MOTOR_SIDE.LEFT);
-            setSpeed(-pad.right_trigger, MOTOR_SIDE.RIGHT);
-        }
-        // translating in cardinal directions witht the dpad
-        else if(pad.dpad_down) setSpeed(-1);
-        else if(pad.dpad_up) setSpeed(1);
-        else if(pad.dpad_right) translate(1);
-        else if(pad.dpad_left) translate(-1);
-        // single wheels
-        else if(pad.a) setSpeed(1, MOTOR_SIDE.RIGHT, MOTOR_END.BACK);
-        else if(pad.b) setSpeed(1, MOTOR_SIDE.RIGHT, MOTOR_END.FRONT);
-        else if(pad.x) setSpeed(1, MOTOR_SIDE.LEFT, MOTOR_END.BACK);
-        else if(pad.y) setSpeed(1, MOTOR_SIDE.LEFT, MOTOR_END.FRONT);
-        // translating in any direction with the joystick
-        else {
+        double lStickX = cleanJoystick(pad.left_stick_x);
+        double lStickY = cleanJoystick(-pad.left_stick_y);
+        double rStickX = pad.right_stick_x;
 
-            // get clean x and y
-            double x = -cleanJoystick(pad.left_stick_x);
-            double y = -cleanJoystick(pad.left_stick_y); // Negated so that up is positive
-
-            if(speedFromStick(x, y) > .1) {
-
-                // find the angle
-                double angle = Math.atan2(y, x);
-
-                translate(speedFromStick(x, y), angle);
-
-            } else {
-
-                stop();
-
-            }
-
-        }
+        translate(lStickX, lStickY, rStickX);
 
     }
 
