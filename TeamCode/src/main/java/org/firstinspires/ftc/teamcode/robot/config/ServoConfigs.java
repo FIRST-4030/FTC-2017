@@ -44,7 +44,7 @@ public class ServoConfigs extends Configs {
             case Mecanum:
                 switch (servo) {
                     case CLAW_TOP:
-                        config = new ServoConfig("CL1", true, 0.17d, 0.57d);
+                        config = new ServoConfig("CL1", true, 0.04d, 0.42d);
                         break;
                     case CLAW_BOTTOM:
                         config = new ServoConfig("CL2", true, 0.08d, 0.44d);
