@@ -107,7 +107,8 @@ public class VuforiaTest extends OpMode {
         // Process the capture if we've got one
         ImageFTC image = robot.vuforia.getImage();
         if (image != null && image.getTimestamp() != lastTimestamp) {
-            lastImage = "(" + image.getWidth() + "," + image.getHeight() + ") " + image.getTimestamp();
+            lastTimestamp = image.getTimestamp();
+            lastImage = "(" + image.getWidth() + "," + image.getHeight() + ") " + lastTimestamp;
             if (buttons.held("SAVE")) {
                 common.drawJewelOutline(image);
                 image.savePNG("vuforia-" + image.getTimestamp() + ".png");
