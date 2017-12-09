@@ -92,8 +92,10 @@ public class VuforiaTest extends OpMode {
         // Read the VuMark
         lastMark = RelicRecoveryVuMark.from(robot.vuforia.getTrackable(VuforiaConfigs.TargetNames[0]));
 
-        // Grab and optionally save an image
-        robot.vuforia.capture();
+        // Grab and save an image from the Vuforia feed
+        if (gamepad1.left_bumper) {
+            robot.vuforia.capture();
+        }
         ImageFTC image = robot.vuforia.getImage();
         if (image != null) {
             lastImage = "(" + image.getWidth() + "," + image.getHeight() + ") " + image.getTimestamp();
@@ -122,11 +124,10 @@ public class VuforiaTest extends OpMode {
             telemetry.addData("Reddest Side", common.leftJewelRed(image) ? "Left" : "Right");
         telemetry.addData("", "");
         telemetry.update();
-
     }
 
     // Once we get this working we should add all the "select a rectangle" stuff to the calibration mode
-    // It will give gamepad2 something to do and will avoid the unncessary dynamic code in CommonTasks
+    // It will give gamepad2 something to do and will avoid the unnecessary dynamic code in CommonTasks
     private void handleInput() {
 
         if (buttons.get("UL-INCREASE-X"))
@@ -150,7 +151,5 @@ public class VuforiaTest extends OpMode {
         if (buttons.get("INCREASE-CHANGE-RATE")) cornerInterval += 1;
         else if (buttons.get("DECREASE-CHANGE-RATE"))
             cornerInterval = Math.max(1, cornerInterval - 1);
-
     }
-
 }
