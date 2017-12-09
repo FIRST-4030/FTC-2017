@@ -22,16 +22,6 @@ public class MecanumDrive extends TankDrive {
         }
     }
 
-    public void setSpeed(double speed, WHEEL_DIAGONAL diagonal) {
-        if (!isAvailable()) {
-            return;
-        }
-
-        for (WheelMotor motor : diagonal.getWheels(config)) {
-            motor.motor.setPower(speed * speedScale);
-        }
-    }
-
     public void translate(double xMagnitude, double yMagnitude, double rotation) {
 
         // modified code from https://ftcforum.usfirst.org/forum/ftc-technology/android-studio/6361-mecanum-wheels-drive-code-example
@@ -52,10 +42,9 @@ public class MecanumDrive extends TankDrive {
 
     @Override
     public void loop(Gamepad pad) {
-
         double lStickX = cleanJoystick(pad.left_stick_x);
         double lStickY = cleanJoystick(-pad.left_stick_y);
-        double rStickX = pad.right_stick_x;
+        double rStickX = cleanJoystick(pad.right_stick_x);
 
         translate(lStickX, lStickY, rStickX);
     }
