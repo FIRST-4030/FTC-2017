@@ -66,7 +66,7 @@ public class CommonTasks implements DriveToListener {
      * Physical-logical mapping
      */
     // Ratio of encoder ticks to millimeters driven
-    public final static float ENCODER_PER_MM = 1.15f;
+    public final static float ENCODER_PER_MM = .76f;
     // Clockwise is gryo-increasing
     public final static DriveToComp COMP_CLOCKWISE = DriveToComp.GREATER;
     // Forward is toward the claws, motor positive, ticks increasing
@@ -149,6 +149,10 @@ public class CommonTasks implements DriveToListener {
         int ticks = (int) ((float) distance * ENCODER_PER_MM);
         param.lessThan(ticks + robot.wheels.getEncoder() - OVERRUN_ENCODER);
         return new DriveTo(new DriveToParams[]{param});
+    }
+
+    public DriveTo turnToHeading(int heading){
+        return turnDegrees(heading - robot.gyro.getHeading());
     }
 
     public DriveTo turnDegrees(int degrees) {
