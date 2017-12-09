@@ -120,8 +120,8 @@ public class VuforiaTest extends OpMode {
         telemetry.addData("UL/LR Interval", cornerInterval);
         telemetry.addData("UL X,Y", CommonTasks.jewelUL[0] + ", " + CommonTasks.jewelUL[1]);
         telemetry.addData("LR X,Y", CommonTasks.jewelLR[0] + ", " + CommonTasks.jewelLR[1]);
-        telemetry.addData("Left", sideReds[0]);
-        telemetry.addData("Right", sideReds[1]);
+        telemetry.addData("Left red", sideReds[0]);
+        telemetry.addData("Right red", sideReds[1]);
         if(image != null) telemetry.addData("Reddest Side", common.leftJewelRed(image) ? "Left" : "Right");
         telemetry.addData("", "");
         telemetry.update();
