@@ -18,6 +18,8 @@ import org.firstinspires.ftc.teamcode.vuforia.VuforiaFTC;
 import org.firstinspires.ftc.teamcode.wheels.Wheels;
 
 public class Robot {
+    public static Robot robot = null;
+
     public BOT bot = null;
     public Wheels wheels = null;
     public Motor lift = null;
@@ -35,6 +37,7 @@ public class Robot {
     }
 
     public Robot(HardwareMap map, Telemetry telemetry, BOT bot) {
+        this.robot = this;
         this.map = map;
         this.telemetry = telemetry;
         if (bot == null) {
