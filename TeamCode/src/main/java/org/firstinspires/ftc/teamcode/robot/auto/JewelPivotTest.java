@@ -21,6 +21,7 @@ public class JewelPivotTest extends OpMode {
     private static final double RELEASE_DELAY = 0.5d;
     private static final int DRIVE_TO_BOX_MM = 330; // Not tested
     private static final double CLAW_DELAY = 0.5d;
+    private static final double ARM_DELAY = 0.5d;
     private static final int JEWEL_PIVOT_DEGREES = 10;
 
     // Devices and subsystems
@@ -140,6 +141,8 @@ public class JewelPivotTest extends OpMode {
 
         // Driver feedback
         telemetry.addData("State", state);
+        telemetry.addData("Running", driver.isRunning(time));
+        telemetry.addData("a pressed", gamepad1.a);
         telemetry.addData("PivotLeft", pivotLeft); // will be false for the first bit
         telemetry.addData("Gyro", robot.gyro.getHeading());
         telemetry.addData("Encoder", robot.wheels.getEncoder());
@@ -164,7 +167,7 @@ public class JewelPivotTest extends OpMode {
                 state = state.next();
                 break;
             case WAIT_FOR_IMAGE:
-                if(robot.vuforia.getImage() != null) state.next();
+                if(robot.vuforia.getImage() != null) state = state.next();
                 break;
             case DISABLE_CAPTURE:
                 // TODO: save the image with boxes
@@ -181,6 +184,7 @@ public class JewelPivotTest extends OpMode {
                 break;
             case DEPLOY_ARM:
                 robot.jewelArm.max();
+                driver.interval = ARM_DELAY;
                 state = state.next();
                 break;
             case DELAY:
@@ -199,6 +203,7 @@ public class JewelPivotTest extends OpMode {
                 break;
             case RETRACT_ARM:
                 robot.jewelArm.setPosition(CommonTasks.JEWEL_ARM_RETRACT);
+                driver.interval = ARM_DELAY;
                 state = state.next();
                 break;
             case PIVOT_BACK:
