@@ -75,7 +75,7 @@ public class ServoFTC implements Available {
     }
 
     public void toggle() {
-        double mid = max - min;
+        double mid = (max + min) / 2;
         if (getPostion() >= mid) {
             min();
         } else {
