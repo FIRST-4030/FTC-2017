@@ -167,7 +167,7 @@ public class JewelPivotTest extends OpMode {
                 state = state.next();
                 break;
             case WAIT_FOR_IMAGE:
-                if(robot.vuforia.getImage() != null) state = state.next();
+                if (robot.vuforia.getImage() != null) state = state.next();
                 break;
             case DISABLE_CAPTURE:
                 // TODO: save the image with boxes
@@ -257,12 +257,12 @@ public class JewelPivotTest extends OpMode {
         ENABLE_CAPTURE,     // Enable vuforia image capture
         WAIT_FOR_IMAGE,     // Make sure we don't try to do anything before Vuforia returns an image to analyze.
         DISABLE_CAPTURE,    // Disable vuforia capture so we run faster (?)
-                            // Also maybe save the image (how do we wait until that is done?)
+        // Also maybe save the image (how do we wait until that is done?)
         GRAB_BLOCK,         // Grab the block in front of us
         LIFT_INIT,          // Initiate lift
         DEPLOY_ARM,         // Move the arm down so we can hit the jewel
         DELAY,              // Delay? we likely won't need this in the final version but just in case..
-                            // We might need this in the final to let the arm come all the way down
+        // We might need this in the final to let the arm come all the way down
         PARSE_JEWEL,        // Parse which jewel is on which side
         HIT_JEWEL,          // Pivot to hit the correct jewel
         RETRACT_ARM,        // Retract the arm so we don't accidentally hit the jewels again
