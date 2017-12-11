@@ -12,6 +12,7 @@ import org.firstinspires.ftc.teamcode.robot.CLAWS;
 import org.firstinspires.ftc.teamcode.robot.Robot;
 import org.firstinspires.ftc.teamcode.utils.OrderedEnum;
 import org.firstinspires.ftc.teamcode.utils.OrderedEnumHelper;
+import org.firstinspires.ftc.teamcode.vuforia.ImageFTC;
 
 @com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "Jewel Pivot Test", group = "Auto")
 public class JewelPivotTest extends OpMode {
@@ -32,15 +33,14 @@ public class JewelPivotTest extends OpMode {
     private AutoDriver driver = new AutoDriver();
     private JewelPivotTest.AUTO_STATE state = JewelPivotTest.AUTO_STATE.LIFT_INIT;
     private boolean liftReady = false;
-
     private boolean pivotLeft = false;
+    private ImageFTC image = null;
 
     // Init-time config
     private final ButtonHandler buttons = new ButtonHandler();
     private Field.AllianceColor alliance = Field.AllianceColor.BLUE;
     private JewelPivotTest.DISTANCE distance = DISTANCE.SHORT;
     private JewelPivotTest.DELAY delay = JewelPivotTest.DELAY.NONE;
-
 
     @Override
     public void init() {
@@ -64,9 +64,6 @@ public class JewelPivotTest extends OpMode {
         // Wait for the game to begin
         telemetry.addData(">", "Init complete");
         telemetry.update();
-
-        robot.vuforia.start();
-        robot.vuforia.enableCapture(true);
     }
 
     @Override
@@ -119,6 +116,7 @@ public class JewelPivotTest extends OpMode {
 
         // Steady...
         state = JewelPivotTest.AUTO_STATE.values()[0];
+        robot.vuforia.start();
     }
 
     @Override
@@ -163,15 +161,23 @@ public class JewelPivotTest extends OpMode {
                 state = state.next();
                 break;
             case WAIT_FOR_IMAGE:
-                if (robot.vuforia.getImage() == null) {
+                if (image == null) {
                     robot.vuforia.capture();
+                    image = robot.vuforia.getImage();
                 } else {
                     state = state.next();
                 }
                 break;
             case DISABLE_CAPTURE:
-                // TODO: save the image with boxes
                 robot.vuforia.enableCapture(false);
+                state = state.next();
+                break;
+            case PARSE_JEWEL:
+                // Determine which way to pivot to remove the other alliance's jewel
+                pivotLeft = (common.leftJewelRed(image)) == (alliance == Field.AllianceColor.BLUE);
+                // Save the parsed image for future analysis
+                common.drawJewelOutline(image);
+                image.savePNG("auto-" + System.currentTimeMillis() + ".png");
                 state = state.next();
                 break;
             case GRAB_BLOCK:
@@ -189,11 +195,6 @@ public class JewelPivotTest extends OpMode {
                 break;
             case DELAY:
                 driver.interval = delay.seconds();
-                state = state.next();
-                break;
-            case PARSE_JEWEL:
-                //determine if we need to pivot left or right.
-                pivotLeft = (common.leftJewelRed(robot.vuforia.getImage())) == (alliance == Field.AllianceColor.BLUE);
                 state = state.next();
                 break;
             case HIT_JEWEL:
@@ -257,17 +258,16 @@ public class JewelPivotTest extends OpMode {
         ENABLE_CAPTURE,     // Enable vuforia image capture
         WAIT_FOR_IMAGE,     // Make sure we don't try to do anything before Vuforia returns an image to analyze.
         DISABLE_CAPTURE,    // Disable vuforia capture so we run faster (?)
-        // Also maybe save the image (how do we wait until that is done?)
+        PARSE_JEWEL,        // Parse which jewel is on which side
         GRAB_BLOCK,         // Grab the block in front of us
         LIFT_INIT,          // Initiate lift
         DEPLOY_ARM,         // Move the arm down so we can hit the jewel
         DELAY,              // Delay? we likely won't need this in the final version but just in case..
         // We might need this in the final to let the arm come all the way down
-        PARSE_JEWEL,        // Parse which jewel is on which side
         HIT_JEWEL,          // Pivot to hit the correct jewel
         RETRACT_ARM,        // Retract the arm so we don't accidentally hit the jewels again
         //should we add a true "Pivot_Back" state which returns us to 0 heading before doing other stuff?
-        //it may be eaiser to do given that turning on the balance board kinda sucks.
+        //it may be easier to do given that turning on the balance board kinda sucks.
         PIVOT_BACK,         // Pivot back so we face towards the rack
         DRIVE_FORWARD,      // Drive forward to appropriate point
         PIVOT_TO_FACE,      // Pivot to align with the desired rack
