@@ -119,10 +119,6 @@ public class JewelPivotTest extends OpMode {
 
         // Steady...
         state = JewelPivotTest.AUTO_STATE.values()[0];
-
-        //capture an image and store it for use in jewel parsing later.
-        robot.vuforia.capture();
-
     }
 
     @Override
@@ -167,7 +163,11 @@ public class JewelPivotTest extends OpMode {
                 state = state.next();
                 break;
             case WAIT_FOR_IMAGE:
-                if (robot.vuforia.getImage() != null) state = state.next();
+                if (robot.vuforia.getImage() == null) {
+                    robot.vuforia.capture();
+                } else {
+                    state = state.next();
+                }
                 break;
             case DISABLE_CAPTURE:
                 // TODO: save the image with boxes
@@ -192,7 +192,7 @@ public class JewelPivotTest extends OpMode {
                 state = state.next();
                 break;
             case PARSE_JEWEL:
-                //determine if we need to pivot left or right. 
+                //determine if we need to pivot left or right.
                 pivotLeft = (common.leftJewelRed(robot.vuforia.getImage())) == (alliance == Field.AllianceColor.BLUE);
                 state = state.next();
                 break;
