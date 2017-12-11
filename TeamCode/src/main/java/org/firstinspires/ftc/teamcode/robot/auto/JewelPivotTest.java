@@ -44,9 +44,7 @@ public class JewelPivotTest extends OpMode {
 
     @Override
     public void init() {
-
-        // Placate drivers
-        telemetry.addData(">", "Initializing...");
+        telemetry.addData(">", "Init…");
         telemetry.update();
 
         // Init the common tasks elements
@@ -60,10 +58,6 @@ public class JewelPivotTest extends OpMode {
         buttons.register("DISTANCE-DOWN", gamepad1, BUTTON.dpad_left);
         buttons.register("ALLIANCE-RED", gamepad1, BUTTON.b);
         buttons.register("ALLIANCE-BLUE", gamepad1, BUTTON.x);
-
-        // Wait for the game to begin
-        telemetry.addData(">", "Init complete");
-        telemetry.update();
     }
 
     @Override
@@ -100,10 +94,15 @@ public class JewelPivotTest extends OpMode {
         }
 
         // Driver feedback
-        telemetry.addData("Delay", delay);
-        telemetry.addData("Distance", distance);
         telemetry.addData("Alliance", alliance);
+        telemetry.addData("Distance", distance);
+        telemetry.addData("Delay", delay);
+        telemetry.addData("Gyro", robot.gyro.isReady() ? "Ready" : "Calibrating…");
         telemetry.addData("Lift", liftReady ? "Ready" : "Zeroing");
+        telemetry.update();
+        if (robot.gyro.isReady() && liftReady) {
+            telemetry.addData(">", "Ready for game start");
+        }
         telemetry.update();
     }
 
@@ -154,7 +153,11 @@ public class JewelPivotTest extends OpMode {
         switch (state) {
             case INIT:
                 driver.done = false;
-                state = state.next();
+                // Don't start driving until the gyro is ready
+                // TODO: Do something different if the gyro never becomes available
+                if (robot.gyro.isReady()) {
+                    state = state.next();
+                }
                 break;
             case ENABLE_CAPTURE:
                 robot.vuforia.enableCapture(true);
