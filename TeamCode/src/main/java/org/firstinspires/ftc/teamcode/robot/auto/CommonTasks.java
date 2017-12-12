@@ -85,6 +85,7 @@ public class CommonTasks implements DriveToListener {
 
         switch (liftState) {
             case INIT:
+                robot.jewelArm.setPosition(CommonTasks.JEWEL_ARM_RETRACT);
                 liftState = liftState.next();
                 break;
             case GRAB:
@@ -151,7 +152,7 @@ public class CommonTasks implements DriveToListener {
         return new DriveTo(new DriveToParams[]{param});
     }
 
-    public DriveTo turnToHeading(int heading){
+    public DriveTo turnToHeading(int heading) {
         return turnDegrees(heading - robot.gyro.getHeading());
     }
 
