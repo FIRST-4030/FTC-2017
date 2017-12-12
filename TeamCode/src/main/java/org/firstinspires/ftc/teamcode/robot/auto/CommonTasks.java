@@ -152,7 +152,12 @@ public class CommonTasks implements DriveToListener {
     }
 
     public DriveTo turnToHeading(int heading){
-        return turnDegrees(heading - robot.gyro.getHeading());
+        int normalizedDirection = Heading.normalize(heading - robot.gyro.getHeading());
+        if(normalizedDirection <= 180) {}
+        else {
+            normalizedDirection = normalizedDirection - 360;
+        }
+        return turnDegrees(normalizedDirection);
     }
 
     public DriveTo turnDegrees(int degrees) {
