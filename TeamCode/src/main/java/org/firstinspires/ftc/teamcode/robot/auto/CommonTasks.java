@@ -49,7 +49,7 @@ public class CommonTasks implements DriveToListener {
     public final static float SPEED_FORWARD_SLOW = SPEED_FORWARD * 0.75f;
     public final static float SPEED_REVERSE = -SPEED_FORWARD;
     // Turn drive speed
-    public final static float SPEED_TURN = SPEED_FORWARD * 0.5f;
+    public final static float SPEED_TURN = SPEED_FORWARD * 0.4f;
     // Lift speed -- Up is motor positive, ticks increasing
     public final static float LIFT_SPEED_UP = 1.0f;
     public final static float LIFT_SPEED_DOWN = -LIFT_SPEED_UP;
@@ -66,7 +66,7 @@ public class CommonTasks implements DriveToListener {
      * Physical-logical mapping
      */
     // Ratio of encoder ticks to millimeters driven
-    public final static float ENCODER_PER_MM = .76f;
+    public final static float ENCODER_PER_MM = .92f;
     // Clockwise is gryo-increasing
     public final static DriveToComp COMP_CLOCKWISE = DriveToComp.GREATER;
     // Forward is toward the claws, motor positive, ticks increasing
@@ -158,6 +158,9 @@ public class CommonTasks implements DriveToListener {
         else {
             normalizedDirection = normalizedDirection - 360;
         }
+
+        robot.telemetry.log().add("Input: " + heading + "\t Current: " + robot.gyro.getHeading() + "\t TurnAmmount: " + normalizedDirection);
+
         return turnDegrees(normalizedDirection);
     }
 
@@ -181,6 +184,8 @@ public class CommonTasks implements DriveToListener {
         // If the heading's turn direction's sign matches the sign of gyro change
         // This indicates that we'll travel across the 0/360 discontinuity during this turn
         boolean signMatches = (degrees * (target - heading) > 0);
+
+        robot.telemetry.log().add("target: " + target + "\theading: " + heading + "\tdegrees: " + degrees + "\tsignMatches: " + signMatches);
 
         // Turn CW or CCW as selected
         // Set a crossing target only if we'll cross 0/360

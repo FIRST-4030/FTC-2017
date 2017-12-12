@@ -134,9 +134,13 @@ public class SimpleAuto extends OpMode {
             liftReady = false;
             liftState = LIFT_STATE.INIT;
         } else if (gamepad1.dpad_left) {
-            driver.drive = common.turnDegrees(-30);
+            driver.drive = common.turnToHeading(270);
         } else if (gamepad1.dpad_right) {
-            driver.drive = common.turnDegrees(30);
+            driver.drive = common.turnToHeading(90);
+        } else if(gamepad1.dpad_up){
+            driver.drive = common.turnToHeading(0);
+        } else if (gamepad1.dpad_down){
+            driver.drive = common.turnToHeading(180);
         }
     }
 }
