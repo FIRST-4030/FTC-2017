@@ -211,6 +211,10 @@ public class JewelPivotTest extends OpMode {
                 state = state.next();
                 break;
             case PIVOT_BACK:
+                driver.drive = common.turnToHeading(0);
+                state = state.next();
+                break;
+            case PIVOT90:
                 driver.drive = common.turnToHeading((alliance == Field.AllianceColor.BLUE ? -1 : 1) * 90);
                 state = state.next();
                 break;
@@ -269,9 +273,8 @@ public class JewelPivotTest extends OpMode {
         // We might need this in the final to let the arm come all the way down
         HIT_JEWEL,          // Pivot to hit the correct jewel
         RETRACT_ARM,        // Retract the arm so we don't accidentally hit the jewels again
-        //should we add a true "Pivot_Back" state which returns us to 0 heading before doing other stuff?
-        //it may be easier to do given that turning on the balance board kinda sucks.
-        PIVOT_BACK,         // Pivot back so we face towards the rack
+        PIVOT_BACK,         // Pivot back to a heading of 0
+        PIVOT90,            // Pivot 90 degrees so we can drive towards the rack
         DRIVE_FORWARD,      // Drive forward to appropriate point
         PIVOT_TO_FACE,      // Pivot to align with the desired rack
         DRIVE_TO_BOX,       // Drive up to the rack
