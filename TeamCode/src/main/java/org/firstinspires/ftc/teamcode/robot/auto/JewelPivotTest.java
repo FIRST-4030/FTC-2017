@@ -51,6 +51,9 @@ public class JewelPivotTest extends OpMode {
         robot = new Robot(hardwareMap, telemetry);
         common = new CommonTasks(robot);
 
+        // Init the camera system
+        robot.vuforia.start();
+
         // Register buttons
         buttons.register("DELAY-UP", gamepad1, BUTTON.dpad_up);
         buttons.register("DELAY-DOWN", gamepad1, BUTTON.dpad_down);
@@ -115,7 +118,6 @@ public class JewelPivotTest extends OpMode {
 
         // Steady...
         state = JewelPivotTest.AUTO_STATE.values()[0];
-        robot.vuforia.start();
     }
 
     @Override
