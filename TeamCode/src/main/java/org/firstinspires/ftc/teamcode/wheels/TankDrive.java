@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.wheels;
 
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -33,7 +34,7 @@ public class TankDrive implements Wheels {
         }
         this.offsets = new int[config.motors.length];
         for (int i = 0; i < config.motors.length; i++) {
-            offsets[i] = 0;
+            resetEncoder(i);
         }
         this.config = config;
     }
@@ -47,7 +48,16 @@ public class TankDrive implements Wheels {
     }
 
     public void resetEncoder(int index) {
+        setMode(index, DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        setMode(index, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         offsets[index] = -getEncoder(index);
+    }
+
+    public void setMode(int index, DcMotor.RunMode mode) {
+        if (!isAvailable()) {
+            return;
+        }
+        config.motors[index].motor.setMode(mode);
     }
 
     public int getEncoder() {
