@@ -48,8 +48,9 @@ public class TankDrive implements Wheels {
     }
 
     public void resetEncoder(int index) {
+        DcMotor.RunMode mode = config.motors[index].motor.getMode();
         setMode(index, DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        setMode(index, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        setMode(index, mode);
         offsets[index] = -getEncoder(index);
     }
 
