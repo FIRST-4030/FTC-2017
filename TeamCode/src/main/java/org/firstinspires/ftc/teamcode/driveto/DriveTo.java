@@ -1,9 +1,11 @@
 package org.firstinspires.ftc.teamcode.driveto;
 
+import org.firstinspires.ftc.teamcode.utils.Heading;
+
 public class DriveTo {
 
     public static final int TIMEOUT_DEFAULT = 3000;
-    private static final int ROTATION_OVERSHOOT_RANGE = 5;
+    private static final int ROTATION_OVERSHOOT_RANGE = Heading.QUARTER_CIRCLE;
 
     private final boolean any;
     private boolean done;
@@ -68,30 +70,51 @@ public class DriveTo {
             double actual = param.parent.driveToSensor(param);
             param.error1 = param.limit1 - actual;
             param.error2 = param.limit2 - actual;
+            boolean crossing;
+            int heading, target, range;
+
             switch (param.comparator) {
                 case LESS:
-                    if (actual < param.limit1) {
+                    if (actual <= param.limit1) {
                         onTarget = true;
                     }
                     break;
                 case GREATER:
-                    if (actual > param.limit1) {
+                    if (actual >= param.limit1) {
                         onTarget = true;
                     }
                     break;
                 case IN_RANGE:
-                    if (actual > param.limit1 && actual < param.limit2) {
+                    if (actual >= param.limit1 && actual <= param.limit2) {
                         onTarget = true;
                     }
                     break;
                 case OUTSIDE_RANGE:
-                    if (actual <= param.limit1 || actual >= param.limit2) {
+                    if (actual < param.limit1 || actual > param.limit2) {
                         onTarget = true;
                     }
                     break;
                 case ROTATION_LESS:
+                    heading = Heading.normalize((int) actual);
+                    target = Heading.normalize((int) param.limit1);
+                    range = Heading.normalize(target - ROTATION_OVERSHOOT_RANGE);
+                    crossing = range > target;
+                    if (!crossing && heading <= target) {
+                        onTarget = true;
+                    } else if (crossing && heading > range && heading <= target) {
+                        onTarget = true;
+                    }
                     break;
                 case ROTATION_GREATER:
+                    heading = Heading.normalize((int) actual);
+                    target = Heading.normalize((int) param.limit1);
+                    range = Heading.normalize(target + ROTATION_OVERSHOOT_RANGE);
+                    crossing = range < target;
+                    if (!crossing && heading >= target) {
+                        onTarget = true;
+                    } else if (crossing && heading < range && heading >= target) {
+                        onTarget = true;
+                    }
                     break;
             }
 

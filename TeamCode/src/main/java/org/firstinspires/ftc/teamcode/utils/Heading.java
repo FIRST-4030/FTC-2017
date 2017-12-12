@@ -4,6 +4,7 @@ public class Heading {
 
     public static final int FULL_CIRCLE = 360;
     public static final int HALF_CIRCLE = FULL_CIRCLE / 2;
+    public static final int QUARTER_CIRCLE = FULL_CIRCLE / 4;
 
     /**
      * @param heading Any heading
