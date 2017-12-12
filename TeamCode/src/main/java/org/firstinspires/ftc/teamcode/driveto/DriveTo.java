@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.driveto;
 public class DriveTo {
 
     public static final int TIMEOUT_DEFAULT = 3000;
+    private static final int ROTATION_OVERSHOOT_RANGE = 5;
 
     private final boolean any;
     private boolean done;
@@ -87,6 +88,10 @@ public class DriveTo {
                     if (actual <= param.limit1 || actual >= param.limit2) {
                         onTarget = true;
                     }
+                    break;
+                case ROTATION_LESS:
+                    break;
+                case ROTATION_GREATER:
                     break;
             }
 
