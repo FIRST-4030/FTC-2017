@@ -61,13 +61,21 @@ public class Motor implements Available {
     }
 
     public void resetEncoder() {
-        DcMotor.RunMode mode = motor.getMode();
+        DcMotor.RunMode mode;
+        try {
+            mode = motor.getMode();
+        } catch (Exception e) {
+            mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER;
+        }
         setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         setMode(mode);
         offset = -getEncoder();
     }
 
     public void setMode(DcMotor.RunMode mode) {
+        if (!isAvailable()) {
+            return;
+        }
         motor.setMode(mode);
     }
 }
