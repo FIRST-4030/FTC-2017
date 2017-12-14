@@ -45,8 +45,8 @@ public class StraightLine extends OpMode {
         // Register buttons
         buttons.register("DELAY-UP", gamepad1, BUTTON.dpad_up);
         buttons.register("DELAY-DOWN", gamepad1, BUTTON.dpad_down);
-        buttons.register("DISTANCE-UP", gamepad1, BUTTON.dpad_right);
-        buttons.register("DISTANCE-DOWN", gamepad1, BUTTON.dpad_left);
+        buttons.register("WALL-UP", gamepad1, BUTTON.dpad_right);
+        buttons.register("WALL-DOWN", gamepad1, BUTTON.dpad_left);
         buttons.register("ALLIANCE-" + Field.AllianceColor.RED, gamepad1, BUTTON.b);
         buttons.register("ALLIANCE-" + Field.AllianceColor.BLUE, gamepad1, BUTTON.x);
     }
@@ -71,9 +71,9 @@ public class StraightLine extends OpMode {
         }
 
         // Adjust distance
-        if (buttons.get("DISTANCE-UP")) {
+        if (buttons.get("WALL-UP")) {
             distance = distance.next();
-        } else if (buttons.get("DISTANCE-DOWN")) {
+        } else if (buttons.get("WALL-DOWN")) {
             distance = distance.prev();
         }
 

@@ -43,6 +43,18 @@ public class DriveToParams {
         greaterThan((double) limit);
     }
 
+    public void rotationLess(double limit) {
+        this.comparator = DriveToComp.ROTATION_LESS;
+        this.limit1 = limit;
+        this.limit2 = limit;
+    }
+
+    public void rotationGreater(double limit) {
+        this.comparator = DriveToComp.ROTATION_GREATER;
+        this.limit1 = limit;
+        this.limit2 = limit;
+    }
+
     // And so on
     // Setters/getters are optional since the members are public but might make use easier
 }

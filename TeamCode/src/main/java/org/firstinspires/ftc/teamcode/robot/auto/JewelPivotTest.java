@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.robot.auto;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.actuators.ServoFTC;
@@ -39,7 +38,7 @@ public class JewelPivotTest extends OpMode {
     // Init-time config
     private final ButtonHandler buttons = new ButtonHandler();
     private Field.AllianceColor alliance = Field.AllianceColor.BLUE;
-    private JewelPivotTest.DISTANCE distance = DISTANCE.SHORT;
+    private WALL distance = WALL.ALLIANCE;
     private JewelPivotTest.DELAY delay = JewelPivotTest.DELAY.NONE;
 
     @Override
@@ -57,8 +56,8 @@ public class JewelPivotTest extends OpMode {
         // Register buttons
         buttons.register("DELAY-UP", gamepad1, BUTTON.dpad_up);
         buttons.register("DELAY-DOWN", gamepad1, BUTTON.dpad_down);
-        buttons.register("DISTANCE-UP", gamepad1, BUTTON.dpad_right);
-        buttons.register("DISTANCE-DOWN", gamepad1, BUTTON.dpad_left);
+        buttons.register("WALL-UP", gamepad1, BUTTON.dpad_right);
+        buttons.register("WALL-DOWN", gamepad1, BUTTON.dpad_left);
         buttons.register("ALLIANCE-RED", gamepad1, BUTTON.b);
         buttons.register("ALLIANCE-BLUE", gamepad1, BUTTON.x);
     }
@@ -83,9 +82,9 @@ public class JewelPivotTest extends OpMode {
         }
 
         // Adjust distance
-        if (buttons.get("DISTANCE-UP")) {
+        if (buttons.get("WALL-UP")) {
             distance = distance.next();
-        } else if (buttons.get("DISTANCE-DOWN")) {
+        } else if (buttons.get("WALL-DOWN")) {
             distance = distance.prev();
         }
 
@@ -216,6 +215,10 @@ public class JewelPivotTest extends OpMode {
                 driver.drive = common.turnDegrees((pivotLeft ? 1 : -1) * JEWEL_PIVOT_DEGREES);
                 state = state.next();
                 break;
+            case DRIVE_OFF_PLATFORM:
+                driver.drive = common.driveForward(610);
+                state = state.next();
+                break;
             case PIVOT_TO_MIDDLE:
                 driver.drive = common.turnToHeading((alliance == Field.AllianceColor.BLUE ? -1 : 1) * 90);
                 state = state.next();
@@ -297,14 +300,14 @@ public class JewelPivotTest extends OpMode {
     }
 
     // Configurable straight-line distance
-    enum DISTANCE implements OrderedEnum {
+    enum WALL implements OrderedEnum {
         // TODO: update so that this is accurate
-        SHORT(965),
-        LONG(1016);
+        ALLIANCE(965),
+        SHARED(1016);
 
         private int millimeters;
 
-        DISTANCE(int millimeters) {
+        WALL(int millimeters) {
             this.millimeters = millimeters;
         }
 
@@ -312,11 +315,11 @@ public class JewelPivotTest extends OpMode {
             return millimeters;
         }
 
-        public JewelPivotTest.DISTANCE prev() {
+        public WALL prev() {
             return OrderedEnumHelper.prev(this);
         }
 
-        public JewelPivotTest.DISTANCE next() {
+        public WALL next() {
             return OrderedEnumHelper.next(this);
         }
     }

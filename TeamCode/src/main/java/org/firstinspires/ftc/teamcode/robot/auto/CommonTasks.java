@@ -190,26 +190,27 @@ public class CommonTasks implements DriveToListener {
         // Turn CW or CCW as selected
         // Set a crossing target only if we'll cross 0/360
         if (degrees > 0) {
-            param.greaterThan(target - OVERRUN_GYRO);
-            if (signMatches) {
+            param.rotationGreater(target - OVERRUN_GYRO);
+           /* if (signMatches) {
                 crossing = null;
             } else {
                 crossing.lessThan(heading);
-            }
+            }*/
         } else {
-            param.lessThan(target + OVERRUN_GYRO);
-            if (signMatches) {
+            param.rotationLess(target + OVERRUN_GYRO);
+           /* if (signMatches) {
                 crossing = null;
             } else {
                 crossing.greaterThan(heading);
-            }
+            }*/
         }
 
         // Return one or two DriveToParams as selected above
-        if (crossing == null) {
+        /*if (crossing == null) {
             return new DriveTo(new DriveToParams[]{param});
         }
-        return new DriveTo(new DriveToParams[]{param, crossing});
+        return new DriveTo(new DriveToParams[]{param, crossing});*/
+        return new DriveTo(new DriveToParams[]{param});
     }
 
     @Override
