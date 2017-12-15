@@ -68,7 +68,7 @@ public class CommonTasks implements DriveToListener {
     // Ratio of encoder ticks to millimeters driven
     public final static float ENCODER_PER_MM = .92f;
     // Clockwise is gryo-increasing
-    public final static DriveToComp COMP_CLOCKWISE = DriveToComp.GREATER;
+    public final static DriveToComp COMP_CLOCKWISE = DriveToComp.ROTATION_GREATER;
     // Forward is toward the claws, motor positive, ticks increasing
     public final static DriveToComp COMP_FORWARD = DriveToComp.GREATER;
 
