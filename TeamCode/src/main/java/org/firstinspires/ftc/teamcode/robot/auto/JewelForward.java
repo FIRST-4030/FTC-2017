@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.vuforia.ImageFTC;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
-
+@Disabled
 @com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "Jewel Forward", group = "Auto")
 public class JewelForward extends OpMode {
 

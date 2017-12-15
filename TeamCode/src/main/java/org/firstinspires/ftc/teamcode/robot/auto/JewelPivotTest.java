@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.robot.auto;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.actuators.ServoFTC;
@@ -13,6 +14,7 @@ import org.firstinspires.ftc.teamcode.utils.OrderedEnum;
 import org.firstinspires.ftc.teamcode.utils.OrderedEnumHelper;
 import org.firstinspires.ftc.teamcode.vuforia.ImageFTC;
 
+@Disabled
 @com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "Jewel Pivot Test", group = "Auto")
 public class JewelPivotTest extends OpMode {
 
