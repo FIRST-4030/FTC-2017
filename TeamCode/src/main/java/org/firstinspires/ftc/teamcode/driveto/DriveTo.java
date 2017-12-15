@@ -99,10 +99,14 @@ public class DriveTo {
                     target = Heading.normalize((int) param.limit1);
                     range = Heading.normalize(target - ROTATION_OVERSHOOT_RANGE);
                     crossing = range > target;
-                    if (!crossing && heading <= target) {
-                        onTarget = true;
-                    } else if (crossing && heading > range && heading <= target) {
-                        onTarget = true;
+                    if (!crossing) {
+                        if ((heading <= target) && (heading > range)) {
+                            onTarget = true;
+                        }
+                    } else {
+                        if ((heading <= target) || (heading > range)) {
+                            onTarget = true;
+                        }
                     }
                     break;
                 case ROTATION_GREATER:
@@ -110,10 +114,14 @@ public class DriveTo {
                     target = Heading.normalize((int) param.limit1);
                     range = Heading.normalize(target + ROTATION_OVERSHOOT_RANGE);
                     crossing = range < target;
-                    if (!crossing && heading >= target) {
-                        onTarget = true;
-                    } else if (crossing && heading < range && heading >= target) {
-                        onTarget = true;
+                    if (!crossing) {
+                        if ((heading >= target) && (heading < range)) {
+                            onTarget = true;
+                        }
+                    } else {
+                        if ((heading >= target) || (heading < range)) {
+                            onTarget = true;
+                        }
                     }
                     break;
             }
