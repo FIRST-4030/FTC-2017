@@ -152,64 +152,30 @@ public class CommonTasks implements DriveToListener {
         return new DriveTo(new DriveToParams[]{param});
     }
 
-    public DriveTo turnToHeading(int heading){
-        int normalizedDirection = Heading.normalize(heading - robot.gyro.getHeading());
-        if(normalizedDirection <= 180) {}
-        else {
-            normalizedDirection = normalizedDirection - 360;
+    public DriveTo turnToHeading(int heading) {
+        int degrees = Heading.normalize(heading - robot.gyro.getHeading());
+        // If the turn is more than 180 CW turn CCW instead
+        if (degrees > Heading.HALF_CIRCLE) {
+            degrees -= Heading.FULL_CIRCLE;
         }
-
-        robot.telemetry.log().add("Input: " + heading + "\t Current: " + robot.gyro.getHeading() + "\t TurnAmmount: " + normalizedDirection);
-
-        return turnDegrees(normalizedDirection);
+        return turnDegrees(degrees);
     }
 
     public DriveTo turnDegrees(int degrees) {
         DriveToParams param = new DriveToParams(this, SENSOR_TYPE.GYROSCOPE);
-        DriveToParams crossing = new DriveToParams(this, SENSOR_TYPE.GYROSCOPE_SLAVE);
-
-        /*
-         * Crossing logic
-         *
-         * Heading -> Target, gyro change; targets
-         *     091 -> 181,    increasing;  >181
-         *     271 -> 001,    increasing;  >001 && <271
-         *     001 -> 271,    decreasing;  <271 && >001
-         *     181 -> 091,    decreasing;  <091
-         */
 
         // Current and target heading in normalized degrees
         int heading = robot.gyro.getHeading();
         int target = Heading.normalize(heading + degrees);
-        // If the heading's turn direction's sign matches the sign of gyro change
-        // This indicates that we'll travel across the 0/360 discontinuity during this turn
-        boolean signMatches = (degrees * (target - heading) > 0);
-
-        robot.telemetry.log().add("target: " + target + "\theading: " + heading + "\tdegrees: " + degrees + "\tsignMatches: " + signMatches);
+        // TODO: Debug
+        robot.telemetry.log().add("target: " + target + "\theading: " + heading + "\tdegrees: " + degrees);
 
         // Turn CW or CCW as selected
-        // Set a crossing target only if we'll cross 0/360
         if (degrees > 0) {
             param.rotationGreater(target - OVERRUN_GYRO);
-           /* if (signMatches) {
-                crossing = null;
-            } else {
-                crossing.lessThan(heading);
-            }*/
         } else {
             param.rotationLess(target + OVERRUN_GYRO);
-           /* if (signMatches) {
-                crossing = null;
-            } else {
-                crossing.greaterThan(heading);
-            }*/
         }
-
-        // Return one or two DriveToParams as selected above
-        /*if (crossing == null) {
-            return new DriveTo(new DriveToParams[]{param});
-        }
-        return new DriveTo(new DriveToParams[]{param, crossing});*/
         return new DriveTo(new DriveToParams[]{param});
     }
 
@@ -284,40 +250,28 @@ public class CommonTasks implements DriveToListener {
     }
 
     public int[] getJewelReds(ImageFTC image) {
-
-        // Perhaps you mean ((jewelLR[0] - jewelUL[0]) / 2) + jewelUL[0];
-        // To get half the rectangle width plus the offset of the left side
         int middleX = (jewelLR[0] + jewelUL[0]) / 2;
-
         return new int[]{
                 Color.red(image.rgb(new int[]{middleX + 1, jewelUL[1]}, jewelLR)),
                 Color.red(image.rgb(jewelUL, new int[]{middleX, jewelLR[1]}))};
-
     }
 
     public boolean leftJewelRed(ImageFTC image) {
-
         int[] sideReds = getJewelReds(image);
-
         return (sideReds[0] > sideReds[1]);
-
     }
 
     public void setJewelUL(int[] jewelUL) {
-
         int modifiedX = Math.max(0, Math.min(jewelLR[0] - 1, jewelUL[0]));
         int modifiedY = Math.max(0, Math.min(jewelLR[1] - 1, jewelUL[1]));
 
-        this.jewelUL = new int[]{modifiedX, modifiedY};
+        CommonTasks.jewelUL = new int[]{modifiedX, modifiedY};
     }
 
     public void setJewelLR(int[] jewelLR) {
-
         int modifiedX = Math.max(jewelUL[0] + 1, Math.min(VUFORIA_MAX_X, jewelLR[0]));
         int modifiedY = Math.max(jewelUL[1] + 1, Math.min(VUFORIA_MAX_Y, jewelLR[1]));
 
-        this.jewelLR = new int[]{modifiedX, modifiedY};
-
+        CommonTasks.jewelLR = new int[]{modifiedX, modifiedY};
     }
-
 }
