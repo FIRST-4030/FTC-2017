@@ -3,31 +3,27 @@ package org.firstinspires.ftc.teamcode.robot.auto;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
-import org.firstinspires.ftc.teamcode.buttons.ButtonHandler;
-import org.firstinspires.ftc.teamcode.driveto.AutoDriver;
-import org.firstinspires.ftc.teamcode.field.Field;
-import org.firstinspires.ftc.teamcode.robot.Robot;
-
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.sun.tools.javac.tree.JCTree;
-
 import org.firstinspires.ftc.teamcode.actuators.ServoFTC;
 import org.firstinspires.ftc.teamcode.buttons.BUTTON;
 import org.firstinspires.ftc.teamcode.buttons.ButtonHandler;
-import org.firstinspires.ftc.teamcode.field.Field;
-import org.firstinspires.ftc.teamcode.robot.Robot;
 import org.firstinspires.ftc.teamcode.driveto.AutoDriver;
+import org.firstinspires.ftc.teamcode.field.Field;
+import org.firstinspires.ftc.teamcode.robot.CLAWS;
+import org.firstinspires.ftc.teamcode.robot.Robot;
 import org.firstinspires.ftc.teamcode.utils.OrderedEnum;
 import org.firstinspires.ftc.teamcode.utils.OrderedEnumHelper;
+import org.firstinspires.ftc.teamcode.vuforia.ImageFTC;
 
-@Disabled
 @com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "Jewel Pivot", group = "Auto")
 public class JewelPivot extends OpMode {
 
     // Auto constants
     private static final int RELEASE_REVERSE_MM = 250;
     private static final double RELEASE_DELAY = 0.5d;
-    private static final int JEWEL_PIOVT_DEGREES = 5;
+    private static final int DRIVE_TO_BOX_MM = 330; // Not tested
+    private static final double CLAW_DELAY = 0.5d;
+    private static final double ARM_DELAY = 0.5d;
+    private static final int JEWEL_PIVOT_DEGREES = 10;
 
     // Devices and subsystems
     private Robot robot = null;
@@ -35,26 +31,28 @@ public class JewelPivot extends OpMode {
 
     // Runtime state
     private AutoDriver driver = new AutoDriver();
-    private org.firstinspires.ftc.teamcode.robot.auto.JewelPivot.AUTO_STATE state = org.firstinspires.ftc.teamcode.robot.auto.JewelPivot.AUTO_STATE.LIFT_INIT;
+    private JewelPivot.AUTO_STATE state = JewelPivot.AUTO_STATE.LIFT_INIT;
     private boolean liftReady = false;
+    private boolean pivotLeft = false;
+    private ImageFTC image = null;
 
     // Init-time config
     private final ButtonHandler buttons = new ButtonHandler();
     private Field.AllianceColor alliance = Field.AllianceColor.BLUE;
-    private org.firstinspires.ftc.teamcode.robot.auto.JewelPivot.DISTANCE distance = DISTANCE.SHORT;
-    private org.firstinspires.ftc.teamcode.robot.auto.JewelPivot.DELAY delay = org.firstinspires.ftc.teamcode.robot.auto.JewelPivot.DELAY.NONE;
-
+    private WALL distance = WALL.ALLIANCE;
+    private JewelPivot.DELAY delay = JewelPivot.DELAY.NONE;
 
     @Override
     public void init() {
-
-        // Placate drivers
-        telemetry.addData(">", "Initializing...");
+        telemetry.addData(">", "Init…");
         telemetry.update();
 
         // Init the common tasks elements
         robot = new Robot(hardwareMap, telemetry);
         common = new CommonTasks(robot);
+
+        // Init the camera system
+        robot.vuforia.start();
 
         // Register buttons
         buttons.register("DELAY-UP", gamepad1, BUTTON.dpad_up);
@@ -63,13 +61,6 @@ public class JewelPivot extends OpMode {
         buttons.register("WALL-DOWN", gamepad1, BUTTON.dpad_left);
         buttons.register("ALLIANCE-RED", gamepad1, BUTTON.b);
         buttons.register("ALLIANCE-BLUE", gamepad1, BUTTON.x);
-
-        // Wait for the game to begin
-        telemetry.addData(">", "Init complete");
-        telemetry.update();
-
-        robot.vuforia.start();
-        robot.vuforia.enableCapture(true);
     }
 
     @Override
@@ -106,10 +97,15 @@ public class JewelPivot extends OpMode {
         }
 
         // Driver feedback
-        telemetry.addData("Delay", delay);
-        telemetry.addData("Distance", distance);
         telemetry.addData("Alliance", alliance);
+        telemetry.addData("Distance", distance);
+        telemetry.addData("Delay", delay);
+        telemetry.addData("Gyro", robot.gyro.isReady() ? "Ready" : "Calibrating…");
         telemetry.addData("Lift", liftReady ? "Ready" : "Zeroing");
+        telemetry.update();
+        if (robot.gyro.isReady() && liftReady) {
+            telemetry.addData(">", "Ready for game start");
+        }
         telemetry.update();
     }
 
@@ -122,10 +118,6 @@ public class JewelPivot extends OpMode {
 
         // Steady...
         state = JewelPivot.AUTO_STATE.values()[0];
-
-        //capture an image and store it for use in jewel parsing later.
-        robot.vuforia.capture();
-
     }
 
     @Override
@@ -144,6 +136,9 @@ public class JewelPivot extends OpMode {
 
         // Driver feedback
         telemetry.addData("State", state);
+        telemetry.addData("Running", driver.isRunning(time));
+        telemetry.addData("PivotLeft", pivotLeft); // will be false for the first bit
+        telemetry.addData("Gyro", robot.gyro.getHeading());
         telemetry.addData("Encoder", robot.wheels.getEncoder());
         telemetry.update();
 
@@ -155,104 +150,91 @@ public class JewelPivot extends OpMode {
             return;
         }
 
-        // Main state machine
+        // Main state machine, see enum for description of each state
         switch (state) {
             case INIT:
                 driver.done = false;
+                // Don't start driving until the gyro is ready
+                // TODO: Do something different if the gyro never becomes available
+                if (robot.gyro.isReady()) {
+                    state = state.next();
+                }
+                break;
+            case ENABLE_CAPTURE:
+                robot.vuforia.enableCapture(true);
                 state = state.next();
                 break;
             case WAIT_FOR_IMAGE:
-                //saftey stop
-                robot.wheels.stop();
-                if(robot.vuforia.getImage() != null)
-                {
-                    state.next();
+                if (image == null) {
+                    robot.vuforia.capture();
+                    image = robot.vuforia.getImage();
+                } else {
+                    state = state.next();
                 }
+                break;
+            case DISABLE_CAPTURE:
+                robot.vuforia.enableCapture(false);
+                state = state.next();
+                break;
+            case PARSE_JEWEL:
+                // Determine which way to pivot to remove the other alliance's jewel
+                pivotLeft = (common.leftJewelRed(image)) == (alliance == Field.AllianceColor.BLUE);
+                // Save the parsed image for future analysis
+                common.drawJewelOutline(image);
+                image.savePNG("auto-" + System.currentTimeMillis() + ".png");
+                state = state.next();
+                break;
+            case GRAB_BLOCK:
+                robot.claws[CLAWS.TOP.ordinal()].max();
+                driver.interval = CLAW_DELAY;
+                state = state.next();
                 break;
             case LIFT_INIT:
                 driver = delegateDriver(common.liftAutoStart(), state.next());
                 break;
-            case DELAY:
-                // Lower the arm so that it is ready for the next step
+            case DEPLOY_ARM:
                 robot.jewelArm.max();
+                driver.interval = ARM_DELAY;
+                state = state.next();
+                break;
+            case DELAY:
                 driver.interval = delay.seconds();
                 state = state.next();
                 break;
-            case PARSE_JEWEL:
-                //parse the jewel
-                boolean redLeft = common.leftJewelRed(robot.vuforia.getImage());
-
-                //switch based on which platform we're on
-                if(distance == DISTANCE.SHORT) {
-                    switch (alliance) {
-                        case RED:
-                            if (redLeft) {
-                                driver.drive = common.turnDegrees(-245);
-                            } else {
-                                driver.drive = common.turnDegrees(115);
-                            }
-                            break;
-                        case BLUE:
-                            if (redLeft) {
-                                driver.drive = common.turnDegrees(115);
-                            } else {
-                                driver.drive = common.turnDegrees(-245);
-                            }
-                            break;
-                    }
-                }
-                else {                                                  //if we're on the long platform
-                    switch (alliance){
-                        case RED:
-                            if(redLeft) {                               //if we're red and the red ball is to the left, rotate left to center box
-                                driver.drive = common.turnDegrees(-284);
-                            } else {                                    //if we're red and the red ball is to the right, rotate right to the same position
-                                driver.drive = common.turnDegrees(76);
-                            }
-                            break;
-                        case BLUE:
-                            if(redLeft) {
-                                driver.drive = common.turnDegrees(76);
-                            } else {
-                                driver.drive = common.turnDegrees(-284);
-                            }
-                            break;
-                    }
-                }
-
+            case HIT_JEWEL:
+                //turns -90 if we're hitting the left jewel, 90 if we're hitting the right.
+                driver.drive = common.turnDegrees((pivotLeft ? -1 : 1) * JEWEL_PIVOT_DEGREES);
                 state = state.next();
                 break;
-            /*case PIVOT_BACK:
-                //retract Jewel arm
-                robot.jewelArm.min();
-                //this is the number of degrees we gotta turn back
-                int pivotDegrees;
-                //set pivot degrees
-                if(distance == WALL.ALLIANCE)
-                {
-                    if(robot.gyro.getHeading() > 180) pivotDegrees = 90 + JEWEL_PIOVT_DEGREES;
-                    else pivotDegrees = 90 - JEWEL_PIOVT_DEGREES;
-                    driver.drive = common.turnDegrees(pivotDegrees);
-                }
-                else
-                {
-                    if(robot.gyro.getHeading() > 180) pivotDegrees = -JEWEL_PIOVT_DEGREES;
-                    else pivotDegrees = +JEWEL_PIOVT_DEGREES;
-                    driver.drive = common.turnDegrees(pivotDegrees);
-                }
-                state = state.next();
-                break;*/
-            case DRIVE_FORWARD:
+            case RETRACT_ARM:
                 robot.jewelArm.setPosition(CommonTasks.JEWEL_ARM_RETRACT);
+                driver.interval = ARM_DELAY;
+                state = state.next();
+                break;
+            case PIVOT_BACK_TO_0:
+                driver.drive = common.turnDegrees((pivotLeft ? 1 : -1) * JEWEL_PIVOT_DEGREES);
+                state = state.next();
+                break;
+            case DRIVE_OFF_PLATFORM:
+                driver.drive = common.driveForward(610);
+                state = state.next();
+                break;
+            case PIVOT_TO_MIDDLE:
+                driver.drive = common.turnToHeading((alliance == Field.AllianceColor.BLUE ? -1 : 1) * 90);
+                state = state.next();
+                break;
+            case DRIVE_FORWARD:
                 driver.drive = common.driveForward(distance.millimeters());
                 state = state.next();
                 break;
-            /*case PIVOT_TO_FACE:
+            case PIVOT_TO_FACE:
+                driver.drive = common.turnToHeading(180);
                 state = state.next();
-                break;*/
-            /*case DRIVE_TO_BOX:
+                break;
+            case DRIVE_TO_BOX:
+                driver.drive = common.driveForward(DRIVE_TO_BOX_MM);
                 state = state.next();
-                break;*/
+                break;
             case RELEASE:
                 for (ServoFTC claw : robot.claws) {
                     claw.min();
@@ -284,19 +266,29 @@ public class JewelPivot extends OpMode {
 
     // Define the order of auto routine components
     enum AUTO_STATE implements OrderedEnum {
-        INIT,               //initiate stuff
-        WAIT_FOR_IMAGE,     //wait for vuforia to return an image.
-        LIFT_INIT,          //intiate lift
-        DELAY,              //delay? we likely won't need this in the final version but just in case..
-                            //we might need this in the final to let the arm come all the way down
-        PARSE_JEWEL,        //parse which jewel is on which side
-        //PIVOT_BACK,         //pivot back to correct position? might not need this step
-        DRIVE_FORWARD,      //drive forward to approprate point
-        PIVOT_TO_FACE,      //pivot to align with the desired box
-        DRIVE_TO_BOX,       //drive up to the box
-        RELEASE,            //release the block
-        RELEASE_REVERSE,    //reverse away from the blok
-        DONE;               //finish
+        INIT,               // Initiate stuff
+        ENABLE_CAPTURE,     // Enable vuforia image capture
+        WAIT_FOR_IMAGE,     // Make sure we don't try to do anything before Vuforia returns an image to analyze.
+        DISABLE_CAPTURE,    // Disable vuforia capture so we run faster (?)
+        PARSE_JEWEL,        // Parse which jewel is on which side
+        GRAB_BLOCK,         // Grab the block in front of us
+        LIFT_INIT,          // Initiate lift
+        DEPLOY_ARM,         // Move the arm down so we can hit the jewel
+        DELAY,              // Delay? we likely won't need this in the final version but just in case..
+        // We might need this in the final to let the arm come all the way down
+        HIT_JEWEL,          // Pivot to hit the correct jewel
+        RETRACT_ARM,        // Retract the arm so we don't accidentally hit the jewels again
+        PIVOT_BACK_TO_0,    //pivots back to face origonal direction
+        DRIVE_OFF_PLATFORM, //drives off platform to make turning easier.
+        //should we add a true "Pivot_Back" state which returns us to 0 heading before doing other stuff?
+        //it may be easier to do given that turning on the balance board kinda sucks.
+        PIVOT_TO_MIDDLE,    // Pivot so we face the middle
+        DRIVE_FORWARD,      // Drive forward to appropriate point
+        PIVOT_TO_FACE,      // Pivot to align with the desired rack
+        DRIVE_TO_BOX,       // Drive up to the rack
+        RELEASE,            // Release the block
+        RELEASE_REVERSE,    // Reverse away from the block
+        DONE;               // Finish
 
         public JewelPivot.AUTO_STATE prev() {
             return OrderedEnumHelper.prev(this);
@@ -308,13 +300,14 @@ public class JewelPivot extends OpMode {
     }
 
     // Configurable straight-line distance
-    enum DISTANCE implements OrderedEnum {
-        SHORT(965),
-        LONG(1016);
+    enum WALL implements OrderedEnum {
+        // TODO: update so that this is accurate
+        ALLIANCE(965),
+        SHARED(1016);
 
         private int millimeters;
 
-        DISTANCE(int millimeters) {
+        WALL(int millimeters) {
             this.millimeters = millimeters;
         }
 
@@ -322,11 +315,11 @@ public class JewelPivot extends OpMode {
             return millimeters;
         }
 
-        public JewelPivot.DISTANCE prev() {
+        public WALL prev() {
             return OrderedEnumHelper.prev(this);
         }
 
-        public JewelPivot.DISTANCE next() {
+        public WALL next() {
             return OrderedEnumHelper.next(this);
         }
     }
