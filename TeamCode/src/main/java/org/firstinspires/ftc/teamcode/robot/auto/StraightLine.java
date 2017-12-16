@@ -204,8 +204,8 @@ public class StraightLine extends OpMode {
 
     // Configurable straight-line distance
     enum DISTANCE implements OrderedEnum {
-        SHORT(965),
-        LONG(1016);
+        SHORT(965), // definitely incorrect
+        LONG(1250); // guess
 
         private final int millimeters;
 

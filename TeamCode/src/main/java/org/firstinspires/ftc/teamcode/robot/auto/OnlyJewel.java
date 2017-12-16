@@ -14,7 +14,6 @@ import org.firstinspires.ftc.teamcode.utils.OrderedEnum;
 import org.firstinspires.ftc.teamcode.utils.OrderedEnumHelper;
 import org.firstinspires.ftc.teamcode.vuforia.ImageFTC;
 
-@Disabled
 @com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "Jewel Only", group = "Auto")
 public class OnlyJewel extends OpMode {
 
