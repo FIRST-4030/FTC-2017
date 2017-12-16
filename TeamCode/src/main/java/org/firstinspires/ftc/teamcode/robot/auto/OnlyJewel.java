@@ -99,7 +99,6 @@ public class OnlyJewel extends OpMode {
         telemetry.addData("Delay", delay);
         telemetry.addData("Gyro", robot.gyro.isReady() ? "Ready" : "Calibrating…");
         telemetry.addData("Lift", liftReady ? "Ready" : "Zeroing");
-        telemetry.update();
         if (robot.gyro.isReady() && liftReady) {
             telemetry.addData(">", "Ready for game start");
         }
@@ -211,7 +210,7 @@ public class OnlyJewel extends OpMode {
             case DONE:
                 // Exit the opmode
                 driver.done = true;
-                this.requestOpModeStop();
+//                this.requestOpModeStop();
                 break;
         }
     }
