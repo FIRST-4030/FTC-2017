@@ -1,23 +1,20 @@
 package org.firstinspires.ftc.teamcode.robot.test;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.eventloop.opmode.OpModeRegistrar;
 
 import org.firstinspires.ftc.teamcode.driveto.AutoDriver;
-import org.firstinspires.ftc.teamcode.robot.auto.CommonTasks;
+import org.firstinspires.ftc.teamcode.robot.common.Common;
 import org.firstinspires.ftc.teamcode.robot.Robot;
 import org.firstinspires.ftc.teamcode.utils.OrderedEnum;
 import org.firstinspires.ftc.teamcode.utils.OrderedEnumHelper;
 import org.firstinspires.ftc.teamcode.utils.Round;
-
-import static org.firstinspires.ftc.teamcode.robot.auto.CommonTasks.*;
 
 @com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "Simple Auto", group = "Test")
 public class SimpleAuto extends OpMode {
 
     // Devices and subsystems
     private Robot robot = null;
-    private CommonTasks common = null;
+    private Common common = null;
     private AutoDriver driver = new AutoDriver();
 
     // Lift zero testing
@@ -50,7 +47,7 @@ public class SimpleAuto extends OpMode {
 
         // Common init
         robot = new Robot(hardwareMap, telemetry);
-        common = new CommonTasks(robot);
+        common = new Common(robot);
     }
 
     @Override
@@ -112,7 +109,7 @@ public class SimpleAuto extends OpMode {
                         robot.lift.stop();
                         liftState = LIFT_STATE.TIMEOUT;
                     } else {
-                        robot.lift.setPower(LIFT_SPEED_DOWN);
+                        robot.lift.setPower(common.lift.LIFT_SPEED_DOWN);
                     }
                     break;
                 case READY:
@@ -127,24 +124,24 @@ public class SimpleAuto extends OpMode {
         }
 
         if (gamepad1.a) {
-            driver.drive = common.driveForward((int) (25.4 * 10));
+            driver.drive = common.drive.forward((int) (25.4 * 10));
         } else if (gamepad1.y) {
-            driver.drive = common.driveForward((int) (25.4 * 20));
+            driver.drive = common.drive.forward((int) (25.4 * 20));
         } else if (gamepad1.b) {
             liftReady = false;
             liftState = LIFT_STATE.INIT;
         } else if (gamepad1.dpad_left) {
-            driver.drive = common.turnToHeading(270);
+            driver.drive = common.drive.heading(270);
         } else if (gamepad1.dpad_right) {
-            driver.drive = common.turnToHeading(90);
+            driver.drive = common.drive.heading(90);
         } else if(gamepad1.dpad_up){
-            driver.drive = common.turnToHeading(0);
+            driver.drive = common.drive.heading(0);
         } else if (gamepad1.dpad_down){
-            driver.drive = common.turnToHeading(180);
+            driver.drive = common.drive.heading(180);
         } else if (gamepad1.left_bumper){
-            driver.drive = common.turnToHeading(315);
+            driver.drive = common.drive.heading(315);
         } else if (gamepad1.right_bumper){
-            driver.drive = common.turnToHeading(45);
+            driver.drive = common.drive.heading(45);
         }
     }
 }

@@ -4,13 +4,9 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
-import org.firstinspires.ftc.teamcode.buttons.BUTTON;
-import org.firstinspires.ftc.teamcode.buttons.BUTTON_TYPE;
 import org.firstinspires.ftc.teamcode.buttons.ButtonHandler;
 import org.firstinspires.ftc.teamcode.field.VuforiaConfigs;
 import org.firstinspires.ftc.teamcode.robot.Robot;
-import org.firstinspires.ftc.teamcode.robot.auto.CommonTasks;
-import org.firstinspires.ftc.teamcode.vuforia.ImageFTC;
 
 @Disabled
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "Vuforia Test", group = "Test")
@@ -18,7 +14,6 @@ public class VuforiaTest extends OpMode {
 
     // Devices and subsystems
     private Robot robot = null;
-    private CommonTasks common = null;
     private ButtonHandler buttons = new ButtonHandler();
 
     // Dynamic things we need to remember
@@ -26,34 +21,12 @@ public class VuforiaTest extends OpMode {
     private int lastDistance = 0;
     private String lastTarget = "<None>";
     private RelicRecoveryVuMark lastMark = RelicRecoveryVuMark.UNKNOWN;
-    private String lastImage = "<None>";
-    private int cornerInterval = 10;
-    private long lastTimestamp = 0;
 
     @Override
     public void init() {
 
         // Init the robot
         robot = new Robot(hardwareMap, telemetry);
-        common = new CommonTasks(robot);
-
-        // upper left jewel boundary
-        buttons.register("UL-INCREASE-X", gamepad1, BUTTON.dpad_right);
-        buttons.register("UL-DECREASE-X", gamepad1, BUTTON.dpad_left);
-        buttons.register("UL-INCREASE-Y", gamepad1, BUTTON.dpad_down);
-        buttons.register("UL-DECREASE-Y", gamepad1, BUTTON.dpad_up);
-        // bottom right jewel boundary
-        buttons.register("LR-INCREASE-X", gamepad1, BUTTON.b);
-        buttons.register("LR-DECREASE-X", gamepad1, BUTTON.x);
-        buttons.register("LR-INCREASE-Y", gamepad1, BUTTON.a);
-        buttons.register("LR-DECREASE-Y", gamepad1, BUTTON.y);
-        // change rate
-        buttons.register("INCREASE-CHANGE-RATE", gamepad1, BUTTON.right_stick_button);
-        buttons.register("DECREASE-CHANGE-RATE", gamepad1, BUTTON.left_stick_button);
-
-        // Image capture
-        buttons.register("CAPTURE", gamepad1, BUTTON.left_bumper, BUTTON_TYPE.TOGGLE);
-        buttons.register("SAVE", gamepad1, BUTTON.right_bumper);
 
         // Wait for the game to begin
         telemetry.addData(">", "Ready for game start");
@@ -64,14 +37,13 @@ public class VuforiaTest extends OpMode {
     public void start() {
         telemetry.clearAll();
 
-        // Start Vuforia tracking and capture
+        // Start Vuforia tracking
         robot.vuforia.start();
     }
 
     @Override
     public void loop() {
         buttons.update();
-        handleInput();
 
         // Update our location and target info
         robot.vuforia.track();
@@ -98,68 +70,10 @@ public class VuforiaTest extends OpMode {
         // Read the VuMark
         lastMark = RelicRecoveryVuMark.from(robot.vuforia.getTrackable(VuforiaConfigs.TargetNames[0]));
 
-        // Mirror changes in our capture mode to vuforia
-        if (robot.vuforia.capturing() != buttons.get("CAPTURE")) {
-            robot.vuforia.enableCapture(buttons.get("CAPTURE"));
-        }
-        // Capture when enabled
-        if (buttons.get("CAPTURE")) {
-            robot.vuforia.capture();
-        }
-        // Process the capture if we've got one
-        ImageFTC image = robot.vuforia.getImage();
-        if (image != null && image.getTimestamp() != lastTimestamp) {
-            lastTimestamp = image.getTimestamp();
-            lastImage = "(" + image.getWidth() + "," + image.getHeight() + ") " + lastTimestamp;
-            if (buttons.held("SAVE")) {
-                common.drawJewelOutline(image);
-                image.savePNG("vuforia-" + image.getTimestamp() + ".png");
-            }
-        }
-
-        // store the red values for later use in telemetry
-        int[] sideReds = image != null ? common.getJewelReds(image) : new int[]{0, 0};
-
         // Driver feedback
         robot.vuforia.display(telemetry);
         telemetry.addData("Mark", lastMark);
         telemetry.addData("Target (" + lastTarget + ")", lastDistance + "mm @ " + lastBearing + "°");
-        telemetry.addData("Image", lastImage);
-        telemetry.addData("UL/LR Interval", cornerInterval);
-        telemetry.addData("UL X,Y", CommonTasks.jewelUL[0] + ", " + CommonTasks.jewelUL[1]);
-        telemetry.addData("LR X,Y", CommonTasks.jewelLR[0] + ", " + CommonTasks.jewelLR[1]);
-        telemetry.addData("Left", sideReds[0]);
-        telemetry.addData("Right", sideReds[1]);
-        if (image != null)
-            telemetry.addData("Reddest Side", common.leftJewelRed(image) ? "Left" : "Right");
-        telemetry.addData("", "");
         telemetry.update();
-    }
-
-    // Once we get this working we should add all the "select a rectangle" stuff to the calibration mode
-    // It will give gamepad2 something to do and will avoid the unnecessary dynamic code in CommonTasks
-    private void handleInput() {
-
-        if (buttons.get("UL-INCREASE-X"))
-            common.setJewelUL(new int[]{CommonTasks.jewelUL[0] + cornerInterval, CommonTasks.jewelUL[1]});
-        else if (buttons.get("UL-DECREASE-X"))
-            common.setJewelUL(new int[]{CommonTasks.jewelUL[0] - cornerInterval, CommonTasks.jewelUL[1]});
-        if (buttons.get("UL-INCREASE-Y"))
-            common.setJewelUL(new int[]{CommonTasks.jewelUL[0], CommonTasks.jewelUL[1] + cornerInterval});
-        else if (buttons.get("UL-DECREASE-Y"))
-            common.setJewelUL(new int[]{CommonTasks.jewelUL[0], CommonTasks.jewelUL[1] - cornerInterval});
-
-        if (buttons.get("LR-INCREASE-X"))
-            common.setJewelLR(new int[]{CommonTasks.jewelLR[0] + cornerInterval, CommonTasks.jewelLR[1]});
-        else if (buttons.get("LR-DECREASE-X"))
-            common.setJewelLR(new int[]{CommonTasks.jewelLR[0] - cornerInterval, CommonTasks.jewelLR[1]});
-        if (buttons.get("LR-INCREASE-Y"))
-            common.setJewelLR(new int[]{CommonTasks.jewelLR[0], CommonTasks.jewelLR[1] + cornerInterval});
-        else if (buttons.get("LR-DECREASE-Y"))
-            common.setJewelLR(new int[]{CommonTasks.jewelLR[0], CommonTasks.jewelLR[1] - cornerInterval});
-
-        if (buttons.get("INCREASE-CHANGE-RATE")) cornerInterval += 1;
-        else if (buttons.get("DECREASE-CHANGE-RATE"))
-            cornerInterval = Math.max(1, cornerInterval - 1);
     }
 }

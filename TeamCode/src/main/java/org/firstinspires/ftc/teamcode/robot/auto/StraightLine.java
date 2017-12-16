@@ -8,6 +8,7 @@ import org.firstinspires.ftc.teamcode.buttons.ButtonHandler;
 import org.firstinspires.ftc.teamcode.field.Field;
 import org.firstinspires.ftc.teamcode.robot.Robot;
 import org.firstinspires.ftc.teamcode.driveto.AutoDriver;
+import org.firstinspires.ftc.teamcode.robot.common.Common;
 import org.firstinspires.ftc.teamcode.utils.OrderedEnum;
 import org.firstinspires.ftc.teamcode.utils.OrderedEnumHelper;
 
@@ -20,7 +21,7 @@ public class StraightLine extends OpMode {
 
     // Devices and subsystems
     private Robot robot = null;
-    private CommonTasks common = null;
+    private Common common = null;
 
     // Runtime state
     private AutoDriver driver = new AutoDriver();
@@ -40,7 +41,7 @@ public class StraightLine extends OpMode {
 
         // Init the robot and common tasks
         robot = new Robot(hardwareMap, telemetry);
-        common = new CommonTasks(robot);
+        common = new Common(robot);
 
         // Register buttons
         buttons.register("DELAY-UP", gamepad1, BUTTON.dpad_up);
@@ -104,7 +105,7 @@ public class StraightLine extends OpMode {
         robot.lift.setEnabled(liftReady);
 
         // Bring the arm to the runtime retracted position
-        robot.jewelArm.setPosition(CommonTasks.JEWEL_ARM_RETRACT);
+        robot.jewelArm.setPosition(Common.JEWEL_ARM_RETRACT);
 
         // Steady...
         state = AUTO_STATE.values()[0];
@@ -144,14 +145,14 @@ public class StraightLine extends OpMode {
                 state = state.next();
                 break;
             case LIFT_INIT:
-                driver = delegateDriver(common.liftAutoStart(), state.next());
+                driver = delegateDriver(common.lift.autoStart(), state.next());
                 break;
             case DELAY:
                 driver.interval = delay.seconds();
                 state = state.next();
                 break;
             case DRIVE_FORWARD:
-                driver.drive = common.driveForward(distance.millimeters());
+                driver.drive = common.drive.forward(distance.millimeters());
                 state = state.next();
                 break;
             case RELEASE:
@@ -162,7 +163,7 @@ public class StraightLine extends OpMode {
                 state = state.next();
                 break;
             case RELEASE_REVERSE:
-                driver.drive = common.driveBackward(RELEASE_REVERSE_MM);
+                driver.drive = common.drive.backward(RELEASE_REVERSE_MM);
                 state = state.next();
                 break;
             case DONE:

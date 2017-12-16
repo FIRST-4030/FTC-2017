@@ -1,18 +1,14 @@
-package org.firstinspires.ftc.teamcode.robot.westCoast;
+package org.firstinspires.ftc.teamcode.robot;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.actuators.Motor;
-import org.firstinspires.ftc.teamcode.actuators.ServoFTC;
 import org.firstinspires.ftc.teamcode.buttons.BUTTON_TYPE;
 import org.firstinspires.ftc.teamcode.buttons.BUTTON;
 import org.firstinspires.ftc.teamcode.buttons.ButtonHandler;
-import org.firstinspires.ftc.teamcode.robot.CLAWS;
-import org.firstinspires.ftc.teamcode.robot.Robot;
-import org.firstinspires.ftc.teamcode.robot.auto.CommonTasks;
+import org.firstinspires.ftc.teamcode.robot.common.Common;
 
-@TeleOp(name = "TeleOp")
+@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "TeleOp")
 public class TeleOpMode extends OpMode {
 
     // Drive speeds
@@ -48,7 +44,7 @@ public class TeleOpMode extends OpMode {
     @Override
     public void start() {
         robot.wheels.setTeleop(true);
-        robot.jewelArm.setPosition(CommonTasks.JEWEL_ARM_RETRACT);
+        robot.jewelArm.setPosition(Common.JEWEL_ARM_RETRACT);
     }
 
     @Override
