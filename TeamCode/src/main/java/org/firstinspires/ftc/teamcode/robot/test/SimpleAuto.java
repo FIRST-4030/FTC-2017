@@ -141,6 +141,10 @@ public class SimpleAuto extends OpMode {
             driver.drive = common.turnToHeading(0);
         } else if (gamepad1.dpad_down){
             driver.drive = common.turnToHeading(180);
+        } else if (gamepad1.left_bumper){
+            driver.drive = common.turnToHeading(315);
+        } else if (gamepad1.right_bumper){
+            driver.drive = common.turnToHeading(45);
         }
     }
 }
