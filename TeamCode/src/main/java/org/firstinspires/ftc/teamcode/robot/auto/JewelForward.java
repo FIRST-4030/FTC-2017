@@ -15,14 +15,14 @@ import org.firstinspires.ftc.teamcode.vuforia.ImageFTC;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
-@Disabled
-@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "Jewel Forward", group = "Auto")
+//@Disabled
+@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "Jewel + Block", group = "Auto")
 public class JewelForward extends OpMode {
 
     // Auto constants
-    private static final int RELEASE_REVERSE_MM = 250;
+    private static final int RELEASE_REVERSE_MM = 125;
     private static final double RELEASE_DELAY = 0.5d;
-    private static final int DRIVE_TO_BOX_MM = 330; // Not tested
+    private static final int DRIVE_TO_BOX_MM = 900; // Not tested
     private static final double CLAW_DELAY = 0.5d;
     private static final double ARM_DELAY = 0.5d;
     private static final int JEWEL_PIVOT_DEGREES = 10;
@@ -41,7 +41,6 @@ public class JewelForward extends OpMode {
     // Init-time config
     private final ButtonHandler buttons = new ButtonHandler();
     private Field.AllianceColor alliance = Field.AllianceColor.BLUE;
-    private JewelForward.DISTANCE distance = DISTANCE.SHORT;
     private JewelForward.DELAY delay = JewelForward.DELAY.NONE;
 
     @Override
@@ -59,8 +58,6 @@ public class JewelForward extends OpMode {
         // Register buttons
         buttons.register("DELAY-UP", gamepad1, BUTTON.dpad_up);
         buttons.register("DELAY-DOWN", gamepad1, BUTTON.dpad_down);
-        buttons.register("DISTANCE-UP", gamepad1, BUTTON.dpad_right);
-        buttons.register("DISTANCE-DOWN", gamepad1, BUTTON.dpad_left);
         buttons.register("ALLIANCE-RED", gamepad1, BUTTON.b);
         buttons.register("ALLIANCE-BLUE", gamepad1, BUTTON.x);
     }
@@ -84,13 +81,6 @@ public class JewelForward extends OpMode {
             delay = delay.prev();
         }
 
-        // Adjust distance
-        if (buttons.get("DISTANCE-UP")) {
-            distance = distance.next();
-        } else if (buttons.get("DISTANCE-DOWN")) {
-            distance = distance.prev();
-        }
-
         // Adjust alliance color
         if (buttons.get("ALLIANCE-RED")) {
             alliance = Field.AllianceColor.RED;
@@ -100,11 +90,9 @@ public class JewelForward extends OpMode {
 
         // Driver feedback
         telemetry.addData("Alliance", alliance);
-        telemetry.addData("Distance", distance);
         telemetry.addData("Delay", delay);
         telemetry.addData("Gyro", robot.gyro.isReady() ? "Ready" : "Calibrating…");
         telemetry.addData("Lift", liftReady ? "Ready" : "Zeroing");
-        telemetry.update();
         if (robot.gyro.isReady() && liftReady) {
             telemetry.addData(">", "Ready for game start");
         }
@@ -139,7 +127,6 @@ public class JewelForward extends OpMode {
         // Driver feedback
         telemetry.addData("State", state);
         telemetry.addData("Running", driver.isRunning(time));
-        telemetry.addData("a pressed", gamepad1.a);
         telemetry.addData("PivotLeft", pivotLeft); // will be false for the first bit
         telemetry.addData("Gyro", robot.gyro.getHeading());
         telemetry.addData("Encoder", robot.wheels.getEncoder());
@@ -149,7 +136,7 @@ public class JewelForward extends OpMode {
          * Cut the loop short when we are AutoDriver'ing
          * This keeps us out of the state machine until the preceding command is complete
          */
-        if (driver.isRunning(time) || !gamepad1.a) {
+        if (driver.isRunning(time)) {
             return;
         }
 
@@ -215,7 +202,11 @@ public class JewelForward extends OpMode {
                 state = state.next();
                 break;
             case PIVOT_BACK:
-                driver.drive = common.turnToHeading(0);
+                driver.drive = common.turnToHeading(reverseOnAlliance(0));
+                state = state.next();
+                break;
+            case PIVOT_BACK5:
+                driver.drive = common.turnToHeading(reverseOnAlliance(alliance == Field.AllianceColor.BLUE ? 3 : 7));
                 state = state.next();
                 break;
             case DRIVE_FORWARD:
@@ -223,15 +214,24 @@ public class JewelForward extends OpMode {
                 state = state.next();
                 break;
             case PIVOT135:
-                driver.drive = common.turnToHeading(135);
+                driver.drive = common.turnToHeading(reverseOnAlliance(115));
                 state = state.next();
                 break;
             case DRIVE_DIAGONAL:
-                driver.drive = common.driveForward(1100);
+                driver.drive = common.driveForward(1750);
                 state = state.next();
                 break;
             case PIVOT_TO_FACE:
-                driver.drive = common.turnToHeading(180);
+                driver.drive = common.turnToHeading(reverseOnAlliance(173));
+                state = state.next();
+                break;
+            case LOWER_LIFT:
+                robot.lift.setPower(common.LIFT_SPEED_DOWN);
+                driver.interval = common.LIFT_DELAY;
+                state = state.next();
+                break;
+            case LOWER_LIFT_STOP:
+                robot.lift.stop();
                 state = state.next();
                 break;
             case DRIVE_TO_BOX:
@@ -252,9 +252,13 @@ public class JewelForward extends OpMode {
             case DONE:
                 // Exit the opmode
                 driver.done = true;
-                this.requestOpModeStop();
                 break;
         }
+    }
+
+    // Probably should not be here
+    private int reverseOnAlliance(int turnDegrees){
+        return (alliance == Field.AllianceColor.RED ? 1 : -1) * turnDegrees;
     }
 
     // Utility function to delegate our AutoDriver to an external provider
@@ -282,10 +286,13 @@ public class JewelForward extends OpMode {
         HIT_JEWEL,          // Pivot to hit the correct jewel
         RETRACT_ARM,        // Retract the arm so we don't accidentally hit the jewels again
         PIVOT_BACK,         // Pivot back to a heading of 0
+        PIVOT_BACK5,        // Pivot back five the future
         DRIVE_FORWARD,      // Drive forward to appropriate point
         PIVOT135,           // Pivot to align with the desired rack
         DRIVE_DIAGONAL,     // drive to the spot between the balancing plates
-        PIVOT_TO_FACE,      // Pivot to face the rack
+        PIVOT_TO_FACE,      // Pivot to face the rack\
+        LOWER_LIFT,         // Lower the lift so that we don't drop the block on the bottom claw
+        LOWER_LIFT_STOP,    // Stop lowering the lift
         DRIVE_TO_BOX,       // Drive up to the rack
         RELEASE,            // Release the block
         RELEASE_REVERSE,    // Reverse away from the block
@@ -296,31 +303,6 @@ public class JewelForward extends OpMode {
         }
 
         public JewelForward.AUTO_STATE next() {
-            return OrderedEnumHelper.next(this);
-        }
-    }
-
-    // Configurable straight-line distance
-    enum DISTANCE implements OrderedEnum {
-        // TODO: update so that this is accurate
-        SHORT(965),
-        LONG(1016);
-
-        private int millimeters;
-
-        DISTANCE(int millimeters) {
-            this.millimeters = millimeters;
-        }
-
-        public int millimeters() {
-            return millimeters;
-        }
-
-        public JewelForward.DISTANCE prev() {
-            return OrderedEnumHelper.prev(this);
-        }
-
-        public JewelForward.DISTANCE next() {
             return OrderedEnumHelper.next(this);
         }
     }

@@ -24,7 +24,7 @@ import org.firstinspires.ftc.teamcode.wheels.MOTOR_SIDE;
 public class CommonTasks implements DriveToListener {
 
     // LiftAutoStart constants
-    private static final double LIFT_DELAY = 0.75;
+    public static final double LIFT_DELAY = 0.5;
     private static final double CLAW_DELAY = 0.25;
 
     // Initial rotation constants
@@ -49,7 +49,7 @@ public class CommonTasks implements DriveToListener {
     public final static float SPEED_FORWARD_SLOW = SPEED_FORWARD * 0.75f;
     public final static float SPEED_REVERSE = -SPEED_FORWARD;
     // Turn drive speed
-    public final static float SPEED_TURN = SPEED_FORWARD * 0.4f;
+    public final static float SPEED_TURN = SPEED_FORWARD * 0.5f;
     // Lift speed -- Up is motor positive, ticks increasing
     public final static float LIFT_SPEED_UP = 1.0f;
     public final static float LIFT_SPEED_DOWN = -LIFT_SPEED_UP;
