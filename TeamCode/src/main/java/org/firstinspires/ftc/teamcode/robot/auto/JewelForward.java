@@ -165,7 +165,7 @@ public class JewelForward extends OpMode {
                 driver.drive = common.drive.heading(reverseOnAlliance(0));
                 state = state.next();
                 break;
-            case PIVOT_BACK5:
+            case PIVOT_BACK2:
                 driver.drive = common.drive.heading(reverseOnAlliance(alliance == Field.AllianceColor.BLUE ? 3 : 7));
                 state = state.next();
                 break;
@@ -174,15 +174,21 @@ public class JewelForward extends OpMode {
                 state = state.next();
                 break;
             case PIVOT135:
-                driver.drive = common.drive.heading(reverseOnAlliance(115));
+                driver.drive = (alliance == Field.AllianceColor.RED ?
+                        common.drive.heading(reverseOnAlliance(115)) :
+                        common.drive.heading(reverseOnAlliance(-55))); // Turn left and back up vs right and forward
                 state = state.next();
                 break;
             case DRIVE_DIAGONAL:
-                driver.drive = common.drive.forward(1750);
+                driver.drive = (alliance == Field.AllianceColor.RED ?
+                        common.drive.forward(1750) :
+                        common.drive.backward(1050));
                 state = state.next();
                 break;
             case PIVOT_TO_FACE:
-                driver.drive = common.drive.heading(reverseOnAlliance(173));
+                driver.drive = (alliance == Field.AllianceColor.RED ?
+                        common.drive.heading(reverseOnAlliance(173)) :
+                        common.drive.heading(reverseOnAlliance(-173)));
                 state = state.next();
                 break;
             case LOWER_LIFT:
@@ -207,6 +213,10 @@ public class JewelForward extends OpMode {
                 break;
             case RELEASE_REVERSE:
                 driver.drive = common.drive.backward(RELEASE_REVERSE_MM);
+                state = state.next();
+                break;
+            case RELEASE_TURN:
+                driver.drive = common.drive.degrees(reverseOnAlliance(5));
                 state = state.next();
                 break;
             case DONE:
@@ -239,7 +249,7 @@ public class JewelForward extends OpMode {
         HIT_JEWEL,          // Turn to hit the jewel
         DELAY,              // Optionally wait for our alliance partner
         PIVOT_BACK,         // Pivot back to a heading of 0
-        PIVOT_BACK5,        // Pivot back five the future
+        PIVOT_BACK2,        // Pivot back to the future
         DRIVE_FORWARD,      // Drive forward to appropriate point
         PIVOT135,           // Pivot to align with the desired rack
         DRIVE_DIAGONAL,     // drive to the spot between the balancing plates
@@ -248,6 +258,7 @@ public class JewelForward extends OpMode {
         LOWER_LIFT_STOP,    // Stop lowering the lift
         DRIVE_TO_BOX,       // Drive up to the rack
         RELEASE,            // Release the block
+        RELEASE_TURN,       // Turn, so we push the block into a specific column if we hit an edge
         RELEASE_REVERSE,    // Reverse away from the block
         DONE;               // Finish
 
