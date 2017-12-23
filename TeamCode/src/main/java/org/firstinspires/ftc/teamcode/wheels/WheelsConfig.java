@@ -5,10 +5,9 @@ import org.firstinspires.ftc.teamcode.config.Config;
 public class WheelsConfig implements Config {
     public WheelMotor[] motors;
     public DRIVE_TYPE type;
-    public int index;
     public double scale;
 
-    public WheelsConfig(DRIVE_TYPE type, WheelMotor[] motors, int index, double scale) {
+    public WheelsConfig(DRIVE_TYPE type, WheelMotor[] motors, double scale) {
         if (motors == null) {
             throw new IllegalArgumentException(this.getClass().getName() + ": No motors provided");
         }
@@ -29,7 +28,6 @@ public class WheelsConfig implements Config {
 
         this.type = type;
         this.motors = motors;
-        this.index = index;
         this.scale = scale;
     }
 }

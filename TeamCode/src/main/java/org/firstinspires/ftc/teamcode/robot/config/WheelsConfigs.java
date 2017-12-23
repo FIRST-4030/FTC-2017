@@ -43,19 +43,19 @@ public class WheelsConfigs extends Configs {
         switch (bot) {
             case WestCoast:
                 motors = new WheelMotor[4];
-                motors[0] = new WheelMotor("ML1", MOTOR_SIDE.LEFT, true);
-                motors[1] = new WheelMotor("MR1", MOTOR_SIDE.RIGHT);
-                motors[2] = new WheelMotor("ML2", MOTOR_SIDE.LEFT, true);
-                motors[3] = new WheelMotor("MR2", MOTOR_SIDE.RIGHT);
-                config = new WheelsConfig(DRIVE_TYPE.TANK, motors, 0, 1.0d);
+                motors[0] = new WheelMotor("ML1", MOTOR_SIDE.LEFT, true, false);
+                motors[1] = new WheelMotor("MR1", MOTOR_SIDE.RIGHT, false, false);
+                motors[2] = new WheelMotor("ML2", MOTOR_SIDE.LEFT, true, false);
+                motors[3] = new WheelMotor("MR2", MOTOR_SIDE.RIGHT, false, false);
+                config = new WheelsConfig(DRIVE_TYPE.TANK, motors, 1.0d);
                 break;
             case Mecanum:
                 motors = new WheelMotor[4];
-                motors[0] = new WheelMotor("FL", MOTOR_SIDE.LEFT, MOTOR_END.FRONT);
-                motors[1] = new WheelMotor("BL", MOTOR_SIDE.LEFT, MOTOR_END.BACK);
-                motors[2] = new WheelMotor("FR", MOTOR_SIDE.RIGHT, MOTOR_END.FRONT, true);
-                motors[3] = new WheelMotor("BR", MOTOR_SIDE.RIGHT, MOTOR_END.BACK, true);
-                config = new WheelsConfig(DRIVE_TYPE.MECANUM, motors, 0, 1.0d);
+                motors[0] = new WheelMotor("FL", MOTOR_SIDE.LEFT, MOTOR_END.FRONT, false, false);
+                motors[1] = new WheelMotor("BL", MOTOR_SIDE.LEFT, MOTOR_END.BACK, false, false);
+                motors[2] = new WheelMotor("FR", MOTOR_SIDE.RIGHT, MOTOR_END.FRONT, true, false);
+                motors[3] = new WheelMotor("BR", MOTOR_SIDE.RIGHT, MOTOR_END.BACK, true, false);
+                config = new WheelsConfig(DRIVE_TYPE.MECANUM, motors, 1.0d);
                 break;
         }
         return config;

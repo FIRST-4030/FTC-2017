@@ -33,10 +33,8 @@ public class TankDrive implements Wheels {
             }
         }
         this.offsets = new int[config.motors.length];
-        for (int i = 0; i < config.motors.length; i++) {
-            resetEncoder(i);
-        }
         this.config = config;
+        resetEncoder();
     }
 
     public boolean isAvailable() {
@@ -44,10 +42,34 @@ public class TankDrive implements Wheels {
     }
 
     public void resetEncoder() {
-        resetEncoder(config.index);
+        resetEncoder(null, null);
+    }
+
+    public void resetEncoder(MOTOR_SIDE side) {
+        resetEncoder(side, null);
+    }
+
+    public void resetEncoder(MOTOR_SIDE side, MOTOR_END end) {
+        if (!isAvailable()) {
+            return;
+        }
+        for (int i = 0; i < config.motors.length; i++) {
+            if (config.motors[i].encoder &&
+                    (end == null || config.motors[i].end == end) &&
+                    (side == null || config.motors[i].side == side)) {
+                resetEncoder(i);
+            }
+        }
     }
 
     public void resetEncoder(int index) {
+        if (!isAvailable()) {
+            return;
+        }
+        if (!config.motors[index].encoder) {
+            return;
+        }
+
         DcMotor.RunMode mode;
         try {
             mode = config.motors[index].motor.getMode();
@@ -67,7 +89,24 @@ public class TankDrive implements Wheels {
     }
 
     public int getEncoder() {
-        return getEncoder(config.index);
+        return getEncoder(null, null);
+    }
+
+    public int getEncoder(MOTOR_SIDE side) {
+        return getEncoder(side, null);
+    }
+
+    public int getEncoder(MOTOR_SIDE side, MOTOR_END end) {
+        int position = 0;
+        for (int i = 0; i < config.motors.length; i++) {
+            if (config.motors[i].encoder &&
+                    (end == null || config.motors[i].end == end) &&
+                    (side == null || config.motors[i].side == side)) {
+                position = getEncoder(i);
+                break;
+            }
+        }
+        return position;
     }
 
     public int getEncoder(int index) {
@@ -76,6 +115,9 @@ public class TankDrive implements Wheels {
         }
         if (index < 0 || index >= config.motors.length) {
             throw new ArrayIndexOutOfBoundsException(this.getClass().getName() + ": Invalid index: " + index);
+        }
+        if (!config.motors[index].encoder) {
+            return 0;
         }
         return (int) ((double) (config.motors[index].motor.getCurrentPosition() + offsets[index]) * config.scale);
     }

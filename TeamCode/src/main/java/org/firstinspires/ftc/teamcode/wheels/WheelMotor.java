@@ -10,25 +10,19 @@ public class WheelMotor implements Available {
     public final String name;
     public DcMotor motor;
     public final boolean reverse;
+    public final boolean encoder;
 
-    public WheelMotor(String name, MOTOR_SIDE side) {
-        this(name, side, false);
+    public WheelMotor(String name, MOTOR_SIDE side, boolean reverse, boolean encoder) {
+        this(name, side, MOTOR_END.FRONT, reverse, encoder);
     }
 
-    public WheelMotor(String name, MOTOR_SIDE side, boolean reverse) {
-        this(name, side, MOTOR_END.FRONT, reverse);
-    }
-
-    public WheelMotor(String name, MOTOR_SIDE side, MOTOR_END end) {
-        this(name, side, end, false);
-    }
-
-    public WheelMotor(String name, MOTOR_SIDE side, MOTOR_END end, boolean reverse) {
+    public WheelMotor(String name, MOTOR_SIDE side, MOTOR_END end, boolean reverse, boolean encoder) {
         this.name = name;
         this.side = side;
         this.end = end;
         this.motor = null;
         this.reverse = reverse;
+        this.encoder = encoder;
     }
 
     public boolean isAvailable() {

@@ -13,7 +13,19 @@ public interface Wheels extends Available {
 
     int getEncoder();
 
+    int getEncoder(int index);
+
+    int getEncoder(MOTOR_SIDE side);
+
+    int getEncoder(MOTOR_SIDE side, MOTOR_END end);
+
     void resetEncoder();
+
+    void resetEncoder(int index);
+
+    void resetEncoder(MOTOR_SIDE side);
+
+    void resetEncoder(MOTOR_SIDE side, MOTOR_END end);
 
     void loop(Gamepad pad);
 
