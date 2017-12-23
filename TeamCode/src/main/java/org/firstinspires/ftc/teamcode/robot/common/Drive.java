@@ -45,6 +45,7 @@ public class Drive implements CommonTask, DriveToListener {
     public Drive(Robot robot) {
         this.robot = robot;
     }
+
     // Sensor reference types for our DriveTo callbacks
     public enum SENSOR_TYPE {
         DRIVE_ENCODER,
@@ -52,21 +53,15 @@ public class Drive implements CommonTask, DriveToListener {
         GYROSCOPE_SLAVE
     }
 
-    public DriveTo forward(int distance) {
+    public DriveTo distance(int distance) {
         robot.wheels.setTeleop(false);
-        distance = Math.abs(distance);
         DriveToParams param = new DriveToParams(this, SENSOR_TYPE.DRIVE_ENCODER);
-        int ticks = (int) ((float) distance * ENCODER_PER_MM);
-        param.greaterThan(ticks + robot.wheels.getEncoder() - OVERRUN_ENCODER);
-        return new DriveTo(new DriveToParams[]{param});
-    }
-
-    public DriveTo backward(int distance) {
-        robot.wheels.setTeleop(false);
-        distance = -Math.abs(distance);
-        DriveToParams param = new DriveToParams(this, SENSOR_TYPE.DRIVE_ENCODER);
-        int ticks = (int) ((float) distance * ENCODER_PER_MM);
-        param.lessThan(ticks + robot.wheels.getEncoder() - OVERRUN_ENCODER);
+        int target = (int) ((float) distance * ENCODER_PER_MM) + robot.wheels.getEncoder();
+        if (distance > 0) {
+            param.greaterThan(target - OVERRUN_ENCODER);
+        } else {
+            param.lessThan(target - OVERRUN_ENCODER);
+        }
         return new DriveTo(new DriveToParams[]{param});
     }
 

@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.utils.OrderedEnumHelper;
 import org.firstinspires.ftc.teamcode.vuforia.ImageFTC;
 
 public class Jewel implements CommonTask {
-    private static final boolean DEBUG = false;
+    private static final boolean DEBUG = true;
 
     // Drive constants
     public static final double ARM_DELAY = 0.5d;
@@ -151,6 +151,10 @@ public class Jewel implements CommonTask {
 
     public AutoDriver hit(Field.AllianceColor alliance) {
         AutoDriver driver = new AutoDriver();
+        if (DEBUG) {
+            robot.telemetry.log().add("hitState: " + hitState);
+        }
+
         switch (hitState) {
             case INIT:
                 hitState = hitState.next();
@@ -180,6 +184,9 @@ public class Jewel implements CommonTask {
 
     public AutoDriver parse() {
         AutoDriver driver = new AutoDriver();
+        if (DEBUG) {
+            robot.telemetry.log().add("parseState: " + parseState);
+        }
 
         switch (parseState) {
             case INIT:
@@ -219,7 +226,6 @@ public class Jewel implements CommonTask {
     enum HIT_STATE implements OrderedEnum {
         INIT,
         DEPLOY_ARM,         // Move the arm down so we can hit the jewel
-        DELAY,              // Delay? we likely won't need this in the final version but just in case..
         HIT_JEWEL,          // Pivot to hit the correct jewel
         RETRACT_ARM,        // Retract the arm so we don't accidentally hit the jewels again
         DONE;

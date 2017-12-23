@@ -8,7 +8,6 @@ import org.firstinspires.ftc.teamcode.buttons.BUTTON;
 import org.firstinspires.ftc.teamcode.buttons.ButtonHandler;
 import org.firstinspires.ftc.teamcode.driveto.AutoDriver;
 import org.firstinspires.ftc.teamcode.field.Field;
-import org.firstinspires.ftc.teamcode.robot.CLAWS;
 import org.firstinspires.ftc.teamcode.robot.Robot;
 import org.firstinspires.ftc.teamcode.robot.common.Common;
 import org.firstinspires.ftc.teamcode.robot.common.Jewel;
@@ -178,7 +177,7 @@ public class JewelPivotTest extends OpMode {
                 state = state.next();
                 break;
             case DRIVE_OFF_PLATFORM:
-                driver.drive = common.drive.forward(610);
+                driver.drive = common.drive.distance(610);
                 state = state.next();
                 break;
             case PIVOT_TO_MIDDLE:
@@ -186,7 +185,7 @@ public class JewelPivotTest extends OpMode {
                 state = state.next();
                 break;
             case DRIVE_FORWARD:
-                driver.drive = common.drive.forward(distance.millimeters());
+                driver.drive = common.drive.distance(distance.millimeters());
                 state = state.next();
                 break;
             case PIVOT_TO_FACE:
@@ -194,7 +193,7 @@ public class JewelPivotTest extends OpMode {
                 state = state.next();
                 break;
             case DRIVE_TO_BOX:
-                driver.drive = common.drive.forward(DRIVE_TO_BOX_MM);
+                driver.drive = common.drive.distance(DRIVE_TO_BOX_MM);
                 state = state.next();
                 break;
             case RELEASE:
@@ -205,7 +204,7 @@ public class JewelPivotTest extends OpMode {
                 state = state.next();
                 break;
             case RELEASE_REVERSE:
-                driver.drive = common.drive.backward(RELEASE_REVERSE_MM);
+                driver.drive = common.drive.distance(-RELEASE_REVERSE_MM);
                 state = state.next();
                 break;
             case DONE:
@@ -238,7 +237,7 @@ public class JewelPivotTest extends OpMode {
         //should we add a true "Pivot_Back" state which returns us to 0 heading before doing other stuff?
         //it may be easier to do given that turning on the balance board kinda sucks.
         PIVOT_TO_MIDDLE,    // Pivot so we face the middle
-        DRIVE_FORWARD,      // Drive forward to appropriate point
+        DRIVE_FORWARD,      // Drive distance to appropriate point
         PIVOT_TO_FACE,      // Pivot to align with the desired rack
         DRIVE_TO_BOX,       // Drive up to the rack
         RELEASE,            // Release the block

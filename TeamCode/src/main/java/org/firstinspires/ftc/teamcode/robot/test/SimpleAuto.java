@@ -124,9 +124,9 @@ public class SimpleAuto extends OpMode {
         }
 
         if (gamepad1.a) {
-            driver.drive = common.drive.forward((int) (25.4 * 10));
+            driver.drive = common.drive.distance((int) (25.4 * 10));
         } else if (gamepad1.y) {
-            driver.drive = common.drive.forward((int) (25.4 * 20));
+            driver.drive = common.drive.distance((int) (25.4 * 20));
         } else if (gamepad1.b) {
             liftReady = false;
             liftState = LIFT_STATE.INIT;

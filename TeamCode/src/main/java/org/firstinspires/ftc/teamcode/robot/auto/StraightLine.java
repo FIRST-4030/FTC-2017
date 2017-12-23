@@ -152,7 +152,7 @@ public class StraightLine extends OpMode {
                 state = state.next();
                 break;
             case DRIVE_FORWARD:
-                driver.drive = common.drive.forward(distance.millimeters());
+                driver.drive = common.drive.distance(distance.millimeters());
                 state = state.next();
                 break;
             case RELEASE:
@@ -163,7 +163,7 @@ public class StraightLine extends OpMode {
                 state = state.next();
                 break;
             case RELEASE_REVERSE:
-                driver.drive = common.drive.backward(RELEASE_REVERSE_MM);
+                driver.drive = common.drive.distance(-RELEASE_REVERSE_MM);
                 state = state.next();
                 break;
             case DONE:
