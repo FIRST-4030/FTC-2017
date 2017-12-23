@@ -55,8 +55,17 @@ public class Drive implements CommonTask, DriveToListener {
 
     public DriveTo distance(int distance) {
         robot.wheels.setTeleop(false);
+
+        // Skip this motion if the error tolerance exceeds the target
+        if (Math.abs(distance) <= OVERRUN_ENCODER) {
+            return null;
+        }
+
+        // Calculate the drive in encoder ticks relative to the current position
         DriveToParams param = new DriveToParams(this, SENSOR_TYPE.DRIVE_ENCODER);
         int target = (int) ((float) distance * ENCODER_PER_MM) + robot.wheels.getEncoder();
+
+        // Drive forward or backward as selected
         if (distance > 0) {
             param.greaterThan(target - OVERRUN_ENCODER);
         } else {
@@ -66,22 +75,34 @@ public class Drive implements CommonTask, DriveToListener {
     }
 
     public DriveTo heading(double heading) {
+        robot.wheels.setTeleop(false);
+
+        // Calculate the turn relative to our current heading
         double degrees = Heading.normalize(heading - robot.gyro.getHeading());
+
         // If the turn is more than 180 CW turn CCW instead
         if (degrees > Heading.HALF_CIRCLE) {
             degrees -= Heading.FULL_CIRCLE;
         }
+
+        // Execute with this.degrees()
         return degrees(degrees);
     }
 
     public DriveTo degrees(double degrees) {
-        DriveToParams param = new DriveToParams(this, SENSOR_TYPE.GYROSCOPE);
+        robot.wheels.setTeleop(false);
 
-        // Current and target heading in normalized degrees
+        // Skip this motion if the error tolerance exceeds the target
+        if (Math.abs(degrees) <= OVERRUN_GYRO) {
+            return null;
+        }
+
+        // Calculate the drive in degrees relative to our current heading
+        DriveToParams param = new DriveToParams(this, SENSOR_TYPE.GYROSCOPE);
         double heading = robot.gyro.getHeading();
         double target = Heading.normalize(heading + degrees);
 
-        // Turn CW or CCW as selected
+        // Drive CW or CCW as selected
         if (degrees > 0) {
             param.rotationGreater(target - OVERRUN_GYRO);
         } else {
