@@ -278,7 +278,7 @@ public class JewelForward extends OpMode {
         SHORT(5000),
         LONG(10000);
 
-        private int milliseconds;
+        private final int milliseconds;
 
         DELAY(int milliseconds) {
             this.milliseconds = milliseconds;

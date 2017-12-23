@@ -14,7 +14,7 @@ public class VuforiaTest extends OpMode {
 
     // Devices and subsystems
     private Robot robot = null;
-    private ButtonHandler buttons = new ButtonHandler();
+    private final ButtonHandler buttons = new ButtonHandler();
 
     // Dynamic things we need to remember
     private int lastBearing = 0;

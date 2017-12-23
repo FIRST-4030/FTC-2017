@@ -261,7 +261,7 @@ public class JewelPivot extends OpMode {
         ALLIANCE(965),
         SHARED(1016);
 
-        private int millimeters;
+        private final int millimeters;
 
         WALL(int millimeters) {
             this.millimeters = millimeters;
@@ -286,7 +286,7 @@ public class JewelPivot extends OpMode {
         SHORT(5000),
         LONG(10000);
 
-        private int milliseconds;
+        private final int milliseconds;
 
         DELAY(int milliseconds) {
             this.milliseconds = milliseconds;
