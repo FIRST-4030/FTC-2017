@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.utils.OrderedEnumHelper;
 import org.firstinspires.ftc.teamcode.vuforia.ImageFTC;
 
 public class Jewel implements CommonTask {
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = false;
 
     // Drive constants
     public static final double ARM_DELAY = 0.5d;
