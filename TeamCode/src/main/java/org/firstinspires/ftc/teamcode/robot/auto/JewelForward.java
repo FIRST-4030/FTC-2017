@@ -9,6 +9,7 @@ import org.firstinspires.ftc.teamcode.driveto.AutoDriver;
 import org.firstinspires.ftc.teamcode.field.Field;
 import org.firstinspires.ftc.teamcode.robot.Robot;
 import org.firstinspires.ftc.teamcode.robot.common.Common;
+import org.firstinspires.ftc.teamcode.robot.common.Lift;
 import org.firstinspires.ftc.teamcode.utils.OrderedEnum;
 import org.firstinspires.ftc.teamcode.utils.OrderedEnumHelper;
 import org.firstinspires.ftc.teamcode.utils.Round;
@@ -192,8 +193,8 @@ public class JewelForward extends OpMode {
                 state = state.next();
                 break;
             case LOWER_LIFT:
-                robot.lift.setPower(common.lift.LIFT_SPEED_DOWN);
-                driver.interval = common.lift.LIFT_DELAY;
+                robot.lift.setPower(Lift.LIFT_SPEED_DOWN);
+                driver.interval = Lift.LIFT_DELAY;
                 state = state.next();
                 break;
             case LOWER_LIFT_STOP:

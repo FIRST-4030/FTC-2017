@@ -37,7 +37,7 @@ public class Robot {
     }
 
     public Robot(HardwareMap map, Telemetry telemetry, BOT bot) {
-        this.robot = this;
+        robot = this;
         this.map = map;
         this.telemetry = telemetry;
         if (bot == null) {

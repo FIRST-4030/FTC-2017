@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import org.firstinspires.ftc.teamcode.driveto.AutoDriver;
 import org.firstinspires.ftc.teamcode.robot.common.Common;
 import org.firstinspires.ftc.teamcode.robot.Robot;
+import org.firstinspires.ftc.teamcode.robot.common.Lift;
 import org.firstinspires.ftc.teamcode.utils.OrderedEnum;
 import org.firstinspires.ftc.teamcode.utils.OrderedEnumHelper;
 import org.firstinspires.ftc.teamcode.utils.Round;
@@ -109,7 +110,7 @@ public class SimpleAuto extends OpMode {
                         robot.lift.stop();
                         liftState = LIFT_STATE.TIMEOUT;
                     } else {
-                        robot.lift.setPower(common.lift.LIFT_SPEED_DOWN);
+                        robot.lift.setPower(Lift.LIFT_SPEED_DOWN);
                     }
                     break;
                 case READY:
