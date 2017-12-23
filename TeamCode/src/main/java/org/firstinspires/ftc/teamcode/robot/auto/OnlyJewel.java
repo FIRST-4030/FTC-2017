@@ -11,6 +11,7 @@ import org.firstinspires.ftc.teamcode.robot.Robot;
 import org.firstinspires.ftc.teamcode.robot.common.Common;
 import org.firstinspires.ftc.teamcode.utils.OrderedEnum;
 import org.firstinspires.ftc.teamcode.utils.OrderedEnumHelper;
+import org.firstinspires.ftc.teamcode.utils.Round;
 
 @com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "Jewel Only", group = "Auto")
 public class OnlyJewel extends OpMode {
@@ -130,7 +131,7 @@ public class OnlyJewel extends OpMode {
         telemetry.addData("State", state);
         telemetry.addData("Running", driver.isRunning(time));
         telemetry.addData("Pivot CCW", common.jewel.getImage() != null ? common.jewel.pivotCCW(alliance) : "<No Image>");
-        telemetry.addData("Gyro", robot.gyro.getHeading());
+        telemetry.addData("Gyro", Round.truncate(robot.gyro.getHeading()));
         telemetry.addData("Encoder", robot.wheels.getEncoder());
         telemetry.update();
 

@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.utils.Heading;
 public class MRGyro implements Gyro {
     private ModernRoboticsI2cGyro gyro;
     private boolean ready = false;
-    private int offset = 0;
+    private double offset = 0.0d;
 
     public MRGyro(HardwareMap map, Telemetry telemetry, String name) {
         if (name == null || name.isEmpty()) {
@@ -49,16 +49,16 @@ public class MRGyro implements Gyro {
         this.offset = offset;
     }
 
-    public int getRaw() {
+    public double getRaw() {
         if (!isReady()) {
-            return 0;
+            return 0.0d;
         }
 
         // Invert to make CW rotation increase the heading
         return -gyro.getIntegratedZValue();
     }
 
-    public int getHeading() {
+    public double getHeading() {
         return Heading.normalize(getRaw() + offset);
     }
 }

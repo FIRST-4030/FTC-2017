@@ -82,7 +82,7 @@ public class SimpleAuto extends OpMode {
         // Driver feedback
         telemetry.addData("LiftZero", liftState);
         telemetry.addData("Lift", robot.lift.getEncoder() + "/" + (robot.liftSwitch.get() ? "Down" : "Up"));
-        telemetry.addData("Gyro", robot.gyro.isReady() ? robot.gyro.getHeading() : "<Calibrating>");
+        telemetry.addData("Gyro", robot.gyro.isReady() ? Round.truncate(robot.gyro.getHeading()) : "<Calibrating>");
         telemetry.addData("Encoder", robot.wheels.getEncoder());
         telemetry.addData("Time/Drive", Round.truncate(time) + "/" + driver.drive);
         telemetry.update();

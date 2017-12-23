@@ -71,7 +71,7 @@ public class DriveTo {
             param.error1 = param.limit1 - actual;
             param.error2 = param.limit2 - actual;
             boolean crossing;
-            int heading, target, range;
+            double heading, target, range;
 
             switch (param.comparator) {
                 case LESS:
@@ -95,9 +95,9 @@ public class DriveTo {
                     }
                     break;
                 case ROTATION_LESS:
-                    heading = Heading.normalize((int) actual);
-                    target = Heading.normalize((int) param.limit1);
-                    range = Heading.normalize(target - ROTATION_OVERSHOOT_RANGE);
+                    heading = Heading.normalize(actual);
+                    target = Heading.normalize(param.limit1);
+                    range = Heading.normalize(target - (double) ROTATION_OVERSHOOT_RANGE);
                     crossing = range > target;
                     if (!crossing) {
                         if ((heading <= target) && (heading > range)) {
@@ -110,9 +110,9 @@ public class DriveTo {
                     }
                     break;
                 case ROTATION_GREATER:
-                    heading = Heading.normalize((int) actual);
-                    target = Heading.normalize((int) param.limit1);
-                    range = Heading.normalize(target + ROTATION_OVERSHOOT_RANGE);
+                    heading = Heading.normalize(actual);
+                    target = Heading.normalize(param.limit1);
+                    range = Heading.normalize(target + (double) ROTATION_OVERSHOOT_RANGE);
                     crossing = range < target;
                     if (!crossing) {
                         if ((heading >= target) && (heading < range)) {

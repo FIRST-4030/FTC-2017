@@ -13,4 +13,20 @@ public class Heading {
     public static int normalize(int heading) {
         return ((heading % FULL_CIRCLE) + FULL_CIRCLE) % FULL_CIRCLE;
     }
+
+    /**
+     * Modulo arithmetic is not available for doubles
+     *
+     * @param heading Any heading
+     * @return The same heading projected into the space between 0 and 359, inclusively
+     */
+    public static double normalize(double heading) {
+        while (heading >= (double) FULL_CIRCLE) {
+            heading -= (double) FULL_CIRCLE;
+        }
+        while (heading < 0.0d) {
+            heading += (double) FULL_CIRCLE;
+        }
+        return heading;
+    }
 }

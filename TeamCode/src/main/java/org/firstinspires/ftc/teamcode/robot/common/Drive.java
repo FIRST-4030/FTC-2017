@@ -65,8 +65,8 @@ public class Drive implements CommonTask, DriveToListener {
         return new DriveTo(new DriveToParams[]{param});
     }
 
-    public DriveTo heading(int heading) {
-        int degrees = Heading.normalize(heading - robot.gyro.getHeading());
+    public DriveTo heading(double heading) {
+        double degrees = Heading.normalize(heading - robot.gyro.getHeading());
         // If the turn is more than 180 CW turn CCW instead
         if (degrees > Heading.HALF_CIRCLE) {
             degrees -= Heading.FULL_CIRCLE;
@@ -74,12 +74,12 @@ public class Drive implements CommonTask, DriveToListener {
         return degrees(degrees);
     }
 
-    public DriveTo degrees(int degrees) {
+    public DriveTo degrees(double degrees) {
         DriveToParams param = new DriveToParams(this, SENSOR_TYPE.GYROSCOPE);
 
         // Current and target heading in normalized degrees
-        int heading = robot.gyro.getHeading();
-        int target = Heading.normalize(heading + degrees);
+        double heading = robot.gyro.getHeading();
+        double target = Heading.normalize(heading + degrees);
 
         // Turn CW or CCW as selected
         if (degrees > 0) {
