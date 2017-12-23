@@ -43,7 +43,7 @@ public class WheelsConfigs extends Configs {
         switch (bot) {
             case WestCoast:
                 motors = new WheelMotor[4];
-                motors[0] = new WheelMotor("ML1", MOTOR_SIDE.LEFT, true, false);
+                motors[0] = new WheelMotor("ML1", MOTOR_SIDE.LEFT, true, true);
                 motors[1] = new WheelMotor("MR1", MOTOR_SIDE.RIGHT, false, false);
                 motors[2] = new WheelMotor("ML2", MOTOR_SIDE.LEFT, true, false);
                 motors[3] = new WheelMotor("MR2", MOTOR_SIDE.RIGHT, false, false);
@@ -51,7 +51,7 @@ public class WheelsConfigs extends Configs {
                 break;
             case Mecanum:
                 motors = new WheelMotor[4];
-                motors[0] = new WheelMotor("FL", MOTOR_SIDE.LEFT, MOTOR_END.FRONT, false, false);
+                motors[0] = new WheelMotor("FL", MOTOR_SIDE.LEFT, MOTOR_END.FRONT, false, true);
                 motors[1] = new WheelMotor("BL", MOTOR_SIDE.LEFT, MOTOR_END.BACK, false, false);
                 motors[2] = new WheelMotor("FR", MOTOR_SIDE.RIGHT, MOTOR_END.FRONT, true, false);
                 motors[3] = new WheelMotor("BR", MOTOR_SIDE.RIGHT, MOTOR_END.BACK, true, false);
