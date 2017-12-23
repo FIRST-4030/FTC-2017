@@ -1,32 +1,35 @@
 package org.firstinspires.ftc.teamcode.driveto;
 
+import org.firstinspires.ftc.teamcode.utils.Heading;
+
 public class DriveToParams {
-    public double limit1;
-    public double limit2;
-    public DriveToComp comparator;
+    private static final double ROTATION_TARGET_RANGE = Heading.QUARTER_CIRCLE;
+
+    // Administrative members
     public final DriveToListener parent;
     public final Object reference;
-    public int timeout;
-    public double error1 = 0;
-    public double error2 = 0;
+    public int timeout = DriveTo.TIMEOUT_DEFAULT;
 
-    public DriveToParams(DriveToListener parent) {
-        this(parent, null);
-    }
+    // Comparison data
+    public DriveToComp comparator = DriveToComp.LESS;
+    public double limit = 0.0d;
+    public double limitRange = 0.0d; // Used in range and rotational comparators
+    public boolean crossing = false; // Used in rotational comparators
+
+    // PID values
+    public long timestamp = 0;
+    public double error = 0.0d;
+    public double accumulated = 0.0d;
+    public double differential = 0.0d;
 
     public DriveToParams(DriveToListener parent, Object reference) {
-        limit1 = 0.0f;
-        limit2 = 0.0f;
-        this.comparator = DriveToComp.LESS;
         this.parent = parent;
         this.reference = reference;
-        this.timeout = DriveTo.TIMEOUT_DEFAULT;
     }
 
     public void lessThan(double limit) {
         this.comparator = DriveToComp.LESS;
-        this.limit1 = limit;
-        this.limit2 = limit;
+        this.limit = limit;
     }
 
     public void lessThan(int limit) {
@@ -35,8 +38,7 @@ public class DriveToParams {
 
     public void greaterThan(double limit) {
         this.comparator = DriveToComp.GREATER;
-        this.limit1 = limit;
-        this.limit2 = limit;
+        this.limit = limit;
     }
 
     public void greaterThan(int limit) {
@@ -45,14 +47,16 @@ public class DriveToParams {
 
     public void rotationLess(double limit) {
         this.comparator = DriveToComp.ROTATION_LESS;
-        this.limit1 = limit;
-        this.limit2 = limit;
+        this.limit = Heading.normalize(limit);
+        this.limitRange = Heading.normalize(limit - ROTATION_TARGET_RANGE);
+        this.crossing = this.limitRange > this.limit;
     }
 
     public void rotationGreater(double limit) {
         this.comparator = DriveToComp.ROTATION_GREATER;
-        this.limit1 = limit;
-        this.limit2 = limit;
+        this.limit = Heading.normalize(limit);
+        this.limitRange = Heading.normalize(limit + ROTATION_TARGET_RANGE);
+        this.crossing = this.limitRange < this.limit;
     }
 
     // And so on

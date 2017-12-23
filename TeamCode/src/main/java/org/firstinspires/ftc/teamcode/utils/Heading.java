@@ -29,4 +29,19 @@ public class Heading {
         }
         return heading;
     }
+
+    /**
+     * Modulo arithmetic is not available for doubles
+     *
+     * @param err Any heading differential
+     * @return The same heading differential, projected into -180 to +180
+     */
+    public static double normalizeErr(double err) {
+        if (err > HALF_CIRCLE) {
+            err -= FULL_CIRCLE;
+        } else if (err < -HALF_CIRCLE) {
+            err += FULL_CIRCLE;
+        }
+        return err;
+    }
 }

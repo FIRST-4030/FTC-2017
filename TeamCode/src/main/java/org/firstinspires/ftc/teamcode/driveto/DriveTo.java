@@ -5,7 +5,6 @@ import org.firstinspires.ftc.teamcode.utils.Heading;
 public class DriveTo {
 
     public static final int TIMEOUT_DEFAULT = 3000;
-    private static final int ROTATION_OVERSHOOT_RANGE = Heading.QUARTER_CIRCLE;
 
     private final boolean any;
     private boolean done;
@@ -68,58 +67,63 @@ public class DriveTo {
         for (DriveToParams param : params) {
             boolean onTarget = false;
             double actual = param.parent.driveToSensor(param);
-            param.error1 = param.limit1 - actual;
-            param.error2 = param.limit2 - actual;
-            boolean crossing;
-            double heading, target, range;
+            double heading;
+
+            // PID calculations
+            double err = param.limit - actual;
+            long now = System.currentTimeMillis();
+            double dt = param.timestamp - now;
+            if (param.comparator == DriveToComp.ROTATION_LESS || param.comparator == DriveToComp.ROTATION_GREATER) {
+                err = Heading.normalizeErr(err);
+            }
+            double diff = (err - param.error) / dt;
+            double acc = param.accumulated + (err / dt);
+            param.error = err;
+            param.accumulated = acc;
+            param.differential = diff;
+            param.timestamp = now;
 
             switch (param.comparator) {
                 case LESS:
-                    if (actual <= param.limit1) {
+                    if (actual <= param.limit) {
                         onTarget = true;
                     }
                     break;
                 case GREATER:
-                    if (actual >= param.limit1) {
+                    if (actual >= param.limit) {
                         onTarget = true;
                     }
                     break;
                 case IN_RANGE:
-                    if (actual >= param.limit1 && actual <= param.limit2) {
+                    if (actual >= param.limit && actual <= param.limitRange) {
                         onTarget = true;
                     }
                     break;
                 case OUTSIDE_RANGE:
-                    if (actual < param.limit1 || actual > param.limit2) {
+                    if (actual < param.limit || actual > param.limitRange) {
                         onTarget = true;
                     }
                     break;
                 case ROTATION_LESS:
                     heading = Heading.normalize(actual);
-                    target = Heading.normalize(param.limit1);
-                    range = Heading.normalize(target - (double) ROTATION_OVERSHOOT_RANGE);
-                    crossing = range > target;
-                    if (!crossing) {
-                        if ((heading <= target) && (heading > range)) {
+                    if (!param.crossing) {
+                        if ((heading <= param.limit) && (heading > param.limitRange)) {
                             onTarget = true;
                         }
                     } else {
-                        if ((heading <= target) || (heading > range)) {
+                        if ((heading <= param.limit) || (heading > param.limitRange)) {
                             onTarget = true;
                         }
                     }
                     break;
                 case ROTATION_GREATER:
                     heading = Heading.normalize(actual);
-                    target = Heading.normalize(param.limit1);
-                    range = Heading.normalize(target + (double) ROTATION_OVERSHOOT_RANGE);
-                    crossing = range < target;
-                    if (!crossing) {
-                        if ((heading >= target) && (heading < range)) {
+                    if (!param.crossing) {
+                        if ((heading >= param.limit) && (heading < param.limitRange)) {
                             onTarget = true;
                         }
                     } else {
-                        if ((heading >= target) || (heading < range)) {
+                        if ((heading >= param.limit) || (heading < param.limitRange)) {
                             onTarget = true;
                         }
                     }
