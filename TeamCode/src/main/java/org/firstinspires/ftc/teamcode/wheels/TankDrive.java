@@ -185,13 +185,23 @@ public class TankDrive implements Wheels {
 
     public void setSpeed(double speed, MOTOR_SIDE side) {
         speed = limit(speed);
+
+        // Update the matching PIDs and run one of them
         double pidSpeed = 0.0d;
         for (int i = 0; i < config.motors.length; i++) {
             if (config.motors[i].side == side) {
-                pids[i].setTarget(speed * MAX_RATE);
-                pidSpeed = pids[i].run(getEncoder(side));
+                // Special case to settle at exactly 0 instantly
+                if (speed == 0.0d) {
+                    pidSpeed = speed;
+                    pids[i].setTarget(speed);
+                    pids[i].reset();
+                } else {
+                    pids[i].setTarget(speed * MAX_RATE);
+                    pidSpeed = pids[i].run(getEncoder(side));
+                }
             }
         }
+
         setSpeedRaw(pidSpeed, side);
     }
 

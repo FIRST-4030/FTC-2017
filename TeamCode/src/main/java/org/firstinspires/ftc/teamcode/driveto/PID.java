@@ -7,13 +7,13 @@ public class PID {
     public final double I;
     public final double D;
 
-    public long timestamp = 0;
-    public double last = 0.0d;
-    public double error = 0.0d;
-    public double accumulated = 0.0d;
-    public double differential = 0.0d;
-    public double rate = 0.0d;
-    public double target = 0.0d;
+    public long timestamp;
+    public double last;
+    public double error;
+    public double accumulated;
+    public double differential;
+    public double rate;
+    public double target;
 
     public PID() {
         this(1.0d, 0.0d, 0.0d);
@@ -23,6 +23,7 @@ public class PID {
         this.P = p;
         this.I = i;
         this.D = d;
+        this.target = 0.0d;
         reset();
     }
 
@@ -31,10 +32,12 @@ public class PID {
     }
 
     public void reset() {
+        this.timestamp = System.currentTimeMillis();
+        this.last = 0.0d;
         this.error = 0.0d;
         this.accumulated = 0.0d;
         this.differential = 0.0d;
-        this.timestamp = System.currentTimeMillis();
+        this.rate = 0.0d;
     }
 
     public double run(double actual) {
