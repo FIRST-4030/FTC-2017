@@ -7,14 +7,18 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.driveto.PID;
+import org.firstinspires.ftc.teamcode.driveto.RatePID;
 
 public class TankDrive implements Wheels {
+    // TODO: This constant needs to be part of the motor config
+    public final static double MAX_RATE = 1000;
+
     protected WheelsConfig config = null;
-    private final Telemetry telemetry;
-    private boolean teleop = false;
+    protected final Telemetry telemetry;
     protected double speedScale = 1.0d;
+    private boolean teleop = false;
     private int[] offsets;
-    private PID[] pids;
+    private RatePID[] pids;
 
     public TankDrive(HardwareMap map, Telemetry telemetry, WheelsConfig config) {
         this.telemetry = telemetry;
@@ -37,9 +41,9 @@ public class TankDrive implements Wheels {
             }
         }
         this.offsets = new int[config.motors.length];
-        this.pids = new PID[config.motors.length];
+        this.pids = new RatePID[config.motors.length];
         for (int i = 0; i < config.motors.length; i++) {
-            this.pids[i] = new PID();
+            this.pids[i] = new RatePID();
         }
         this.config = config;
         resetEncoder();
@@ -147,13 +151,20 @@ public class TankDrive implements Wheels {
     }
 
     public double getRate(MOTOR_SIDE side, MOTOR_END end) {
+
+        // Update all PIDs
+        for (int i = 0; i < config.motors.length; i++) {
+            pids[i].input(getEncoder(i));
+        }
+
+        // Find something that matches the filter
         double rate = 0.0d;
         boolean found = false;
         for (int i = 0; i < config.motors.length; i++) {
             if (config.motors[i].encoder &&
                     (end == null || config.motors[i].end == end) &&
                     (side == null || config.motors[i].side == side)) {
-                rate = pids[i].rate;
+                rate = pids[i].last; // .last not .rate because we're using RatePID
                 found = true;
                 break;
             }
@@ -162,11 +173,6 @@ public class TankDrive implements Wheels {
             telemetry.log().add("No encoder for SIDE/END: " +
                     (side != null ? side : "<any>") + "/" +
                     (end != null ? end : "<any>"));
-        }
-
-        // Update all PIDs
-        for (int i = 0; i < config.motors.length; i++) {
-            pids[i].input(getEncoder(i));
         }
         return rate;
     }
@@ -178,7 +184,15 @@ public class TankDrive implements Wheels {
     }
 
     public void setSpeed(double speed, MOTOR_SIDE side) {
-        setSpeedRaw(speed, side);
+        speed = limit(speed);
+        double pidSpeed = 0.0d;
+        for (int i = 0; i < config.motors.length; i++) {
+            if (config.motors[i].side == side) {
+                pids[i].setTarget(speed * MAX_RATE);
+                pidSpeed = pids[i].run(getEncoder(side));
+            }
+        }
+        setSpeedRaw(pidSpeed, side);
     }
 
     public void setSpeedRaw(double speed) {
@@ -202,8 +216,9 @@ public class TankDrive implements Wheels {
         if (!isAvailable()) {
             return;
         }
-        for (WheelMotor motor : config.motors) {
-            motor.motor.setPower(0.0d);
+        for (int i = 0; i < config.motors.length; i++) {
+            config.motors[i].motor.setPower(0.0d);
+            pids[i].reset();
         }
     }
 
@@ -219,7 +234,7 @@ public class TankDrive implements Wheels {
     }
 
     public void setSpeedScale(double scale) {
-        this.speedScale = scale;
+        this.speedScale = limit(scale);
     }
 
     public void loop(Gamepad pad) {
@@ -228,15 +243,19 @@ public class TankDrive implements Wheels {
         }
 
         // Negative is forward; this is typically the opposite of native motor config
-        float left = cleanJoystick(-pad.left_stick_y);
+        double left = cleanJoystick(-pad.left_stick_y);
         this.setSpeed(left, MOTOR_SIDE.LEFT);
 
-        float right = cleanJoystick(-pad.right_stick_y);
+        double right = cleanJoystick(-pad.right_stick_y);
         this.setSpeed(right, MOTOR_SIDE.RIGHT);
     }
 
-    protected float cleanJoystick(float power) {
-        power = com.qualcomm.robotcore.util.Range.clip(power, -1f, 1f);
+    protected double limit(double input) {
+        return com.qualcomm.robotcore.util.Range.clip(input, -1.0d, 1.0d);
+    }
+
+    protected double cleanJoystick(double power) {
+        power = limit(power);
         if (power < 0.1 && power > -0.1) {
             return 0;
         } else {

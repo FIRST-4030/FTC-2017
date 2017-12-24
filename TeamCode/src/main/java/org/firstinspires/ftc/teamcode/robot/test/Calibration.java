@@ -27,6 +27,7 @@ public class Calibration extends OpMode {
     private int imageInterval = 10;
     private double servoInterval = 0.01d;
     private long imageTimestamp = 0;
+    private double maxRate = 0.0d;
 
     @Override
     public void init() {
@@ -128,6 +129,10 @@ public class Calibration extends OpMode {
             }
         }
 
+        // Wheel rate
+        double rate = robot.wheels.getRate();
+        maxRate = Math.max(rate, maxRate);
+
         // Feedback
         for (CLAWS claw : CLAWS.values()) {
             telemetry.addData("Claw " + claw, Round.truncate(robot.claws[claw.ordinal()].getPostion()));
@@ -136,7 +141,7 @@ public class Calibration extends OpMode {
         telemetry.addData("Lift", robot.lift.getEncoder());
         telemetry.addData("Lift Switch", robot.liftSwitch.get());
         telemetry.addData("Wheels", robot.wheels.getEncoder());
-        telemetry.addData("Wheels Rate", robot.wheels.getRate());
+        telemetry.addData("Wheels Rate/Max", Round.truncate(robot.wheels.getRate()) + "/" + Round.truncate(maxRate));
         telemetry.addData("Arm", Round.truncate(robot.jewelArm.getPostion()));
         telemetry.addData("Gyro", robot.gyro.isReady() ? Round.truncate(robot.gyro.getHeading()) : "<Not Ready>");
         telemetry.addData("", "");

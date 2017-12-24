@@ -3,9 +3,9 @@ package org.firstinspires.ftc.teamcode.driveto;
 import org.firstinspires.ftc.teamcode.utils.Heading;
 
 public class PID {
-    public double P;
-    public double I;
-    public double D;
+    public final double P;
+    public final double I;
+    public final double D;
 
     public long timestamp = 0;
     public double last = 0.0d;
@@ -23,11 +23,18 @@ public class PID {
         this.P = p;
         this.I = i;
         this.D = d;
-        this.timestamp = System.currentTimeMillis();
+        reset();
     }
 
     public void setTarget(double target) {
         this.target = target;
+    }
+
+    public void reset() {
+        this.error = 0.0d;
+        this.accumulated = 0.0d;
+        this.differential = 0.0d;
+        this.timestamp = System.currentTimeMillis();
     }
 
     public double run(double actual) {
@@ -43,7 +50,7 @@ public class PID {
         input(actual, true);
     }
 
-    private void input(double actual, boolean rotational) {
+    protected void input(double actual, boolean rotational) {
         long now = System.currentTimeMillis();
         double dt = timestamp - now;
         double err = target - actual;
