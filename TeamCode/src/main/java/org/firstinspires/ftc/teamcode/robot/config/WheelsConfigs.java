@@ -44,7 +44,7 @@ public class WheelsConfigs extends Configs {
             case WestCoast:
                 motors = new WheelMotor[4];
                 motors[0] = new WheelMotor("ML1", MOTOR_SIDE.LEFT, true, true);
-                motors[1] = new WheelMotor("MR1", MOTOR_SIDE.RIGHT, false, false);
+                motors[1] = new WheelMotor("MR1", MOTOR_SIDE.RIGHT, false, true);
                 motors[2] = new WheelMotor("ML2", MOTOR_SIDE.LEFT, true, false);
                 motors[3] = new WheelMotor("MR2", MOTOR_SIDE.RIGHT, false, false);
                 config = new WheelsConfig(DRIVE_TYPE.TANK, motors, 1.0d);

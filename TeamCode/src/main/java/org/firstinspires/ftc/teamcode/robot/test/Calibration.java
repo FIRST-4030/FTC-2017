@@ -28,6 +28,7 @@ public class Calibration extends OpMode {
     private double servoInterval = 0.01d;
     private long imageTimestamp = 0;
     private double maxRate = 0.0d;
+    private double minRate = 0.0d;
 
     @Override
     public void init() {
@@ -41,6 +42,9 @@ public class Calibration extends OpMode {
             claw.setPositionRaw(.5);
         }
         robot.jewelArm.setPositionRaw(.5);
+
+        // Start Vuforia tracking
+        robot.vuforia.start();
 
         // Motor/Servo buttons
         buttons.register("CLAW-" + CLAWS.TOP + "-UP", gamepad1, BUTTON.dpad_up);
@@ -68,13 +72,19 @@ public class Calibration extends OpMode {
     }
 
     @Override
+    public void init_loop() {
+        telemetry.addData("Gyro", robot.gyro.isReady() ? "Ready" : "Calibrating…");
+        if (robot.gyro.isReady()) {
+            telemetry.addData(">", "Ready for game start");
+        }
+        telemetry.update();
+    }
+
+    @Override
     public void start() {
         telemetry.clearAll();
         robot.lift.resetEncoder();
         robot.wheels.resetEncoder();
-
-        // Start Vuforia tracking
-        robot.vuforia.start();
     }
 
     @Override
@@ -97,6 +107,7 @@ public class Calibration extends OpMode {
             }
         }
 
+        // Adjust the jewel arm
         if (buttons.get("ARM-UP")) {
             robot.jewelArm.setPositionRaw(robot.jewelArm.getPostion() + servoInterval);
         } else if (buttons.get("ARM-DOWN")) {
@@ -132,6 +143,7 @@ public class Calibration extends OpMode {
         // Wheel rate
         double rate = robot.wheels.getRate();
         maxRate = Math.max(rate, maxRate);
+        minRate = Math.min(rate, minRate);
 
         // Feedback
         for (CLAWS claw : CLAWS.values()) {
@@ -141,12 +153,13 @@ public class Calibration extends OpMode {
         telemetry.addData("Lift", robot.lift.getEncoder());
         telemetry.addData("Lift Switch", robot.liftSwitch.get());
         telemetry.addData("Wheels", robot.wheels.getEncoder());
-        telemetry.addData("Wheels Rate/Max", Round.truncate(robot.wheels.getRate()) + "/" + Round.truncate(maxRate));
+        telemetry.addData("Wheels Rate (Min/Max)", Round.truncate(robot.wheels.getRate()) +
+                " (" + Round.truncate(minRate) + "/" + Round.truncate(maxRate) + ")");
         telemetry.addData("Arm", Round.truncate(robot.jewelArm.getPostion()));
         telemetry.addData("Gyro", robot.gyro.isReady() ? Round.truncate(robot.gyro.getHeading()) : "<Not Ready>");
         telemetry.addData("", "");
         telemetry.addData("Image", image != null ? imageText(image) : "<No image>");
-        telemetry.addData("Red Side", common.jewel.isLeftRed() ? "Left" : "Right");
+        telemetry.addData("Red Side", image != null ? (common.jewel.isLeftRed() ? "Left" : "Right") : "<No image>");
         telemetry.addData("Image Interval", imageInterval);
         telemetry.addData("Image UL", common.jewel.UL[0] + ", " + common.jewel.UL[1]);
         telemetry.addData("Image LR", common.jewel.LR[0] + ", " + common.jewel.LR[1]);

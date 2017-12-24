@@ -13,7 +13,8 @@ public class TankDrive implements Wheels {
     private static final boolean DEBUG = true;
 
     // TODO: These constants need to be part of the motor config
-    public final static double MAX_RATE = 1000;
+    public final static double MAX_RATE_DERATE = 0.875;
+    public final static double MAX_RATE = 2.655 * MAX_RATE_DERATE;
     public final static double P = 1.0d;
     public final static double I = 0.0d;
     public final static double D = 0.0d;
@@ -212,11 +213,10 @@ public class TankDrive implements Wheels {
                     pids[i].setTarget(speed * MAX_RATE * speedScale);
                     pidSpeed = pids[i].run(getEncoder(side));
                     if (DEBUG) {
-                        telemetry.log().add(side + "(" + Round.truncate(pidSpeed) + ") :" +
-                                "t/l/r: " +
-                                Round.truncate(pids[i].target) + "/" +
-                                Round.truncate(pids[i].last) + "/" +
-                                Round.truncate(pids[i].error) + "/"
+                        telemetry.log().add(side + " (" + Round.truncate(pidSpeed) + "):\t" +
+                                "t: " + Round.truncate(pids[i].target) + "\t" +
+                                "l: " + Round.truncate(pids[i].last) + "\t" +
+                                "e: " + Round.truncate(pids[i].error)
                         );
                     }
                 }
