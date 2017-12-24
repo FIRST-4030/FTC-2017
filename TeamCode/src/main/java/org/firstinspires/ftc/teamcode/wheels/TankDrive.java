@@ -15,8 +15,8 @@ public class TankDrive implements Wheels {
     // TODO: These constants need to be part of the motor config
     public final static double MAX_RATE_DERATE = 0.875;
     public final static double MAX_RATE = 2.655 * MAX_RATE_DERATE;
-    public final static double P = 0.45d;
-    public final static double I = 0.05d;
+    public final static double P = 0.375d;
+    public final static double I = 0.075d;
     public final static double D = 0.0d;
 
     protected WheelsConfig config = null;
