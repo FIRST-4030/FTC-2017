@@ -6,16 +6,18 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.driveto.PID;
 
 public class TankDrive implements Wheels {
     protected WheelsConfig config = null;
+    private final Telemetry telemetry;
     private boolean teleop = false;
-    protected double speedScale = 1.0f;
+    protected double speedScale = 1.0d;
     private int[] offsets;
-    private int[] last;
-    private long timestamp;
+    private PID[] pids;
 
     public TankDrive(HardwareMap map, Telemetry telemetry, WheelsConfig config) {
+        this.telemetry = telemetry;
         for (WheelMotor motor : config.motors) {
             if (motor == null) {
                 telemetry.log().add(this.getClass().getName() + ": Null motor");
@@ -35,8 +37,10 @@ public class TankDrive implements Wheels {
             }
         }
         this.offsets = new int[config.motors.length];
-        this.last = new int[config.motors.length];
-        this.timestamp = System.currentTimeMillis();
+        this.pids = new PID[config.motors.length];
+        for (int i = 0; i < config.motors.length; i++) {
+            this.pids[i] = new PID();
+        }
         this.config = config;
         resetEncoder();
     }
@@ -113,10 +117,8 @@ public class TankDrive implements Wheels {
             }
         }
         if (!found) {
-            System.err.println(this.getClass().getName() +
-                    ": No encoder for SIDE/END: " +
-                    (side != null ? side : "<any>") +
-                    "/" +
+            telemetry.log().add("No encoder for SIDE/END: " +
+                    (side != null ? side : "<any>") + "/" +
                     (end != null ? end : "<any>"));
         }
         return position;
@@ -130,7 +132,7 @@ public class TankDrive implements Wheels {
             throw new ArrayIndexOutOfBoundsException(this.getClass().getName() + ": Invalid index: " + index);
         }
         if (!config.motors[index].encoder) {
-            System.err.println(this.getClass().getName() + ": No encoder on wheel: " + index);
+            telemetry.log().add("No encoder on wheel: " + index);
             return 0;
         }
         return (int) ((double) (config.motors[index].motor.getCurrentPosition() + offsets[index]) * config.scale);
@@ -145,39 +147,28 @@ public class TankDrive implements Wheels {
     }
 
     public double getRate(MOTOR_SIDE side, MOTOR_END end) {
-        // Calculate the encoder tick rate since the last call to getRate()
-        long now = System.currentTimeMillis();
-        int current = getEncoder(side, end);
-        double rate = (current - encoderLast(side, end)) / (double) (now - timestamp);
-
-        // Update all encoders and the timestamp
-        for (int i = 0; i < config.motors.length; i++) {
-            last[i] = getEncoder(i);
-        }
-        timestamp = now;
-        return rate;
-    }
-
-    private int encoderLast(MOTOR_SIDE side, MOTOR_END end) {
-        int position = 0;
+        double rate = 0.0d;
         boolean found = false;
         for (int i = 0; i < config.motors.length; i++) {
             if (config.motors[i].encoder &&
                     (end == null || config.motors[i].end == end) &&
                     (side == null || config.motors[i].side == side)) {
-                position = last[i];
+                rate = pids[i].rate;
                 found = true;
                 break;
             }
         }
         if (!found) {
-            System.err.println(this.getClass().getName() +
-                    ": No encoder for SIDE/END: " +
-                    (side != null ? side : "<any>") +
-                    "/" +
+            telemetry.log().add("No encoder for SIDE/END: " +
+                    (side != null ? side : "<any>") + "/" +
                     (end != null ? end : "<any>"));
         }
-        return position;
+
+        // Update all PIDs
+        for (int i = 0; i < config.motors.length; i++) {
+            pids[i].input(getEncoder(i));
+        }
+        return rate;
     }
 
     public void setSpeed(double speed) {

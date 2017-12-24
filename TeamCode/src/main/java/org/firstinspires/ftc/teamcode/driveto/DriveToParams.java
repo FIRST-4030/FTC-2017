@@ -9,20 +9,13 @@ public class DriveToParams {
     public final DriveToListener parent;
     public final Object reference;
     public int timeout = DriveTo.TIMEOUT_DEFAULT;
+    public PID pid = new PID();
 
     // Comparison data
     public DriveToComp comparator = DriveToComp.LESS;
     public double limit = 0.0d;
     public double limitRange = 0.0d; // Used in range and rotational comparators
     public boolean crossing = false; // Used in rotational comparators
-
-    // PID values
-    public long timestamp = 0;
-    public double error = 0.0d;
-    public double accumulated = 0.0d;
-    public double differential = 0.0d;
-    public double last = 0.0d;
-    public double rate = 0.0d;
 
     public DriveToParams(DriveToListener parent, Object reference) {
         this.parent = parent;

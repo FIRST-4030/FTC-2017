@@ -68,25 +68,7 @@ public class DriveTo {
             boolean onTarget = false;
             double actual = param.parent.driveToSensor(param);
             double heading;
-
-            // PID calculations
-            long now = System.currentTimeMillis();
-            double dt = param.timestamp - now;
-            double err = param.limit - actual;
-            if (param.comparator == DriveToComp.ROTATION_LESS || param.comparator == DriveToComp.ROTATION_GREATER) {
-                err = Heading.normalizeErr(err);
-            }
-            double rate = (actual - param.last) / dt;
-            double diff = (err - param.error) / dt;
-            double acc = param.accumulated + (err / dt);
-
-            // Save into the param object
-            param.last = actual;
-            param.rate = rate;
-            param.error = err;
-            param.accumulated = acc;
-            param.differential = diff;
-            param.timestamp = now;
+            param.pid.input(actual);
 
             switch (param.comparator) {
                 case LESS:
