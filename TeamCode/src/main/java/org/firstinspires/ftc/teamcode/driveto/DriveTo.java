@@ -67,8 +67,15 @@ public class DriveTo {
         for (DriveToParams param : params) {
             boolean onTarget = false;
             double actual = param.parent.driveToSensor(param);
-            double heading;
-            param.pid.input(actual);
+            double heading = 0.0d;
+
+            // Special handling for rotational contexts
+            if (param.comparator == DriveToComp.ROTATION_LESS || param.comparator == DriveToComp.ROTATION_GREATER) {
+                heading = Heading.normalize(actual);
+                param.pid.inputRotational(actual);
+            } else {
+                param.pid.input(actual);
+            }
 
             switch (param.comparator) {
                 case LESS:
@@ -92,7 +99,6 @@ public class DriveTo {
                     }
                     break;
                 case ROTATION_LESS:
-                    heading = Heading.normalize(actual);
                     if (!param.crossing) {
                         if ((heading <= param.limit) && (heading > param.limitRange)) {
                             onTarget = true;
@@ -104,7 +110,6 @@ public class DriveTo {
                     }
                     break;
                 case ROTATION_GREATER:
-                    heading = Heading.normalize(actual);
                     if (!param.crossing) {
                         if ((heading >= param.limit) && (heading < param.limitRange)) {
                             onTarget = true;
