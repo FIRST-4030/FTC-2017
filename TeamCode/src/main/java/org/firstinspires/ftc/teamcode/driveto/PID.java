@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.driveto;
 
+import org.firstinspires.ftc.teamcode.robot.Robot;
 import org.firstinspires.ftc.teamcode.utils.Heading;
 
 public class PID {
@@ -55,7 +56,7 @@ public class PID {
 
     protected void input(double actual, boolean rotational) {
         long now = System.currentTimeMillis();
-        double dt = timestamp - now;
+        double dt = now - timestamp;
         double err = target - actual;
         if (rotational) {
             err = Heading.normalizeErr(err);

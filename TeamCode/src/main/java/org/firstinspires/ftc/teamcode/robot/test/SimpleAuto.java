@@ -9,6 +9,7 @@ import org.firstinspires.ftc.teamcode.robot.common.Lift;
 import org.firstinspires.ftc.teamcode.utils.OrderedEnum;
 import org.firstinspires.ftc.teamcode.utils.OrderedEnumHelper;
 import org.firstinspires.ftc.teamcode.utils.Round;
+import org.firstinspires.ftc.teamcode.wheels.MOTOR_SIDE;
 
 @com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "Simple Auto", group = "Test")
 public class SimpleAuto extends OpMode {
@@ -82,14 +83,20 @@ public class SimpleAuto extends OpMode {
 
         // Wheel PID
         if (gamepad1.x) {
-            robot.wheels.setSpeed(0.5);
+            robot.wheels.setSpeed(0.25);
+        } else {
+            robot.wheels.stop();
         }
 
         // Driver feedback
-        telemetry.addData("Wheels", robot.wheels.getEncoder());
-        telemetry.addData("Wheels Rate", Round.truncate(robot.wheels.getRate()));
+        telemetry.addData("Wheels L/R", robot.wheels.getEncoder(MOTOR_SIDE.LEFT) +
+                "/" + robot.wheels.getEncoder(MOTOR_SIDE.RIGHT));
+        telemetry.addData("Wheels Rate L/R", Round.truncate(robot.wheels.getRate(MOTOR_SIDE.LEFT)) +
+                "/" + Round.truncate(robot.wheels.getRate(MOTOR_SIDE.RIGHT)));
         telemetry.addData("LiftZero", liftState);
-        telemetry.addData("Lift", robot.lift.getEncoder() + "/" + (robot.liftSwitch.get() ? "Down" : "Up"));
+        telemetry.addData("Lift", robot.lift.getEncoder() +
+                "/" + (robot.liftSwitch.get() ? "Down" : "Up") +
+                " (" + liftState + ")");
         telemetry.addData("Gyro", robot.gyro.isReady() ? Round.truncate(robot.gyro.getHeading()) : "<Calibrating>");
         telemetry.addData("Time/Drive", Round.truncate(time) + "/" + driver.drive);
         telemetry.update();

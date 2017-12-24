@@ -15,8 +15,8 @@ public class TankDrive implements Wheels {
     // TODO: These constants need to be part of the motor config
     public final static double MAX_RATE_DERATE = 0.875;
     public final static double MAX_RATE = 2.655 * MAX_RATE_DERATE;
-    public final static double P = 1.0d;
-    public final static double I = 0.0d;
+    public final static double P = 0.45d;
+    public final static double I = 0.05d;
     public final static double D = 0.0d;
 
     protected WheelsConfig config = null;
@@ -49,7 +49,11 @@ public class TankDrive implements Wheels {
         this.offsets = new int[config.motors.length];
         this.pids = new RatePID[config.motors.length];
         for (int i = 0; i < config.motors.length; i++) {
-            this.pids[i] = new RatePID(P, I, D);
+            RatePID pid = null;
+            if (config.motors[i].encoder) {
+                pid = new RatePID(P, I, D);
+            }
+            this.pids[i] = pid;
         }
         this.config = config;
         resetEncoder();
@@ -173,7 +177,9 @@ public class TankDrive implements Wheels {
 
         // Update all PIDs
         for (int i = 0; i < config.motors.length; i++) {
-            pids[i].input(getEncoder(side, end));
+            if (pids[i] != null) {
+                pids[i].input(getEncoder(i));
+            }
         }
 
         // Find something that matches the filter
@@ -192,6 +198,9 @@ public class TankDrive implements Wheels {
     }
 
     public void setSpeed(double speed, MOTOR_SIDE side) {
+        if (side == null) {
+            throw new IllegalArgumentException(this.getClass().getName() + ": Null SIDE");
+        }
         if (!isAvailable()) {
             return;
         }
@@ -200,10 +209,9 @@ public class TankDrive implements Wheels {
         speed = limit(speed);
         double pidSpeed = 0.0d;
         for (int i = 0; i < config.motors.length; i++) {
-            if (config.motors[i].side == side) {
+            if (config.motors[i].side == side && pids[i] != null) {
                 // Special case to settle at exactly 0 instantly
                 if (speed == 0.0d) {
-                    pidSpeed = speed;
                     pids[i].setTarget(speed);
                     pids[i].reset();
                     if (DEBUG) {
@@ -214,7 +222,7 @@ public class TankDrive implements Wheels {
                     pidSpeed = pids[i].run(getEncoder(side));
                     if (DEBUG) {
                         telemetry.log().add(side + " (" + Round.truncate(pidSpeed) + "):\t" +
-                                "t: " + Round.truncate(pids[i].target) + "\t" +
+                                "t: " + Round.truncate(pids[i].target) + "\t\t" +
                                 "l: " + Round.truncate(pids[i].last) + "\t" +
                                 "e: " + Round.truncate(pids[i].error)
                         );
@@ -248,7 +256,9 @@ public class TankDrive implements Wheels {
         }
         for (int i = 0; i < config.motors.length; i++) {
             config.motors[i].motor.setPower(0.0d);
-            pids[i].reset();
+            if (pids[i] != null) {
+                pids[i].reset();
+            }
         }
     }
 

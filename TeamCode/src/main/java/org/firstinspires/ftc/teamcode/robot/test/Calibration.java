@@ -12,6 +12,7 @@ import org.firstinspires.ftc.teamcode.robot.Robot;
 import org.firstinspires.ftc.teamcode.robot.common.Common;
 import org.firstinspires.ftc.teamcode.utils.Round;
 import org.firstinspires.ftc.teamcode.vuforia.ImageFTC;
+import org.firstinspires.ftc.teamcode.wheels.MOTOR_SIDE;
 
 @TeleOp(name = "Calibration", group = "Test")
 public class Calibration extends OpMode {
@@ -27,8 +28,9 @@ public class Calibration extends OpMode {
     private int imageInterval = 10;
     private double servoInterval = 0.01d;
     private long imageTimestamp = 0;
-    private double maxRate = 0.0d;
-    private double minRate = 0.0d;
+    private double rate[] = new double[MOTOR_SIDE.values().length];
+    private double min[] = new double[MOTOR_SIDE.values().length];
+    private double max[] = new double[MOTOR_SIDE.values().length];
 
     @Override
     public void init() {
@@ -95,8 +97,8 @@ public class Calibration extends OpMode {
         jewelAreaInput();
 
         // Adjust the lift and wheels
-        robot.wheels.setSpeedRaw(gamepad1.left_stick_y);
-        robot.lift.setPower(gamepad1.right_stick_y);
+        robot.wheels.setSpeedRaw(-gamepad1.left_stick_y);
+        robot.lift.setPower(-gamepad1.right_stick_y);
 
         // Adjust the claws
         for (CLAWS claw : CLAWS.values()) {
@@ -140,10 +142,12 @@ public class Calibration extends OpMode {
             }
         }
 
-        // Wheel rate
-        double rate = robot.wheels.getRate();
-        maxRate = Math.max(rate, maxRate);
-        minRate = Math.min(rate, minRate);
+        // Wheel rates
+        for (MOTOR_SIDE side : MOTOR_SIDE.values()) {
+            rate[side.ordinal()] = robot.wheels.getRate(side);
+            max[side.ordinal()] = Math.max(rate[side.ordinal()], max[side.ordinal()]);
+            min[side.ordinal()] = Math.min(rate[side.ordinal()], min[side.ordinal()]);
+        }
 
         // Feedback
         for (CLAWS claw : CLAWS.values()) {
@@ -152,9 +156,13 @@ public class Calibration extends OpMode {
         telemetry.addData("Servo Interval", Round.truncate(servoInterval));
         telemetry.addData("Lift", robot.lift.getEncoder());
         telemetry.addData("Lift Switch", robot.liftSwitch.get());
-        telemetry.addData("Wheels", robot.wheels.getEncoder());
-        telemetry.addData("Wheels Rate (Min/Max)", Round.truncate(robot.wheels.getRate()) +
-                " (" + Round.truncate(minRate) + "/" + Round.truncate(maxRate) + ")");
+        telemetry.addData("Wheels L/R", robot.wheels.getEncoder(MOTOR_SIDE.LEFT) +
+                "/" + robot.wheels.getEncoder(MOTOR_SIDE.RIGHT));
+        telemetry.addData("Wheels Rate", Round.truncate(robot.wheels.getRate()));
+        telemetry.addData("Left Rate (Min/Max)", Round.truncate(rate[MOTOR_SIDE.LEFT.ordinal()]) +
+                "\t(" + Round.truncate(min[MOTOR_SIDE.LEFT.ordinal()]) + "/" + Round.truncate(max[MOTOR_SIDE.LEFT.ordinal()]) + ")");
+        telemetry.addData("Right Rate (Min/Max)", Round.truncate(rate[MOTOR_SIDE.RIGHT.ordinal()]) +
+                "\t(" + Round.truncate(min[MOTOR_SIDE.RIGHT.ordinal()]) + "/" + Round.truncate(max[MOTOR_SIDE.RIGHT.ordinal()]) + ")");
         telemetry.addData("Arm", Round.truncate(robot.jewelArm.getPostion()));
         telemetry.addData("Gyro", robot.gyro.isReady() ? Round.truncate(robot.gyro.getHeading()) : "<Not Ready>");
         telemetry.addData("", "");
