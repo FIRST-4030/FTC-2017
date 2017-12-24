@@ -21,6 +21,8 @@ public class DriveToParams {
     public double error = 0.0d;
     public double accumulated = 0.0d;
     public double differential = 0.0d;
+    public double last = 0.0d;
+    public double rate = 0.0d;
 
     public DriveToParams(DriveToListener parent, Object reference) {
         this.parent = parent;

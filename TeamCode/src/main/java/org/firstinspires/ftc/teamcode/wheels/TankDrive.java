@@ -12,6 +12,8 @@ public class TankDrive implements Wheels {
     private boolean teleop = false;
     protected double speedScale = 1.0f;
     private int[] offsets;
+    private int[] last;
+    private long timestamp;
 
     public TankDrive(HardwareMap map, Telemetry telemetry, WheelsConfig config) {
         for (WheelMotor motor : config.motors) {
@@ -33,6 +35,8 @@ public class TankDrive implements Wheels {
             }
         }
         this.offsets = new int[config.motors.length];
+        this.last = new int[config.motors.length];
+        this.timestamp = System.currentTimeMillis();
         this.config = config;
         resetEncoder();
     }
@@ -98,13 +102,22 @@ public class TankDrive implements Wheels {
 
     public int getEncoder(MOTOR_SIDE side, MOTOR_END end) {
         int position = 0;
+        boolean found = false;
         for (int i = 0; i < config.motors.length; i++) {
             if (config.motors[i].encoder &&
                     (end == null || config.motors[i].end == end) &&
                     (side == null || config.motors[i].side == side)) {
                 position = getEncoder(i);
+                found = true;
                 break;
             }
+        }
+        if (!found) {
+            System.err.println(this.getClass().getName() +
+                    ": No encoder for SIDE/END: " +
+                    (side != null ? side : "<any>") +
+                    "/" +
+                    (end != null ? end : "<any>"));
         }
         return position;
     }
@@ -117,21 +130,73 @@ public class TankDrive implements Wheels {
             throw new ArrayIndexOutOfBoundsException(this.getClass().getName() + ": Invalid index: " + index);
         }
         if (!config.motors[index].encoder) {
+            System.err.println(this.getClass().getName() + ": No encoder on wheel: " + index);
             return 0;
         }
         return (int) ((double) (config.motors[index].motor.getCurrentPosition() + offsets[index]) * config.scale);
     }
 
-    public void setSpeed(double speed) {
-        if (!isAvailable()) {
-            return;
+    public double getRate() {
+        return getRate(null, null);
+    }
+
+    public double getRate(MOTOR_SIDE side) {
+        return getRate(side, null);
+    }
+
+    public double getRate(MOTOR_SIDE side, MOTOR_END end) {
+        // Calculate the encoder tick rate since the last call to getRate()
+        long now = System.currentTimeMillis();
+        int current = getEncoder(side, end);
+        double rate = (current - encoderLast(side, end)) / (double) (now - timestamp);
+
+        // Update all encoders and the timestamp
+        for (int i = 0; i < config.motors.length; i++) {
+            last[i] = getEncoder(i);
         }
-        for (WheelMotor motor : config.motors) {
-            motor.motor.setPower(speed * speedScale);
+        timestamp = now;
+        return rate;
+    }
+
+    private int encoderLast(MOTOR_SIDE side, MOTOR_END end) {
+        int position = 0;
+        boolean found = false;
+        for (int i = 0; i < config.motors.length; i++) {
+            if (config.motors[i].encoder &&
+                    (end == null || config.motors[i].end == end) &&
+                    (side == null || config.motors[i].side == side)) {
+                position = last[i];
+                found = true;
+                break;
+            }
+        }
+        if (!found) {
+            System.err.println(this.getClass().getName() +
+                    ": No encoder for SIDE/END: " +
+                    (side != null ? side : "<any>") +
+                    "/" +
+                    (end != null ? end : "<any>"));
+        }
+        return position;
+    }
+
+    public void setSpeed(double speed) {
+        for (MOTOR_SIDE side : MOTOR_SIDE.values()) {
+            setSpeed(speed, side);
         }
     }
 
     public void setSpeed(double speed, MOTOR_SIDE side) {
+        setSpeedRaw(speed, side);
+    }
+
+    public void setSpeedRaw(double speed) {
+        for (MOTOR_SIDE side : MOTOR_SIDE.values()) {
+            setSpeedRaw(speed, side);
+        }
+    }
+
+    public void setSpeedRaw(double speed, MOTOR_SIDE side) {
         if (!isAvailable()) {
             return;
         }

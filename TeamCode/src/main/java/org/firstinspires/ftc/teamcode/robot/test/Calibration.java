@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.robot.test;
 
-import android.provider.ContactsContract;
-
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -83,12 +81,10 @@ public class Calibration extends OpMode {
 
         // Update buttons
         buttons.update();
-
-        // Adjust the jewel image area
         jewelAreaInput();
 
         // Adjust the lift and wheels
-        robot.wheels.setSpeed(gamepad1.left_stick_y);
+        robot.wheels.setSpeedRaw(gamepad1.left_stick_y);
         robot.lift.setPower(gamepad1.right_stick_y);
 
         // Adjust the claws
@@ -140,6 +136,7 @@ public class Calibration extends OpMode {
         telemetry.addData("Lift", robot.lift.getEncoder());
         telemetry.addData("Lift Switch", robot.liftSwitch.get());
         telemetry.addData("Wheels", robot.wheels.getEncoder());
+        telemetry.addData("Wheels Rate", robot.wheels.getRate());
         telemetry.addData("Arm", Round.truncate(robot.jewelArm.getPostion()));
         telemetry.addData("Gyro", robot.gyro.isReady() ? Round.truncate(robot.gyro.getHeading()) : "<Not Ready>");
         telemetry.addData("", "");

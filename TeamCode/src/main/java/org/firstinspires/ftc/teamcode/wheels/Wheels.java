@@ -11,6 +11,10 @@ public interface Wheels extends Available {
 
     void setSpeed(double speed, MOTOR_SIDE side);
 
+    void setSpeedRaw(double speed);
+
+    void setSpeedRaw(double speed, MOTOR_SIDE side);
+
     int getEncoder();
 
     int getEncoder(int index);
@@ -26,6 +30,12 @@ public interface Wheels extends Available {
     void resetEncoder(MOTOR_SIDE side);
 
     void resetEncoder(MOTOR_SIDE side, MOTOR_END end);
+
+    double getRate();
+
+    double getRate(MOTOR_SIDE side);
+
+    double getRate(MOTOR_SIDE side, MOTOR_END end);
 
     void loop(Gamepad pad);
 
