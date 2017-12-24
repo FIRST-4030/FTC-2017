@@ -31,8 +31,6 @@ public class Drive implements CommonTask, DriveToListener {
     /**
      * Physical-logical mapping
      */
-    // Ratio of encoder ticks to millimeters driven
-    public final static float ENCODER_PER_MM = .92f;
     // Clockwise is gryo-increasing
     public final static DriveToComp COMP_CLOCKWISE = DriveToComp.ROTATION_GREATER;
     // Forward is toward the claws, motor positive, ticks increasing
@@ -63,7 +61,7 @@ public class Drive implements CommonTask, DriveToListener {
 
         // Calculate the drive in encoder ticks relative to the current position
         DriveToParams param = new DriveToParams(this, SENSOR_TYPE.DRIVE_ENCODER);
-        int target = (int) ((float) distance * ENCODER_PER_MM) + robot.wheels.getEncoder();
+        int target = (int) ((double) distance * robot.wheels.getTicksPerMM()) + robot.wheels.getEncoder();
 
         // Drive forward or backward as selected
         if (distance > 0) {
@@ -75,17 +73,7 @@ public class Drive implements CommonTask, DriveToListener {
     }
 
     public DriveTo heading(double heading) {
-        robot.wheels.setTeleop(false);
-
-        // Calculate the turn relative to our current heading
-        double degrees = Heading.normalize(heading - robot.gyro.getHeading());
-
-        // If the turn is more than 180 CW turn CCW instead
-        if (degrees > Heading.HALF_CIRCLE) {
-            degrees -= Heading.FULL_CIRCLE;
-        }
-
-        // Execute with this.degrees()
+        double degrees = Heading.normalizeErr(heading - robot.gyro.getHeading());
         return degrees(degrees);
     }
 

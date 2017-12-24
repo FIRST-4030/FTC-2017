@@ -20,6 +20,10 @@ public class PID {
         this(1.0d, 0.0d, 0.0d);
     }
 
+    public PID(PIDParams params) {
+        this(params.P, params.I, params.D);
+    }
+
     public PID(double p, double i, double d) {
         this.P = p;
         this.I = i;

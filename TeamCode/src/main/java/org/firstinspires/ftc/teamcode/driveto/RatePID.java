@@ -7,6 +7,10 @@ public class RatePID extends PID {
         super(p, i, d);
     }
 
+    public RatePID(PIDParams params) {
+        super(params);
+    }
+
     @Override
     public void input(double actual) {
         this.input(actual, false);

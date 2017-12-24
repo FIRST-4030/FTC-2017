@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.wheels;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import org.firstinspires.ftc.teamcode.driveto.PID;
+import org.firstinspires.ftc.teamcode.driveto.PIDParams;
 import org.firstinspires.ftc.teamcode.utils.Available;
 
 public class WheelMotor implements Available {
@@ -11,18 +13,28 @@ public class WheelMotor implements Available {
     public DcMotor motor;
     public final boolean reverse;
     public final boolean encoder;
+    public final PIDParams pid;
 
-    public WheelMotor(String name, MOTOR_SIDE side, boolean reverse, boolean encoder) {
-        this(name, side, MOTOR_END.FRONT, reverse, encoder);
+    public WheelMotor(String name, MOTOR_SIDE side, boolean reverse) {
+        this(name, side, MOTOR_END.FRONT, reverse, null);
     }
 
-    public WheelMotor(String name, MOTOR_SIDE side, MOTOR_END end, boolean reverse, boolean encoder) {
+    public WheelMotor(String name, MOTOR_SIDE side, MOTOR_END end, boolean reverse) {
+        this(name, side, end, reverse, null);
+    }
+
+    public WheelMotor(String name, MOTOR_SIDE side, boolean reverse, PIDParams pid) {
+        this(name, side, MOTOR_END.FRONT, reverse, pid);
+    }
+
+    public WheelMotor(String name, MOTOR_SIDE side, MOTOR_END end, boolean reverse, PIDParams pid) {
         this.name = name;
         this.side = side;
         this.end = end;
         this.motor = null;
         this.reverse = reverse;
-        this.encoder = encoder;
+        this.pid = pid;
+        this.encoder = (pid != null);
     }
 
     public boolean isAvailable() {

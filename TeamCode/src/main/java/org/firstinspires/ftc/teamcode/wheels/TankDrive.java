@@ -12,13 +12,6 @@ import org.firstinspires.ftc.teamcode.utils.Round;
 public class TankDrive implements Wheels {
     private static final boolean DEBUG = true;
 
-    // TODO: These constants need to be part of the motor config
-    public final static double MAX_RATE_DERATE = 0.875;
-    public final static double MAX_RATE = 2.655 * MAX_RATE_DERATE;
-    public final static double P = 0.375d;
-    public final static double I = 0.075d;
-    public final static double D = 0.0d;
-
     protected WheelsConfig config = null;
     protected final Telemetry telemetry;
     protected double speedScale = 1.0d;
@@ -51,7 +44,7 @@ public class TankDrive implements Wheels {
         for (int i = 0; i < config.motors.length; i++) {
             RatePID pid = null;
             if (config.motors[i].encoder) {
-                pid = new RatePID(P, I, D);
+                pid = new RatePID(config.motors[i].pid);
             }
             this.pids[i] = pid;
         }
@@ -131,6 +124,26 @@ public class TankDrive implements Wheels {
         return motor;
     }
 
+    public double getTicksPerMM() {
+        return getTicksPerMM(null, null);
+    }
+
+    public double getTicksPerMM(MOTOR_SIDE side) {
+        return getTicksPerMM(side, null);
+    }
+
+    public double getTicksPerMM(MOTOR_SIDE side, MOTOR_END end) {
+        if (!isAvailable()) {
+            return 0;
+        }
+        double ticks = 0.0d;
+        Integer index = findEncoderIndex(side, end);
+        if (index != null) {
+            ticks = config.motors[index].pid.ticksPerMM;
+        }
+        return ticks;
+    }
+
     public int getEncoder() {
         return getEncoder(null, null);
     }
@@ -159,7 +172,7 @@ public class TankDrive implements Wheels {
             telemetry.log().add("No encoder on motor: " + index);
             return 0;
         }
-        return (int) ((double) (config.motors[index].motor.getCurrentPosition() + offsets[index]) * config.scale);
+        return (int) ((double) (config.motors[index].motor.getCurrentPosition() + offsets[index]));
     }
 
     public double getRate() {
@@ -218,7 +231,7 @@ public class TankDrive implements Wheels {
                         telemetry.log().add(side + "(" + Round.truncate(pidSpeed) + "): reset");
                     }
                 } else {
-                    pids[i].setTarget(speed * MAX_RATE * speedScale);
+                    pids[i].setTarget(speed * config.motors[i].pid.maxRate * speedScale);
                     pidSpeed = pids[i].run(getEncoder(side));
                     if (DEBUG) {
                         telemetry.log().add(side + " (" + Round.truncate(pidSpeed) + "):\t" +

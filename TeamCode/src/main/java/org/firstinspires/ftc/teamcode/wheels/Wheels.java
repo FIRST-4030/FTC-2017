@@ -15,6 +15,12 @@ public interface Wheels extends Available {
 
     void setSpeedRaw(double speed, MOTOR_SIDE side);
 
+    double getTicksPerMM();
+
+    double getTicksPerMM(MOTOR_SIDE side);
+
+    double getTicksPerMM(MOTOR_SIDE side, MOTOR_END end);
+
     int getEncoder();
 
     int getEncoder(int index);
