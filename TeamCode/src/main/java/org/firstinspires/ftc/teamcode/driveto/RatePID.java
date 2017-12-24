@@ -3,6 +3,10 @@ package org.firstinspires.ftc.teamcode.driveto;
 public class RatePID extends PID {
     private PID displacement = new PID();
 
+    public RatePID(double p, double i, double d) {
+        super(p, i, d);
+    }
+
     @Override
     public void input(double actual) {
         this.input(actual, false);

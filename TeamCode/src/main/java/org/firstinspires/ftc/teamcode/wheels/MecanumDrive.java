@@ -15,6 +15,7 @@ public class MecanumDrive extends TankDrive {
         if (!isAvailable()) {
             return;
         }
+        // TODO: Add rate PID as used in TankDrive
         for (WheelMotor motor : config.motors) {
             if (motor.side == side && motor.end == end) {
                 motor.motor.setPower(speed * speedScale);

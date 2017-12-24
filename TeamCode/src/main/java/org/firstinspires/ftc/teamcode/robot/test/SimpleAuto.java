@@ -80,7 +80,14 @@ public class SimpleAuto extends OpMode {
             }
         }
 
+        // Wheel PID
+        if (gamepad1.x) {
+            robot.wheels.setSpeed(0.5);
+        }
+
         // Driver feedback
+        telemetry.addData("Wheels", robot.wheels.getEncoder());
+        telemetry.addData("Wheels Rate", robot.wheels.getRate());
         telemetry.addData("LiftZero", liftState);
         telemetry.addData("Lift", robot.lift.getEncoder() + "/" + (robot.liftSwitch.get() ? "Down" : "Up"));
         telemetry.addData("Gyro", robot.gyro.isReady() ? Round.truncate(robot.gyro.getHeading()) : "<Calibrating>");
@@ -135,13 +142,13 @@ public class SimpleAuto extends OpMode {
             driver.drive = common.drive.heading(270);
         } else if (gamepad1.dpad_right) {
             driver.drive = common.drive.heading(90);
-        } else if(gamepad1.dpad_up){
+        } else if (gamepad1.dpad_up) {
             driver.drive = common.drive.heading(0);
-        } else if (gamepad1.dpad_down){
+        } else if (gamepad1.dpad_down) {
             driver.drive = common.drive.heading(180);
-        } else if (gamepad1.left_bumper){
+        } else if (gamepad1.left_bumper) {
             driver.drive = common.drive.heading(315);
-        } else if (gamepad1.right_bumper){
+        } else if (gamepad1.right_bumper) {
             driver.drive = common.drive.heading(45);
         }
     }

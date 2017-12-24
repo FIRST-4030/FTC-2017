@@ -6,12 +6,17 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.driveto.PID;
 import org.firstinspires.ftc.teamcode.driveto.RatePID;
+import org.firstinspires.ftc.teamcode.utils.Round;
 
 public class TankDrive implements Wheels {
-    // TODO: This constant needs to be part of the motor config
+    private static final boolean DEBUG = true;
+
+    // TODO: These constants need to be part of the motor config
     public final static double MAX_RATE = 1000;
+    public final static double P = 1.0d;
+    public final static double I = 0.0d;
+    public final static double D = 0.0d;
 
     protected WheelsConfig config = null;
     protected final Telemetry telemetry;
@@ -43,7 +48,7 @@ public class TankDrive implements Wheels {
         this.offsets = new int[config.motors.length];
         this.pids = new RatePID[config.motors.length];
         for (int i = 0; i < config.motors.length; i++) {
-            this.pids[i] = new RatePID();
+            this.pids[i] = new RatePID(P, I, D);
         }
         this.config = config;
         resetEncoder();
@@ -100,6 +105,27 @@ public class TankDrive implements Wheels {
         config.motors[index].motor.setMode(mode);
     }
 
+    private Integer findEncoderIndex(MOTOR_SIDE side, MOTOR_END end) {
+        if (!isAvailable()) {
+            return null;
+        }
+        Integer motor = null;
+        for (int i = 0; i < config.motors.length; i++) {
+            if (config.motors[i].encoder &&
+                    (end == null || config.motors[i].end == end) &&
+                    (side == null || config.motors[i].side == side)) {
+                motor = i;
+                break;
+            }
+        }
+        if (motor == null) {
+            telemetry.log().add("No encoder for SIDE/END: " +
+                    (side != null ? side : "<any>") + "/" +
+                    (end != null ? end : "<any>"));
+        }
+        return motor;
+    }
+
     public int getEncoder() {
         return getEncoder(null, null);
     }
@@ -110,20 +136,9 @@ public class TankDrive implements Wheels {
 
     public int getEncoder(MOTOR_SIDE side, MOTOR_END end) {
         int position = 0;
-        boolean found = false;
-        for (int i = 0; i < config.motors.length; i++) {
-            if (config.motors[i].encoder &&
-                    (end == null || config.motors[i].end == end) &&
-                    (side == null || config.motors[i].side == side)) {
-                position = getEncoder(i);
-                found = true;
-                break;
-            }
-        }
-        if (!found) {
-            telemetry.log().add("No encoder for SIDE/END: " +
-                    (side != null ? side : "<any>") + "/" +
-                    (end != null ? end : "<any>"));
+        Integer index = findEncoderIndex(side, end);
+        if (index != null) {
+            position = getEncoder(index);
         }
         return position;
     }
@@ -136,7 +151,7 @@ public class TankDrive implements Wheels {
             throw new ArrayIndexOutOfBoundsException(this.getClass().getName() + ": Invalid index: " + index);
         }
         if (!config.motors[index].encoder) {
-            telemetry.log().add("No encoder on wheel: " + index);
+            telemetry.log().add("No encoder on motor: " + index);
             return 0;
         }
         return (int) ((double) (config.motors[index].motor.getCurrentPosition() + offsets[index]) * config.scale);
@@ -151,28 +166,20 @@ public class TankDrive implements Wheels {
     }
 
     public double getRate(MOTOR_SIDE side, MOTOR_END end) {
+        if (!isAvailable()) {
+            return 0.0d;
+        }
 
         // Update all PIDs
         for (int i = 0; i < config.motors.length; i++) {
-            pids[i].input(getEncoder(i));
+            pids[i].input(getEncoder(side, end));
         }
 
         // Find something that matches the filter
         double rate = 0.0d;
-        boolean found = false;
-        for (int i = 0; i < config.motors.length; i++) {
-            if (config.motors[i].encoder &&
-                    (end == null || config.motors[i].end == end) &&
-                    (side == null || config.motors[i].side == side)) {
-                rate = pids[i].last; // .last not .rate because we're using RatePID
-                found = true;
-                break;
-            }
-        }
-        if (!found) {
-            telemetry.log().add("No encoder for SIDE/END: " +
-                    (side != null ? side : "<any>") + "/" +
-                    (end != null ? end : "<any>"));
+        Integer index = findEncoderIndex(side, end);
+        if (index != null) {
+            rate = pids[index].last; // .last not .rate because we're using RatePID
         }
         return rate;
     }
@@ -184,9 +191,12 @@ public class TankDrive implements Wheels {
     }
 
     public void setSpeed(double speed, MOTOR_SIDE side) {
-        speed = limit(speed);
+        if (!isAvailable()) {
+            return;
+        }
 
         // Update the matching PIDs and run one of them
+        speed = limit(speed);
         double pidSpeed = 0.0d;
         for (int i = 0; i < config.motors.length; i++) {
             if (config.motors[i].side == side) {
@@ -195,13 +205,23 @@ public class TankDrive implements Wheels {
                     pidSpeed = speed;
                     pids[i].setTarget(speed);
                     pids[i].reset();
+                    if (DEBUG) {
+                        telemetry.log().add(side + "(" + Round.truncate(pidSpeed) + "): reset");
+                    }
                 } else {
-                    pids[i].setTarget(speed * MAX_RATE);
+                    pids[i].setTarget(speed * MAX_RATE * speedScale);
                     pidSpeed = pids[i].run(getEncoder(side));
+                    if (DEBUG) {
+                        telemetry.log().add(side + "(" + Round.truncate(pidSpeed) + ") :" +
+                                "t/l/r: " +
+                                Round.truncate(pids[i].target) + "/" +
+                                Round.truncate(pids[i].last) + "/" +
+                                Round.truncate(pids[i].error) + "/"
+                        );
+                    }
                 }
             }
         }
-
         setSpeedRaw(pidSpeed, side);
     }
 
@@ -217,7 +237,7 @@ public class TankDrive implements Wheels {
         }
         for (WheelMotor motor : config.motors) {
             if (motor.side == side) {
-                motor.motor.setPower(speed * speedScale);
+                motor.motor.setPower(speed);
             }
         }
     }
