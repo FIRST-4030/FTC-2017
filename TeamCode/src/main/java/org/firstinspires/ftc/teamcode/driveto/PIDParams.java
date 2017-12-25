@@ -7,6 +7,10 @@ public class PIDParams {
     public double maxRate;
     public double ticksPerMM;
 
+    public PIDParams(double p, double i, double d) {
+        this(p, i, d, 1.0d, 1.0d);
+    }
+
     public PIDParams(double p, double i, double d, double maxRate, double ticksPerMM) {
         this.P = p;
         this.I = i;

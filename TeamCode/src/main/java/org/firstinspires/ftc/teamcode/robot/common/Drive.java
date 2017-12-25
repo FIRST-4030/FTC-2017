@@ -4,6 +4,7 @@ import org.firstinspires.ftc.teamcode.driveto.DriveTo;
 import org.firstinspires.ftc.teamcode.driveto.DriveToComp;
 import org.firstinspires.ftc.teamcode.driveto.DriveToListener;
 import org.firstinspires.ftc.teamcode.driveto.DriveToParams;
+import org.firstinspires.ftc.teamcode.driveto.PIDParams;
 import org.firstinspires.ftc.teamcode.robot.Robot;
 import org.firstinspires.ftc.teamcode.utils.Heading;
 import org.firstinspires.ftc.teamcode.wheels.MOTOR_SIDE;
@@ -13,6 +14,9 @@ public class Drive implements CommonTask, DriveToListener {
     /**
      * Configured drive constants
      */
+    // PID Turns
+    public static final double TURN_TOLERANCE = 1.0d / (double) Heading.FULL_CIRCLE;
+    public static final PIDParams TURN_PARAMS = new PIDParams(0.1d, 0.01d, 0.0d);
     // Straight drive speed -- Forward is toward the claws, motor positive, tick increasing
     public final static float SPEED_FORWARD = 1.0f;
     public final static float SPEED_FORWARD_SLOW = SPEED_FORWARD * 0.75f;
@@ -47,8 +51,7 @@ public class Drive implements CommonTask, DriveToListener {
     // Sensor reference types for our DriveTo callbacks
     public enum SENSOR_TYPE {
         DRIVE_ENCODER,
-        GYROSCOPE,
-        GYROSCOPE_SLAVE
+        GYROSCOPE
     }
 
     public DriveTo distance(int distance) {
@@ -73,30 +76,15 @@ public class Drive implements CommonTask, DriveToListener {
     }
 
     public DriveTo heading(double heading) {
-        double degrees = Heading.normalizeErr(heading - robot.gyro.getHeading());
-        return degrees(degrees);
+        robot.wheels.setTeleop(false);
+        DriveToParams param = new DriveToParams(this, SENSOR_TYPE.GYROSCOPE);
+        param.rotationPid(heading, TURN_TOLERANCE, TURN_PARAMS);
+        return new DriveTo(new DriveToParams[]{param});
     }
 
     public DriveTo degrees(double degrees) {
-        robot.wheels.setTeleop(false);
-
-        // Skip this motion if the error tolerance exceeds the target
-        if (Math.abs(degrees) <= OVERRUN_GYRO) {
-            return null;
-        }
-
-        // Calculate the drive in degrees relative to our current heading
-        DriveToParams param = new DriveToParams(this, SENSOR_TYPE.GYROSCOPE);
-        double heading = robot.gyro.getHeading();
-        double target = Heading.normalize(heading + degrees);
-
-        // Drive CW or CCW as selected
-        if (degrees > 0) {
-            param.rotationGreater(target - OVERRUN_GYRO);
-        } else {
-            param.rotationLess(target + OVERRUN_GYRO);
-        }
-        return new DriveTo(new DriveToParams[]{param});
+        double heading = Heading.normalize(degrees + robot.gyro.getHeading());
+        return heading(heading);
     }
 
     @Override
@@ -117,7 +105,6 @@ public class Drive implements CommonTask, DriveToListener {
                 value = robot.wheels.getEncoder();
                 break;
             case GYROSCOPE:
-            case GYROSCOPE_SLAVE:
                 value = robot.gyro.getHeading();
                 break;
         }
@@ -126,6 +113,7 @@ public class Drive implements CommonTask, DriveToListener {
 
     @Override
     public void driveToRun(DriveToParams param) {
+        double speed = 0.0d;
         switch ((SENSOR_TYPE) param.reference) {
             case DRIVE_ENCODER:
                 if (param.comparator == COMP_FORWARD) {
@@ -135,12 +123,16 @@ public class Drive implements CommonTask, DriveToListener {
                 }
                 break;
             case GYROSCOPE:
-                if (param.comparator == COMP_CLOCKWISE) {
-                    robot.wheels.setSpeed(SPEED_TURN, MOTOR_SIDE.LEFT);
-                    robot.wheels.setSpeed(-SPEED_TURN, MOTOR_SIDE.RIGHT);
-                } else {
-                    robot.wheels.setSpeed(-SPEED_TURN, MOTOR_SIDE.LEFT);
-                    robot.wheels.setSpeed(SPEED_TURN, MOTOR_SIDE.RIGHT);
+                switch (param.comparator) {
+                    case ROTATION_PID:
+                        speed = param.pid.output();
+                        robot.wheels.setSpeed(speed, MOTOR_SIDE.LEFT);
+                        robot.wheels.setSpeed(-speed, MOTOR_SIDE.RIGHT);
+                        break;
+                    default:
+                        robot.telemetry.log().add("Unhandled driveToRun: " +
+                                param.reference + " => " + param.comparator);
+                        break;
                 }
                 break;
         }

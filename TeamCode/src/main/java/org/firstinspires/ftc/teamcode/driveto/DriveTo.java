@@ -70,7 +70,7 @@ public class DriveTo {
             double heading = 0.0d;
 
             // Special handling for rotational contexts
-            if (param.comparator == DriveToComp.ROTATION_LESS || param.comparator == DriveToComp.ROTATION_GREATER) {
+            if (param.comparator.rotataional()) {
                 heading = Heading.normalize(actual);
                 param.pid.inputRotational(actual);
             } else {
@@ -118,6 +118,13 @@ public class DriveTo {
                         if ((heading >= param.limit) || (heading < param.limitRange)) {
                             onTarget = true;
                         }
+                    }
+                    break;
+                case PID:
+                case ROTATION_PID:
+                    if (Math.abs(param.pid.error) < param.limitRange &&
+                            Math.abs(param.pid.accumulated) < param.limitRange) {
+                        onTarget = true;
                     }
                     break;
             }

@@ -14,7 +14,7 @@ public class DriveToParams {
     // Comparison data
     public DriveToComp comparator = DriveToComp.LESS;
     public double limit = 0.0d;
-    public double limitRange = 0.0d; // Used in range and rotational comparators
+    public double limitRange = 0.0d; // Used in range, rotational, and PID comparators
     public boolean crossing = false; // Used in rotational comparators
 
     public DriveToParams(DriveToListener parent, Object reference) {
@@ -54,6 +54,22 @@ public class DriveToParams {
         this.crossing = this.limitRange < this.limit;
     }
 
+    public void pid(double target, double tolerance, PIDParams params) {
+        this.comparator = DriveToComp.PID;
+        this.pid = new PID(params);
+        this.pid.setTarget(target);
+        this.limit = target;
+        this.limitRange = Math.abs(tolerance);
+    }
+
+    public void rotationPid(double target, double tolerance, PIDParams params) {
+        this.comparator = DriveToComp.ROTATION_PID;
+        this.pid = new PID(params);
+        this.pid.setTarget(target);
+        this.limit = Heading.normalize(target);
+        this.limitRange = Math.abs(tolerance);
+    }
+
     // And so on
-    // Setters/getters are optional since the members are public but might make use easier
+    // Setters are optional (due to public members) but useful for readability
 }
