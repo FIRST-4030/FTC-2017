@@ -28,9 +28,9 @@ public class Calibration extends OpMode {
     private int imageInterval = 10;
     private double servoInterval = 0.01d;
     private long imageTimestamp = 0;
-    private double rate[] = new double[MOTOR_SIDE.values().length];
-    private double min[] = new double[MOTOR_SIDE.values().length];
-    private double max[] = new double[MOTOR_SIDE.values().length];
+    private final double[] rate = new double[MOTOR_SIDE.values().length];
+    private final double[] min = new double[MOTOR_SIDE.values().length];
+    private final double[] max = new double[MOTOR_SIDE.values().length];
 
     @Override
     public void init() {

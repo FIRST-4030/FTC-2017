@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.driveto;
 
 public class RatePID extends PID {
-    private PID displacement = new PID();
+    private final PID displacement = new PID();
 
     public RatePID(double p, double i, double d) {
         super(p, i, d);

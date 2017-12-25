@@ -123,7 +123,7 @@ public class DriveTo {
                 case PID:
                 case ROTATION_PID:
                     if (Math.abs(param.pid.error) < param.limitRange &&
-                            Math.abs(param.pid.accumulated) < param.limitRange) {
+                            Math.abs(param.pid.differential) < param.limitRange) {
                         onTarget = true;
                     }
                     break;

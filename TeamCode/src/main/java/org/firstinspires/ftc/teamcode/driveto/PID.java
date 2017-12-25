@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.driveto;
 
-import org.firstinspires.ftc.teamcode.robot.Robot;
 import org.firstinspires.ftc.teamcode.utils.Heading;
 
 public class PID {
@@ -17,7 +16,7 @@ public class PID {
     public double target;
 
     public PID() {
-        this(1.0d, 0.0d, 0.0d);
+        this(0.1d, 0.01d, 0.0d);
     }
 
     public PID(PIDParams params) {

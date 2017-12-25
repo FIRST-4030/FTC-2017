@@ -113,7 +113,7 @@ public class Drive implements CommonTask, DriveToListener {
 
     @Override
     public void driveToRun(DriveToParams param) {
-        double speed = 0.0d;
+        double speed;
         switch ((SENSOR_TYPE) param.reference) {
             case DRIVE_ENCODER:
                 if (param.comparator == COMP_FORWARD) {
@@ -130,11 +130,13 @@ public class Drive implements CommonTask, DriveToListener {
                         robot.wheels.setSpeed(-speed, MOTOR_SIDE.RIGHT);
                         break;
                     default:
-                        robot.telemetry.log().add("Unhandled driveToRun: " +
-                                param.reference + " => " + param.comparator);
-                        break;
+                        throw new IllegalStateException("Unhandled driveToRun: " +
+                                param.reference + "::" + param.comparator);
                 }
                 break;
+            default:
+                throw new IllegalStateException("Unhandled driveToRun: " +
+                        param.reference + " ::" + param.comparator);
         }
     }
 }

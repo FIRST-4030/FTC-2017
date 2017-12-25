@@ -88,7 +88,7 @@ public class Jewel implements CommonTask {
 
     public boolean isLeftRed() {
         if (isLeftRed != null) {
-            return isLeftRed.booleanValue();
+            return isLeftRed;
         }
         if (!isAvailable()) {
             return false;
