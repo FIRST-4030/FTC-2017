@@ -243,16 +243,16 @@ public class TankDrive implements Wheels {
                 }
             }
         }
-        setSpeedRaw(pidSpeed, side);
+        setPowerRaw(pidSpeed, side);
     }
 
-    public void setSpeedRaw(double speed) {
+    public void setPowerRaw(double speed) {
         for (MOTOR_SIDE side : MOTOR_SIDE.values()) {
-            setSpeedRaw(speed, side);
+            setPowerRaw(speed, side);
         }
     }
 
-    public void setSpeedRaw(double speed, MOTOR_SIDE side) {
+    public void setPowerRaw(double speed, MOTOR_SIDE side) {
         if (!isAvailable()) {
             return;
         }

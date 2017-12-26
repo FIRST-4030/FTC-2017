@@ -97,7 +97,7 @@ public class Calibration extends OpMode {
         jewelAreaInput();
 
         // Adjust the lift and wheels
-        robot.wheels.setSpeedRaw(-gamepad1.left_stick_y);
+        robot.wheels.setPowerRaw(-gamepad1.left_stick_y);
         robot.lift.setPower(-gamepad1.right_stick_y);
 
         // Adjust the claws

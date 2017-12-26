@@ -11,9 +11,9 @@ public interface Wheels extends Available {
 
     void setSpeed(double speed, MOTOR_SIDE side);
 
-    void setSpeedRaw(double speed);
+    void setPowerRaw(double speed);
 
-    void setSpeedRaw(double speed, MOTOR_SIDE side);
+    void setPowerRaw(double speed, MOTOR_SIDE side);
 
     double getTicksPerMM();
 
