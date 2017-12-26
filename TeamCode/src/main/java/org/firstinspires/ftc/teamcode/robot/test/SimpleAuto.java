@@ -81,12 +81,31 @@ public class SimpleAuto extends OpMode {
             }
         }
 
-        // Wheel PID
-        if (gamepad1.x) {
-            robot.wheels.setSpeed(0.25);
+        // Wheel PID testing @ gamepad2
+        double speed = 0.0d;
+        if (gamepad2.a) {
+            speed = 0.25d;
+        } else if (gamepad2.b) {
+            speed = 0.50d;
+        } else if (gamepad2.x) {
+            speed = 0.75d;
+        } else if (gamepad2.y) {
+            speed = 1.0d;
+        }
+        if (speed > 0.0d) {
+            if (gamepad2.left_bumper) {
+                robot.wheels.setSpeed(-speed, MOTOR_SIDE.LEFT);
+                robot.wheels.setSpeed(speed, MOTOR_SIDE.RIGHT);
+            } else if (gamepad2.right_bumper) {
+                robot.wheels.setSpeed(speed, MOTOR_SIDE.LEFT);
+                robot.wheels.setSpeed(-speed, MOTOR_SIDE.RIGHT);
+            } else {
+                robot.wheels.setSpeed(speed);
+            }
         } else {
             robot.wheels.stop();
         }
+
 
         // Driver feedback
         telemetry.addData("Wheels L/R", robot.wheels.getEncoder(MOTOR_SIDE.LEFT) +
