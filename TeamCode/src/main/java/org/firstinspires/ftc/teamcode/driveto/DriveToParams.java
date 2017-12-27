@@ -10,7 +10,6 @@ public class DriveToParams {
     public final Object reference;
     public int timeout = DriveTo.TIMEOUT_DEFAULT;
     public PID pid = new PID();
-    public double pidAccumulatorMax = DriveTo.I_MAX_DEFAULT;
 
     // Comparison data
     public DriveToComp comparator = DriveToComp.LESS;

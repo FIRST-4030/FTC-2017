@@ -3,9 +3,7 @@ package org.firstinspires.ftc.teamcode.driveto;
 import org.firstinspires.ftc.teamcode.utils.Heading;
 
 public class DriveTo {
-
     public static final int TIMEOUT_DEFAULT = 3000;
-    public static final double I_MAX_DEFAULT = 5.0d;
 
     // Run-time
     private final boolean any;
@@ -71,20 +69,15 @@ public class DriveTo {
             double actual = param.parent.driveToSensor(param);
             double heading = 0.0d;
 
-            // Special handling for rotational contexts
+            // Special handling for rotational contexts and PIDs
             if (param.comparator.rotational()) {
                 heading = Heading.normalize(actual);
-                param.pid.inputRotational(actual);
+                if (param.comparator.pid()) {
+                    param.pid.inputRotational(actual);
+                }
             } else {
-                param.pid.input(actual);
-            }
-
-            // Anti-wind up protection for PIDs, defaults to (I_MAX_DEFAULT * PID tolerance)
-            if (param.comparator.pid()) {
-                double accumulatorAbsolute = Math.abs(param.pid.accumulated);
-                double iMax = param.pidAccumulatorMax * param.limitRange;
-                if (accumulatorAbsolute > iMax) {
-                    param.pid.accumulated *= (iMax / accumulatorAbsolute);
+                if (param.comparator.pid()) {
+                    param.pid.input(actual);
                 }
             }
 

@@ -4,6 +4,7 @@ import org.firstinspires.ftc.teamcode.driveto.DriveTo;
 import org.firstinspires.ftc.teamcode.driveto.DriveToComp;
 import org.firstinspires.ftc.teamcode.driveto.DriveToListener;
 import org.firstinspires.ftc.teamcode.driveto.DriveToParams;
+import org.firstinspires.ftc.teamcode.driveto.PID;
 import org.firstinspires.ftc.teamcode.driveto.PIDParams;
 import org.firstinspires.ftc.teamcode.robot.Robot;
 import org.firstinspires.ftc.teamcode.utils.Heading;
@@ -64,6 +65,8 @@ public class Drive implements CommonTask, DriveToListener {
         DriveToParams param = new DriveToParams(this, SENSOR_TYPE.GYROSCOPE);
         param.rotationPid(heading, TURN_TOLERANCE, TURN_PARAMS);
         param.timeout = DriveTo.TIMEOUT_DEFAULT * 2;
+        param.pid.maxAccumulator = TURN_TOLERANCE * PID.MAX_I_TOLERANCE_RATIO;
+        param.pid.resetAccumulatorOnSignChange = true;
         return new DriveTo(new DriveToParams[]{param});
     }
 

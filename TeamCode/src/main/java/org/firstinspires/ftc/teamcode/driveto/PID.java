@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode.driveto;
 import org.firstinspires.ftc.teamcode.utils.Heading;
 
 public class PID {
+    public static final double MAX_I_TOLERANCE_RATIO = 5.0d;
+
     public final double P;
     public final double I;
     public final double D;
@@ -14,6 +16,8 @@ public class PID {
     public double differential;
     public double rate;
     public double target;
+    public Double maxAccumulator;
+    public boolean resetAccumulatorOnSignChange;
 
     public PID() {
         this(0.1d, 0.01d, 0.0d);
@@ -28,6 +32,8 @@ public class PID {
         this.I = i;
         this.D = d;
         this.target = 0.0d;
+        this.maxAccumulator = null;
+        this.resetAccumulatorOnSignChange = false;
         reset();
     }
 
@@ -60,14 +66,29 @@ public class PID {
     protected void input(double actual, boolean rotational) {
         long now = System.currentTimeMillis();
         double dt = now - timestamp;
+        double r = (actual - last) / dt;
+
         double err = target - actual;
         if (rotational) {
             err = Heading.normalizeErr(err);
         }
-        double r = (actual - last) / dt;
-        double diff = (err - error) / dt;
-        double acc = accumulated + (err / dt);
 
+        double acc = accumulated + (err / dt);
+        // Limit the accumulator to avoid wind-up errors
+        if (maxAccumulator != null) {
+            double accumulatorAbsolute = Math.abs(accumulated);
+            if (accumulatorAbsolute > maxAccumulator) {
+                accumulated *= (maxAccumulator / accumulatorAbsolute);
+            }
+        }
+        // Reset the accumulator when the error sign changes, if requested
+        if (err * error < 0 && resetAccumulatorOnSignChange) {
+            acc = 0;
+        }
+
+        double diff = (err - error) / dt;
+
+        // Save new values
         last = actual;
         rate = r;
         error = err;
