@@ -49,9 +49,9 @@ public class WheelsConfigs extends Configs {
             case WestCoast:
                 motors = new WheelMotor[4];
                 motors[0] = new WheelMotor("ML1", MOTOR_SIDE.LEFT, true,
-                        new PIDParams(0.375d, 0.075d, 0.0d, WC_MAX_RATE, WC_TICKS_PER_MM));
+                        new PIDParams(0.38d, 1.00d, 0.0d, WC_MAX_RATE, WC_TICKS_PER_MM));
                 motors[1] = new WheelMotor("MR1", MOTOR_SIDE.RIGHT, false,
-                        new PIDParams(0.375d, 0.075d, 0.0d, WC_MAX_RATE, WC_TICKS_PER_MM));
+                        new PIDParams(0.29d, 0.25d, 0.0d, WC_MAX_RATE, WC_TICKS_PER_MM));
                 motors[2] = new WheelMotor("ML2", MOTOR_SIDE.LEFT, true);
                 motors[3] = new WheelMotor("MR2", MOTOR_SIDE.RIGHT, false);
                 config = new WheelsConfig(DRIVE_TYPE.TANK, motors);
