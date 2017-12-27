@@ -133,7 +133,7 @@ public class RevIMU implements Gyro {
         }
 
         // Invert to make CW rotation increase with the heading
-        return (int) -gyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+        return -gyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
     }
 
     public double getHeading() {
