@@ -22,6 +22,9 @@ public class PID {
     // If true, reset the accumulated error whenever the error sign changes
     // This is useful when the input() values are not rate-based (e.g. raw displacement or heading)
     public boolean resetAccumulatorOnErrorSignChange;
+    // If true, reset the accumulator error whenever the target sign changes
+    // This is usually desirable but might interfere with non-rate, non-normalized input() values
+    public boolean resetAccumulatorOnTargetSignChange;
 
     public PID() {
         this(0.1d, 0.01d, 0.0d);
@@ -38,11 +41,17 @@ public class PID {
         this.target = 0.0d;
         this.maxAccumulator = null;
         this.resetAccumulatorOnErrorSignChange = false;
+        this.resetAccumulatorOnTargetSignChange = true;
         reset();
     }
 
-    public void setTarget(double target) {
-        this.target = target;
+    public void setTarget(double newTarget) {
+        // If the target sign changes our accumulator is probably invalid
+        if (resetAccumulatorOnTargetSignChange &&
+                Math.signum(target) != Math.signum(newTarget)) {
+            accumulated = 0;
+        }
+        target = newTarget;
     }
 
     public void reset() {
@@ -81,8 +90,7 @@ public class PID {
         double acc = accumulated + (err / dt);
         // Limit the accumulator to avoid wind-up errors
         if (maxAccumulator != null) {
-            double accumulatorAbsolute = Math.abs(accumulated);
-            if (accumulatorAbsolute > maxAccumulator) {
+            if (Math.abs(accumulated) > maxAccumulator) {
                 accumulated = Math.copySign(maxAccumulator, accumulated);
             }
         }
