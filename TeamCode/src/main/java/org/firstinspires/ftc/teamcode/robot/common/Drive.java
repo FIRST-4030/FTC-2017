@@ -8,7 +8,6 @@ import org.firstinspires.ftc.teamcode.driveto.PID;
 import org.firstinspires.ftc.teamcode.driveto.PIDParams;
 import org.firstinspires.ftc.teamcode.robot.Robot;
 import org.firstinspires.ftc.teamcode.utils.Heading;
-import org.firstinspires.ftc.teamcode.utils.Round;
 import org.firstinspires.ftc.teamcode.wheels.MOTOR_SIDE;
 
 public class Drive implements CommonTask, DriveToListener {
@@ -64,9 +63,11 @@ public class Drive implements CommonTask, DriveToListener {
         robot.wheels.setTeleop(false);
         DriveToParams param = new DriveToParams(this, SENSOR_TYPE.GYROSCOPE);
         param.rotationPid(heading, TURN_TOLERANCE, TURN_PARAMS);
-        param.timeout = DriveTo.TIMEOUT_DEFAULT * 2;
+        // Provide windup protection and do not carry errors past the target
         param.pid.maxAccumulator = TURN_TOLERANCE * PID.MAX_I_TOLERANCE_RATIO;
-        param.pid.resetAccumulatorOnSignChange = true;
+        param.pid.resetAccumulatorOnErrorSignChange = true;
+        // Allow extra time to settle, at least while we are tuning
+        param.timeout = DriveTo.TIMEOUT_DEFAULT * 4;
         return new DriveTo(new DriveToParams[]{param});
     }
 

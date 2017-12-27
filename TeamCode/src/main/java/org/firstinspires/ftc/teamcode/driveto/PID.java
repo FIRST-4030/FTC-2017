@@ -16,8 +16,12 @@ public class PID {
     public double differential;
     public double rate;
     public double target;
+
+    // If set, limit the accumulator value to the range ±maxAccumulator
     public Double maxAccumulator;
-    public boolean resetAccumulatorOnSignChange;
+    // If true, reset the accumulated error whenever the error sign changes
+    // This is useful when the input() values are not rate-based (e.g. raw displacement or heading)
+    public boolean resetAccumulatorOnErrorSignChange;
 
     public PID() {
         this(0.1d, 0.01d, 0.0d);
@@ -33,7 +37,7 @@ public class PID {
         this.D = d;
         this.target = 0.0d;
         this.maxAccumulator = null;
-        this.resetAccumulatorOnSignChange = false;
+        this.resetAccumulatorOnErrorSignChange = false;
         reset();
     }
 
@@ -83,7 +87,7 @@ public class PID {
             }
         }
         // Reset the accumulator when the error sign changes, if requested
-        if (resetAccumulatorOnSignChange && Math.signum(err) != Math.signum(error)) {
+        if (resetAccumulatorOnErrorSignChange && Math.signum(err) != Math.signum(error)) {
             acc = 0;
         }
 
