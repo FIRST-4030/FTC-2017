@@ -17,7 +17,7 @@ public class Drive implements CommonTask, DriveToListener {
     // PID Turns
     public static final double TURN_TOLERANCE = 0.90d; // Permitted heading error in degrees
     public static final double TURN_DIFF_TOLERANCE = 0.001d; // Permitted error change rate
-    public static final PIDParams TURN_PARAMS = new PIDParams(0.0046d, 0.090d, 0.0d);
+    public static final PIDParams TURN_PARAMS = new PIDParams(0.0030d, 0.20d, 0.0d);
     // Straight drive speed -- Forward is toward the claws, motor positive, tick increasing
     public final static float SPEED_FORWARD = 1.0f;
     public final static float SPEED_FORWARD_SLOW = SPEED_FORWARD * 0.75f;
