@@ -114,11 +114,11 @@ public class Jewel implements CommonTask {
 
     public boolean isAvailable() {
         if (image == null) {
-            robot.telemetry.log().add(this.getClass().getName() + ": Falling back to default image");
+            robot.telemetry.log().add(this.getClass().getSimpleName() + ": Falling back to default image");
             setImage(robot.vuforia.getImage());
         }
         if (image == null) {
-            robot.telemetry.log().add(this.getClass().getName() + ": No image available");
+            robot.telemetry.log().add(this.getClass().getSimpleName() + ": No image available");
         }
         return image != null;
     }

@@ -23,11 +23,11 @@ public class TankDrive implements Wheels {
         this.telemetry = telemetry;
         for (WheelMotor motor : config.motors) {
             if (motor == null) {
-                telemetry.log().add(this.getClass().getName() + ": Null motor");
+                telemetry.log().add(this.getClass().getSimpleName() + ": Null motor");
                 break;
             }
             if (motor.name == null || motor.name.isEmpty()) {
-                throw new IllegalArgumentException(this.getClass().getName() + ": Null motor or null/empty motor name");
+                throw new IllegalArgumentException(this.getClass().getSimpleName() + ": Null motor or null/empty motor name");
             }
             try {
                 motor.motor = map.dcMotor.get(motor.name);
@@ -35,7 +35,7 @@ public class TankDrive implements Wheels {
                     motor.motor.setDirection(DcMotorSimple.Direction.REVERSE);
                 }
             } catch (Exception e) {
-                telemetry.log().add(this.getClass().getName() + ": No such device: " + motor.name);
+                telemetry.log().add(this.getClass().getSimpleName() + ": No such device: " + motor.name);
                 return;
             }
         }
@@ -166,7 +166,7 @@ public class TankDrive implements Wheels {
             return 0;
         }
         if (index < 0 || index >= config.motors.length) {
-            throw new ArrayIndexOutOfBoundsException(this.getClass().getName() + ": Invalid index: " + index);
+            throw new ArrayIndexOutOfBoundsException(this.getClass().getSimpleName() + ": Invalid index: " + index);
         }
         if (!config.motors[index].encoder) {
             telemetry.log().add("No encoder on motor: " + index);
@@ -212,7 +212,7 @@ public class TankDrive implements Wheels {
 
     public void setSpeed(double speed, MOTOR_SIDE side) {
         if (side == null) {
-            throw new IllegalArgumentException(this.getClass().getName() + ": Null SIDE");
+            throw new IllegalArgumentException(this.getClass().getSimpleName() + ": Null SIDE");
         }
         if (!isAvailable()) {
             return;

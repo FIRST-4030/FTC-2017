@@ -13,11 +13,11 @@ public class Motor implements Available {
 
     public Motor(HardwareMap map, Telemetry telemetry, MotorConfig config) {
         if (config == null) {
-            telemetry.log().add(this.getClass().getName() + ": Null config");
+            telemetry.log().add(this.getClass().getSimpleName() + ": Null config");
             return;
         }
         if (config.name == null || config.name.isEmpty()) {
-            telemetry.log().add(this.getClass().getName() + ": Null/empty name");
+            telemetry.log().add(this.getClass().getSimpleName() + ": Null/empty name");
             return;
         }
         try {
@@ -26,7 +26,7 @@ public class Motor implements Available {
                 motor.setDirection(DcMotor.Direction.REVERSE);
             }
         } catch (Exception e) {
-            telemetry.log().add(this.getClass().getName() + "No such device: " + config.name);
+            telemetry.log().add(this.getClass().getSimpleName() + "No such device: " + config.name);
             motor = null;
         }
     }

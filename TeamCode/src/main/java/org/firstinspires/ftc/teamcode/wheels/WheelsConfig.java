@@ -8,7 +8,7 @@ public class WheelsConfig implements Config {
 
     public WheelsConfig(DRIVE_TYPE type, WheelMotor[] motors) {
         if (motors == null) {
-            throw new IllegalArgumentException(this.getClass().getName() + ": No motors provided");
+            throw new IllegalArgumentException(this.getClass().getSimpleName() + ": No motors provided");
         }
 
         int minMotors = 0;
@@ -21,7 +21,7 @@ public class WheelsConfig implements Config {
                 break;
         }
         if (motors.length < minMotors) {
-            throw new IllegalArgumentException(this.getClass().getName() +
+            throw new IllegalArgumentException(this.getClass().getSimpleName() +
                     ": Not enough motors configured " + motors.length + "/" + minMotors);
         }
 

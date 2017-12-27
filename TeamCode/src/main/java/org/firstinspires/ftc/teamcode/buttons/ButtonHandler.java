@@ -4,9 +4,11 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
+import java.util.Vector;
 
 public class ButtonHandler {
     private final HashMap<String, Button> buttons = new HashMap<>();
+    private final Vector<ButtonHandlerListener> handlers = new Vector<>();
 
     public void register(String name, Gamepad gamepad, BUTTON button) {
         this.register(name, gamepad, button, BUTTON_TYPE.SINGLE_PRESS);
@@ -31,10 +33,10 @@ public class ButtonHandler {
         Button b = new Button(gamepad, button);
         switch (type) {
             case SINGLE_PRESS:
-                b.listener = new SinglePressButton();
+                b.listener = new SinglePress();
                 break;
             case TOGGLE:
-                b.listener = new ToggleButton();
+                b.listener = new Toggle();
                 break;
         }
 
@@ -52,13 +54,25 @@ public class ButtonHandler {
         }
     }
 
+    public void registerHandler(ButtonHandlerListener handler) {
+        handlers.add(handler);
+    }
+
+    public void deregisterHandler(ButtonHandlerListener handler) {
+        handlers.remove(handler);
+    }
+
     // Update stored state for all buttons, typically called once per OpMode loop()
+    // Call onButtonHandler for all registered ButtonHandlerListeners
     public void update() {
         for (String name : buttons.keySet()) {
             Button b = buttons.get(name);
             if (b != null) {
                 b.listener.update(read(b));
             }
+        }
+        for (ButtonHandlerListener bh : handlers) {
+            bh.onButtonHandler();
         }
     }
 
@@ -108,7 +122,7 @@ public class ButtonHandler {
     private class Button {
         public final Gamepad gamepad;
         public final BUTTON button;
-        public ButtonHandlerListener listener;
+        public ButtonType listener;
 
         public Button(Gamepad gamepad, BUTTON button) {
             this.gamepad = gamepad;

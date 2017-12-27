@@ -13,13 +13,13 @@ public class MRGyro implements Gyro {
 
     public MRGyro(HardwareMap map, Telemetry telemetry, String name) {
         if (name == null || name.isEmpty()) {
-            throw new IllegalArgumentException(this.getClass().getName() + ": Null/empty name");
+            throw new IllegalArgumentException(this.getClass().getSimpleName() + ": Null/empty name");
         }
         try {
             gyro = (ModernRoboticsI2cGyro) map.gyroSensor.get(name);
         } catch (Exception e) {
             gyro = null;
-            telemetry.log().add(this.getClass().getName() + "No such device: " + name);
+            telemetry.log().add(this.getClass().getSimpleName() + "No such device: " + name);
             return;
         }
 

@@ -3,9 +3,9 @@ package org.firstinspires.ftc.teamcode.driveto;
 import org.firstinspires.ftc.teamcode.utils.Heading;
 
 public class PID {
-    public final double P;
-    public final double I;
-    public final double D;
+    public double P;
+    public double I;
+    public double D;
 
     public long timestamp;
     public double last;

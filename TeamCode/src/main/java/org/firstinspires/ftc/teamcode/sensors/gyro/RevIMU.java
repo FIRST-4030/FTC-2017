@@ -78,7 +78,7 @@ class IMUWaiter implements Runnable {
     }
 
     private void fail() {
-        telemetry.log().add(this.getClass().getName() + ": Failed to initialize");
+        telemetry.log().add(this.getClass().getSimpleName() + ": Failed to initialize");
         parent.setGyro(null);
     }
 }
@@ -90,7 +90,7 @@ public class RevIMU implements Gyro {
 
     public RevIMU(HardwareMap map, Telemetry telemetry, String name) {
         if (name == null || name.isEmpty()) {
-            throw new IllegalArgumentException(this.getClass().getName() + ": Null/empty name");
+            throw new IllegalArgumentException(this.getClass().getSimpleName() + ": Null/empty name");
         }
 
         // Attempt to init
@@ -98,7 +98,7 @@ public class RevIMU implements Gyro {
         try {
             imu = map.get(BNO055IMU.class, name);
         } catch (Exception e) {
-            telemetry.log().add(this.getClass().getName() + "No such device: " + name);
+            telemetry.log().add(this.getClass().getSimpleName() + "No such device: " + name);
             return;
         }
 

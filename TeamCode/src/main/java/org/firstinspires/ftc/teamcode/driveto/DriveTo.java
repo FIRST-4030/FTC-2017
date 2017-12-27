@@ -6,10 +6,10 @@ public class DriveTo {
     public static final int TIMEOUT_DEFAULT = 3000;
 
     // Run-time
-    private final boolean any;
+    public final boolean any;
     private boolean done;
     private long started = 0;
-    private final DriveToParams[] params;
+    public final DriveToParams[] params;
 
     public DriveTo(DriveToParams[] params, boolean any) {
         this.any = any;

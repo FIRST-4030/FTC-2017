@@ -1,9 +1,15 @@
 package org.firstinspires.ftc.teamcode.buttons;
 
 public interface ButtonHandlerListener {
-    void update(boolean pressed);
+    void onButtonHandler();
 
-    boolean active();
+    double get(String name);
 
-    boolean held();
+    double getDouble(String name);
+
+    int getInt(String name);
+
+    void set(String name, int value);
+
+    void set(String name, double value);
 }

@@ -2,9 +2,15 @@ package org.firstinspires.ftc.teamcode.robot.test;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
+import org.firstinspires.ftc.teamcode.buttons.BUTTON;
+import org.firstinspires.ftc.teamcode.buttons.ButtonHandler;
+import org.firstinspires.ftc.teamcode.buttons.SPINNER_TYPE;
+import org.firstinspires.ftc.teamcode.buttons.SpinnerHandler;
 import org.firstinspires.ftc.teamcode.driveto.AutoDriver;
+import org.firstinspires.ftc.teamcode.driveto.DriveToComp;
 import org.firstinspires.ftc.teamcode.robot.common.Common;
 import org.firstinspires.ftc.teamcode.robot.Robot;
+import org.firstinspires.ftc.teamcode.robot.common.Drive;
 import org.firstinspires.ftc.teamcode.robot.common.Lift;
 import org.firstinspires.ftc.teamcode.utils.OrderedEnum;
 import org.firstinspires.ftc.teamcode.utils.OrderedEnumHelper;
@@ -17,6 +23,8 @@ public class SimpleAuto extends OpMode {
     // Devices and subsystems
     private Robot robot = null;
     private Common common = null;
+    private ButtonHandler buttons = null;
+    private SpinnerHandler spinners = null;
     private AutoDriver driver = new AutoDriver();
 
     // Lift zero testing
@@ -50,6 +58,19 @@ public class SimpleAuto extends OpMode {
         // Common init
         robot = new Robot(hardwareMap, telemetry);
         common = new Common(robot);
+
+        // Buttons
+        buttons = new ButtonHandler();
+        spinners = new SpinnerHandler(buttons, telemetry);
+        spinners.add("TURN_INC", SPINNER_TYPE.DOUBLE,
+                gamepad2, BUTTON.right_bumper, BUTTON.left_bumper,
+                (Double) Drive.TURN_PARAMS.P / 100, (Double) Drive.TURN_PARAMS.P / 10);
+        spinners.add("TURN_P", SPINNER_TYPE.DOUBLE,
+                gamepad2, BUTTON.dpad_up, BUTTON.dpad_down,
+                "TURN_INC", (Double) Drive.TURN_PARAMS.P);
+        spinners.add("TURN_I", SPINNER_TYPE.DOUBLE,
+                gamepad2, BUTTON.dpad_right, BUTTON.dpad_left,
+                "TURN_INC", (Double) Drive.TURN_PARAMS.I);
     }
 
     @Override
@@ -69,6 +90,16 @@ public class SimpleAuto extends OpMode {
     @Override
     public void loop() {
 
+        // Input
+        buttons.update();
+
+        // Spinners
+        if (driver.drive != null && driver.drive.params.length > 0 &&
+                driver.drive.params[0].comparator == DriveToComp.ROTATION_PID) {
+            driver.drive.params[0].pid.P = spinners.get("TURN_P");
+            driver.drive.params[0].pid.I = spinners.get("TURN_I");
+        }
+
         // Handle AutoDriver driving
         if (driver.drive != null) {
             // DriveTo
@@ -82,6 +113,7 @@ public class SimpleAuto extends OpMode {
         }
 
         // Driver feedback
+        spinners.telemetry();
         telemetry.addData("Wheels L/R", robot.wheels.getEncoder(MOTOR_SIDE.LEFT) +
                 "/" + robot.wheels.getEncoder(MOTOR_SIDE.RIGHT));
         telemetry.addData("Wheels Rate L/R", Round.truncate(robot.wheels.getRate(MOTOR_SIDE.LEFT)) +
@@ -111,13 +143,13 @@ public class SimpleAuto extends OpMode {
         } else if (gamepad2.x) {
             speed = 0.75d;
         } else if (gamepad2.y) {
-            speed = 1.0d;
+            speed = -gamepad2.left_stick_y * 0.10d;
         }
         if (speed > 0.0d) {
-            if (gamepad2.left_bumper) {
+            if (Math.abs(gamepad2.left_trigger) > 0.5) {
                 robot.wheels.setSpeed(-speed, MOTOR_SIDE.LEFT);
                 robot.wheels.setSpeed(speed, MOTOR_SIDE.RIGHT);
-            } else if (gamepad2.right_bumper) {
+            } else if (Math.abs(gamepad2.right_trigger) > 0.5) {
                 robot.wheels.setSpeed(speed, MOTOR_SIDE.LEFT);
                 robot.wheels.setSpeed(-speed, MOTOR_SIDE.RIGHT);
             } else {

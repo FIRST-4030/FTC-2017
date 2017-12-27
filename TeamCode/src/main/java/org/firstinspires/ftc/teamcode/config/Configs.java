@@ -12,7 +12,7 @@ abstract public class Configs {
 
     protected Configs(HardwareMap map, Telemetry telemetry, BOT bot) throws IllegalArgumentException {
         if (map == null || telemetry == null || bot == null) {
-            throw new IllegalArgumentException(this.getClass().getName() +
+            throw new IllegalArgumentException(this.getClass().getSimpleName() +
                     ": Null HardwareMap, Telemetry, or BOT");
         }
         this.map = map;
@@ -36,7 +36,7 @@ abstract public class Configs {
 
     protected void checkConfig(Config config, Object name) throws IllegalArgumentException {
         if (config == null) {
-            String error = this.getClass().getName() + ": Not configured: " + bot;
+            String error = this.getClass().getSimpleName() + ": Not configured: " + bot;
             if (name != null) {
                 error += ": " + name;
             }
@@ -50,7 +50,7 @@ abstract public class Configs {
 
     protected void checkAvailable(Available device, Object name) {
         if (device == null || !device.isAvailable()) {
-            String error = this.getClass().getName() + ": Unable to initialize: " + bot;
+            String error = this.getClass().getSimpleName() + ": Unable to initialize: " + bot;
             if (name != null) {
                 error += ": " + name;
             }

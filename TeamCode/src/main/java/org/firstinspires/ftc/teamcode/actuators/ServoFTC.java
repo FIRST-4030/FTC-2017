@@ -15,11 +15,11 @@ public class ServoFTC implements Available {
 
     public ServoFTC(HardwareMap map, Telemetry telemetry, ServoConfig config) {
         if (config == null) {
-            telemetry.log().add(this.getClass().getName() + ": Null config");
+            telemetry.log().add(this.getClass().getSimpleName() + ": Null config");
             return;
         }
         if (config.name == null || config.name.isEmpty()) {
-            throw new IllegalArgumentException(this.getClass().getName() + ": Null/empty name");
+            throw new IllegalArgumentException(this.getClass().getSimpleName() + ": Null/empty name");
         }
         try {
             servo = map.servo.get(config.name);
@@ -30,7 +30,7 @@ public class ServoFTC implements Available {
             this.max = config.max;
         } catch (Exception e) {
             servo = null;
-            telemetry.log().add(this.getClass().getName() + "No such device: " + config.name);
+            telemetry.log().add(this.getClass().getSimpleName() + "No such device: " + config.name);
         }
     }
 

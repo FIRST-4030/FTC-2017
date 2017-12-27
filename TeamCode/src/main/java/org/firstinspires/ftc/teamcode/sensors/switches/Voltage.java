@@ -11,13 +11,13 @@ public class Voltage implements Switch {
 
     public Voltage(HardwareMap map, Telemetry telemetry, String name) {
         if (name == null || name.isEmpty()) {
-            throw new IllegalArgumentException(this.getClass().getName() + ": Null/empty name");
+            throw new IllegalArgumentException(this.getClass().getSimpleName() + ": Null/empty name");
         }
         try {
             button = map.analogInput.get(name);
         } catch (Exception e) {
             button = null;
-            telemetry.log().add(this.getClass().getName() + "No such device: " + name);
+            telemetry.log().add(this.getClass().getSimpleName() + "No such device: " + name);
             return;
         }
     }

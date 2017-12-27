@@ -1,14 +1,14 @@
 package org.firstinspires.ftc.teamcode.buttons;
 
-public class ToggleButton implements ButtonHandlerListener {
+public class Toggle implements ButtonType {
     private boolean active = false;
-    private final SinglePressButton toggle = new SinglePressButton();
+    private final SinglePress toggle = new SinglePress();
 
-    public ToggleButton(boolean active) {
+    public Toggle(boolean active) {
         this.active = active;
     }
 
-    public ToggleButton() {
+    public Toggle() {
         this(false);
     }
 

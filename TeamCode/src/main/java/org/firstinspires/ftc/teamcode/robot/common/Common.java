@@ -21,7 +21,7 @@ public class Common {
 
     public Common(Robot r) {
         if (r == null) {
-            throw new IllegalArgumentException(this.getClass().getName() + ": Null robot");
+            throw new IllegalArgumentException(this.getClass().getSimpleName() + ": Null robot");
         }
         this.robot = r;
 
