@@ -81,6 +81,27 @@ public class SimpleAuto extends OpMode {
             }
         }
 
+        // Driver feedback
+        telemetry.addData("Wheels L/R", robot.wheels.getEncoder(MOTOR_SIDE.LEFT) +
+                "/" + robot.wheels.getEncoder(MOTOR_SIDE.RIGHT));
+        telemetry.addData("Wheels Rate L/R", Round.truncate(robot.wheels.getRate(MOTOR_SIDE.LEFT)) +
+                "/" + Round.truncate(robot.wheels.getRate(MOTOR_SIDE.RIGHT)));
+        telemetry.addData("LiftZero", liftState);
+        telemetry.addData("Lift", robot.lift.getEncoder() +
+                "/" + (robot.liftSwitch.get() ? "Down" : "Up") +
+                " (" + liftState + ")");
+        telemetry.addData("Gyro", robot.gyro.isReady() ? Round.truncate(robot.gyro.getHeading()) : "<Calibrating>");
+        telemetry.addData("Time/Drive", Round.truncate(time) + "/" + driver.drive);
+        telemetry.update();
+
+        /*
+         * Cut the loop short when we are AutoDriver'ing
+         * This keeps us out of the state machine until the preceding command is complete
+         */
+        if (driver.isRunning(time)) {
+            return;
+        }
+
         // Wheel PID testing @ gamepad2
         double speed = 0.0d;
         if (gamepad2.a) {
@@ -104,28 +125,6 @@ public class SimpleAuto extends OpMode {
             }
         } else {
             robot.wheels.stop();
-        }
-
-
-        // Driver feedback
-        telemetry.addData("Wheels L/R", robot.wheels.getEncoder(MOTOR_SIDE.LEFT) +
-                "/" + robot.wheels.getEncoder(MOTOR_SIDE.RIGHT));
-        telemetry.addData("Wheels Rate L/R", Round.truncate(robot.wheels.getRate(MOTOR_SIDE.LEFT)) +
-                "/" + Round.truncate(robot.wheels.getRate(MOTOR_SIDE.RIGHT)));
-        telemetry.addData("LiftZero", liftState);
-        telemetry.addData("Lift", robot.lift.getEncoder() +
-                "/" + (robot.liftSwitch.get() ? "Down" : "Up") +
-                " (" + liftState + ")");
-        telemetry.addData("Gyro", robot.gyro.isReady() ? Round.truncate(robot.gyro.getHeading()) : "<Calibrating>");
-        telemetry.addData("Time/Drive", Round.truncate(time) + "/" + driver.drive);
-        telemetry.update();
-
-        /*
-         * Cut the loop short when we are AutoDriver'ing
-         * This keeps us out of the state machine until the preceding command is complete
-         */
-        if (driver.isRunning(time)) {
-            return;
         }
 
         // Test lift zero, with persistent timeout
