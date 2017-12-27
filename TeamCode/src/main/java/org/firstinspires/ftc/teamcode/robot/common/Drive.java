@@ -7,39 +7,23 @@ import org.firstinspires.ftc.teamcode.driveto.DriveToParams;
 import org.firstinspires.ftc.teamcode.driveto.PIDParams;
 import org.firstinspires.ftc.teamcode.robot.Robot;
 import org.firstinspires.ftc.teamcode.utils.Heading;
+import org.firstinspires.ftc.teamcode.utils.Round;
 import org.firstinspires.ftc.teamcode.wheels.MOTOR_SIDE;
 
 public class Drive implements CommonTask, DriveToListener {
 
-    /**
-     * Configured drive constants
-     */
     // PID Turns
-    public static final double TURN_TOLERANCE = 1.0d / (double) Heading.FULL_CIRCLE;
-    public static final PIDParams TURN_PARAMS = new PIDParams(0.1d, 0.01d, 0.0d);
+    public static final double TURN_TOLERANCE = 0.75d; // Permitted heading error in degrees
+    public static final PIDParams TURN_PARAMS = new PIDParams(0.0075d, 0.0d, 0.0d);
     // Straight drive speed -- Forward is toward the claws, motor positive, tick increasing
     public final static float SPEED_FORWARD = 1.0f;
     public final static float SPEED_FORWARD_SLOW = SPEED_FORWARD * 0.75f;
     public final static float SPEED_REVERSE = -SPEED_FORWARD;
-    // Turn drive speed
-    public final static float SPEED_TURN = SPEED_FORWARD * 0.5f;
 
-    /**
-     * Tuned drive constants
-     */
-    // An estimate of the number of degrees we slip on inertia after calling wheels.stop()
-    public final static int OVERRUN_GYRO = 1;
     // An estimate of the number of ricks we slip on inertia after calling wheels.stop()
     public final static int OVERRUN_ENCODER = 10;
-
-    /**
-     * Physical-logical mapping
-     */
-    // Clockwise is gryo-increasing
-    public final static DriveToComp COMP_CLOCKWISE = DriveToComp.ROTATION_GREATER;
     // Forward is toward the claws, motor positive, ticks increasing
     public final static DriveToComp COMP_FORWARD = DriveToComp.GREATER;
-
 
     // Runtime
     private final Robot robot;
@@ -79,6 +63,7 @@ public class Drive implements CommonTask, DriveToListener {
         robot.wheels.setTeleop(false);
         DriveToParams param = new DriveToParams(this, SENSOR_TYPE.GYROSCOPE);
         param.rotationPid(heading, TURN_TOLERANCE, TURN_PARAMS);
+        param.timeout = DriveTo.TIMEOUT_DEFAULT * 2;
         return new DriveTo(new DriveToParams[]{param});
     }
 
@@ -126,6 +111,7 @@ public class Drive implements CommonTask, DriveToListener {
                 switch (param.comparator) {
                     case ROTATION_PID:
                         speed = param.pid.output();
+                        // Left spins forward when heading is increasing
                         robot.wheels.setSpeed(speed, MOTOR_SIDE.LEFT);
                         robot.wheels.setSpeed(-speed, MOTOR_SIDE.RIGHT);
                         break;
