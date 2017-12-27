@@ -7,6 +7,6 @@ public class Round {
     }
 
     public static double truncate(double val) {
-        return truncate(val, 3);
+        return truncate(val, 2);
     }
 }
