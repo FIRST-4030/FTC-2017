@@ -3,52 +3,50 @@ package org.firstinspires.ftc.teamcode.buttons;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.robot.Robot;
 
 import java.util.HashMap;
 
-public class SpinnerHandler implements ButtonHandlerListener {
+public class SpinnerHandler {
     private final ButtonHandler parent;
-    private final Telemetry telemetry;
+    private final Robot robot;
     private final HashMap<String, Spinner> spinners;
 
-    public SpinnerHandler(ButtonHandler parent, Telemetry telemetry) {
+    public SpinnerHandler(ButtonHandler parent, Robot robot) {
         if (parent == null) {
-            throw new IllegalArgumentException(this.getClass().getSimpleName() + "Null listener");
+            throw new IllegalArgumentException(this.getClass().getSimpleName() + "Null handler");
         }
-        this.telemetry = telemetry;
+        this.robot = robot;
         this.parent = parent;
         spinners = new HashMap<>();
     }
 
-    public void onButtonHandler() {
+    public void handle() {
         for (Spinner spinner : spinners.values()) {
             if (parent.get(spinner.up())) {
                 spinner.increment();
             } else if (parent.get(spinner.down())) {
                 spinner.decrement();
             }
+
+            // Publish telemetry
+            telemetry(spinner);
         }
     }
 
-    public void telemetry() {
-        for (Spinner spinner : spinners.values()) {
-            Class cls = null;
-            switch (spinner.type) {
-                case INT:
-                    cls = Integer.class;
-                    break;
-                case DOUBLE:
-                    cls = Double.class;
-                    break;
-            }
-            String label = this.getClass().getSimpleName().charAt(0) +
-                    cls.getSimpleName().charAt(0) + ":" + spinner.name;
-            telemetry.addData(label, cls.cast(spinner.value));
+    public void telemetry(Spinner spinner) {
+        Class cls = null;
+        switch (spinner.type) {
+            case INT:
+                cls = Integer.class;
+                break;
+            case DOUBLE:
+                cls = Double.class;
+                break;
         }
-    }
-
-    public double get(String name) {
-        return getDouble(name);
+        String label = this.getClass().getSimpleName().charAt(0) +
+                cls.getSimpleName().charAt(0) + ":" + spinner.name;
+        robot.telemetry.addData(label, cls.cast(spinner.value));
     }
 
     public double getDouble(String name) {
@@ -150,7 +148,7 @@ public class SpinnerHandler implements ButtonHandlerListener {
         // Main object
         Spinner spinner = new Spinner(this, name, type, pad, up, down, increment, value);
         if (spinners.containsKey(name)) {
-            telemetry.log().add("De-registering existing spinner: " + name);
+            robot.telemetry.log().add("De-registering existing spinner: " + name);
         }
         spinners.put(name, spinner);
 
@@ -176,7 +174,7 @@ public class SpinnerHandler implements ButtonHandlerListener {
     protected class Spinner {
         protected static final String namespace = "__SPINNER";
 
-        private ButtonHandlerListener listener;
+        private SpinnerHandler handler;
         private String name;
         private SPINNER_TYPE type;
         private Gamepad gamepad;
@@ -186,7 +184,7 @@ public class SpinnerHandler implements ButtonHandlerListener {
         private Object increment;
         private boolean incrementIsName;
 
-        protected Spinner(ButtonHandlerListener listener, String name, SPINNER_TYPE type,
+        protected Spinner(SpinnerHandler handler, String name, SPINNER_TYPE type,
                           Gamepad gamepad, BUTTON up, BUTTON down,
                           Object increment, Object value) {
 
@@ -215,7 +213,7 @@ public class SpinnerHandler implements ButtonHandlerListener {
                 }
             }
 
-            this.listener = listener;
+            this.handler = handler;
             this.name = name;
             this.type = type;
             this.gamepad = gamepad;
@@ -238,10 +236,10 @@ public class SpinnerHandler implements ButtonHandlerListener {
             if (incrementIsName) {
                 switch (type) {
                     case INT:
-                        inc = listener.getInt((String) increment);
+                        inc = handler.getInt((String) increment);
                         break;
                     case DOUBLE:
-                        inc = listener.getDouble((String) increment);
+                        inc = handler.getDouble((String) increment);
                         break;
                 }
             }

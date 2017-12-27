@@ -3,9 +3,7 @@ package org.firstinspires.ftc.teamcode.driveto;
 import org.firstinspires.ftc.teamcode.utils.Heading;
 
 public class PID {
-    public double P;
-    public double I;
-    public double D;
+    public final PIDParams params;
 
     public long timestamp;
     public double last;
@@ -25,17 +23,11 @@ public class PID {
     public boolean resetAccumulatorOnTargetSignChange;
 
     public PID() {
-        this(0.1d, 0.01d, 0.0d);
+        this(new PIDParams(0.1d, 0.01d, 0.0d));
     }
 
     public PID(PIDParams params) {
-        this(params.P, params.I, params.D);
-    }
-
-    public PID(double p, double i, double d) {
-        this.P = p;
-        this.I = i;
-        this.D = d;
+        this.params = params;
         this.target = 0.0d;
         this.maxAccumulator = null;
         this.resetAccumulatorOnErrorSignChange = false;
@@ -64,6 +56,10 @@ public class PID {
     public double run(double actual) {
         input(actual);
         return output();
+    }
+
+    public double output() {
+        return (params.P * error) + (params.I * accumulated) + (params.D * differential);
     }
 
     public void input(double actual) {
@@ -106,9 +102,5 @@ public class PID {
         accumulated = acc;
         differential = diff;
         timestamp = now;
-    }
-
-    public double output() {
-        return (P * error) + (I * accumulated) + (D * differential);
     }
 }

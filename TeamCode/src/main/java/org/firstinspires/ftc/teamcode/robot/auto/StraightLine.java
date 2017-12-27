@@ -29,7 +29,7 @@ public class StraightLine extends OpMode {
     private boolean liftReady = false;
 
     // Init-time config
-    private final ButtonHandler buttons = new ButtonHandler();
+    private ButtonHandler buttons;
     private Field.AllianceColor alliance = Field.AllianceColor.BLUE;
     private DISTANCE distance = DISTANCE.SHORT;
     private DELAY delay = DELAY.NONE;
@@ -44,6 +44,7 @@ public class StraightLine extends OpMode {
         common = new Common(robot);
 
         // Register buttons
+        buttons = new ButtonHandler(robot);
         buttons.register("DELAY-UP", gamepad1, BUTTON.dpad_up);
         buttons.register("DELAY-DOWN", gamepad1, BUTTON.dpad_down);
         buttons.register("WALL-UP", gamepad1, BUTTON.dpad_right);

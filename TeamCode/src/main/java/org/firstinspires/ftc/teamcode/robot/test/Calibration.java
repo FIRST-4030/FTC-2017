@@ -22,7 +22,7 @@ public class Calibration extends OpMode {
     // Devices and subsystems
     private Robot robot = null;
     private Common common = null;
-    private final ButtonHandler buttons = new ButtonHandler();
+    private ButtonHandler buttons;
 
     // Run-time
     private int imageInterval = 10;
@@ -49,6 +49,7 @@ public class Calibration extends OpMode {
         robot.vuforia.start();
 
         // Motor/Servo buttons
+        buttons = new ButtonHandler(robot);
         buttons.register("CLAW-" + CLAWS.TOP + "-UP", gamepad1, BUTTON.dpad_up);
         buttons.register("CLAW-" + CLAWS.TOP + "-DOWN", gamepad1, BUTTON.dpad_down);
         buttons.register("CLAW-" + CLAWS.BOTTOM + "-UP", gamepad1, BUTTON.dpad_right);

@@ -2,13 +2,22 @@ package org.firstinspires.ftc.teamcode.buttons;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.robot.Robot;
+
 import java.lang.reflect.Field;
 import java.util.HashMap;
-import java.util.Vector;
 
 public class ButtonHandler {
-    private final HashMap<String, Button> buttons = new HashMap<>();
-    private final Vector<ButtonHandlerListener> handlers = new Vector<>();
+    private final HashMap<String, Button> buttons;
+    private final Robot robot;
+    public final SpinnerHandler spinners;
+
+    public ButtonHandler(Robot robot) {
+        this.buttons = new HashMap<>();
+        this.robot = robot;
+        this.spinners = new SpinnerHandler(this, robot);
+    }
 
     public void register(String name, Gamepad gamepad, BUTTON button) {
         this.register(name, gamepad, button, BUTTON_TYPE.SINGLE_PRESS);
@@ -54,16 +63,8 @@ public class ButtonHandler {
         }
     }
 
-    public void registerHandler(ButtonHandlerListener handler) {
-        handlers.add(handler);
-    }
-
-    public void deregisterHandler(ButtonHandlerListener handler) {
-        handlers.remove(handler);
-    }
-
     // Update stored state for all buttons, typically called once per OpMode loop()
-    // Call onButtonHandler for all registered ButtonHandlerListeners
+    // Call handle for all registered ButtonHandlerListeners
     public void update() {
         for (String name : buttons.keySet()) {
             Button b = buttons.get(name);
@@ -71,9 +72,7 @@ public class ButtonHandler {
                 b.listener.update(read(b));
             }
         }
-        for (ButtonHandlerListener bh : handlers) {
-            bh.onButtonHandler();
-        }
+        spinners.handle();
     }
 
     // Directly read the underlying button state

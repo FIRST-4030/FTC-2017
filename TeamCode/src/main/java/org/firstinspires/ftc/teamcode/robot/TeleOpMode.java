@@ -16,7 +16,7 @@ public class TeleOpMode extends OpMode {
 
     // Devices and subsystems
     private Robot robot = null;
-    private final ButtonHandler buttons = new ButtonHandler();
+    private ButtonHandler buttons;
 
     @Override
     public void init() {
@@ -29,6 +29,7 @@ public class TeleOpMode extends OpMode {
         robot = new Robot(hardwareMap, telemetry);
 
         // Register buttons
+        buttons = new ButtonHandler(robot);
         buttons.register("CLAW-" + CLAWS.TOP, gamepad2, BUTTON.right_bumper);
         buttons.register("CLAW-" + CLAWS.BOTTOM, gamepad2, BUTTON.left_bumper);
         buttons.register("EXTEND-INTAKE", gamepad2, BUTTON.b);

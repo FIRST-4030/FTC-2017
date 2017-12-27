@@ -24,7 +24,6 @@ public class SimpleAuto extends OpMode {
     private Robot robot = null;
     private Common common = null;
     private ButtonHandler buttons = null;
-    private SpinnerHandler spinners = null;
     private AutoDriver driver = new AutoDriver();
 
     // Lift zero testing
@@ -60,15 +59,14 @@ public class SimpleAuto extends OpMode {
         common = new Common(robot);
 
         // Buttons
-        buttons = new ButtonHandler();
-        spinners = new SpinnerHandler(buttons, telemetry);
-        spinners.add("TURN_INC", SPINNER_TYPE.DOUBLE,
+        buttons = new ButtonHandler(robot);
+        buttons.spinners.add("TURN_INC", SPINNER_TYPE.DOUBLE,
                 gamepad2, BUTTON.right_bumper, BUTTON.left_bumper,
-                (Double) Drive.TURN_PARAMS.P / 100, (Double) Drive.TURN_PARAMS.P / 10);
-        spinners.add("TURN_P", SPINNER_TYPE.DOUBLE,
+                (Double) Drive.TURN_PARAMS.P / 100.0d, (Double) Drive.TURN_PARAMS.P / 10.0d);
+        buttons.spinners.add("TURN_P", SPINNER_TYPE.DOUBLE,
                 gamepad2, BUTTON.dpad_up, BUTTON.dpad_down,
                 "TURN_INC", (Double) Drive.TURN_PARAMS.P);
-        spinners.add("TURN_I", SPINNER_TYPE.DOUBLE,
+        buttons.spinners.add("TURN_I", SPINNER_TYPE.DOUBLE,
                 gamepad2, BUTTON.dpad_right, BUTTON.dpad_left,
                 "TURN_INC", (Double) Drive.TURN_PARAMS.I);
     }
@@ -94,11 +92,8 @@ public class SimpleAuto extends OpMode {
         buttons.update();
 
         // Spinners
-        if (driver.drive != null && driver.drive.params.length > 0 &&
-                driver.drive.params[0].comparator == DriveToComp.ROTATION_PID) {
-            driver.drive.params[0].pid.P = spinners.get("TURN_P");
-            driver.drive.params[0].pid.I = spinners.get("TURN_I");
-        }
+        Drive.TURN_PARAMS.P = buttons.spinners.getDouble("TURN_P");
+        Drive.TURN_PARAMS.I = buttons.spinners.getDouble("TURN_I");
 
         // Handle AutoDriver driving
         if (driver.drive != null) {
@@ -113,7 +108,6 @@ public class SimpleAuto extends OpMode {
         }
 
         // Driver feedback
-        spinners.telemetry();
         telemetry.addData("Wheels L/R", robot.wheels.getEncoder(MOTOR_SIDE.LEFT) +
                 "/" + robot.wheels.getEncoder(MOTOR_SIDE.RIGHT));
         telemetry.addData("Wheels Rate L/R", Round.truncate(robot.wheels.getRate(MOTOR_SIDE.LEFT)) +

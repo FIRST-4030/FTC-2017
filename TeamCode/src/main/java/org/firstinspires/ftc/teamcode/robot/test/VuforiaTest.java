@@ -13,8 +13,8 @@ import org.firstinspires.ftc.teamcode.robot.Robot;
 public class VuforiaTest extends OpMode {
 
     // Devices and subsystems
-    private Robot robot = null;
-    private final ButtonHandler buttons = new ButtonHandler();
+    private Robot robot;
+    private ButtonHandler buttons;
 
     // Dynamic things we need to remember
     private int lastBearing = 0;
@@ -27,6 +27,7 @@ public class VuforiaTest extends OpMode {
 
         // Init the robot
         robot = new Robot(hardwareMap, telemetry);
+        buttons = new ButtonHandler(robot);
 
         // Wait for the game to begin
         telemetry.addData(">", "Ready for game start");

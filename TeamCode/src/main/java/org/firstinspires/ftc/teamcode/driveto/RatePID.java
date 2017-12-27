@@ -4,7 +4,7 @@ public class RatePID extends PID {
     private final PID displacement = new PID();
 
     public RatePID(double p, double i, double d) {
-        super(p, i, d);
+        super(new PIDParams(p, i, d));
     }
 
     public RatePID(PIDParams params) {

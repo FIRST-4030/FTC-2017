@@ -38,7 +38,7 @@ public class JewelForward extends OpMode {
     private ImageFTC image = null;
 
     // Init-time config
-    private final ButtonHandler buttons = new ButtonHandler();
+    private ButtonHandler buttons;
     private Field.AllianceColor alliance = Field.AllianceColor.BLUE;
     private JewelForward.DELAY delay = JewelForward.DELAY.NONE;
 
@@ -55,6 +55,7 @@ public class JewelForward extends OpMode {
         robot.vuforia.start();
 
         // Register buttons
+        buttons = new ButtonHandler(robot);
         buttons.register("DELAY-UP", gamepad1, BUTTON.dpad_up);
         buttons.register("DELAY-DOWN", gamepad1, BUTTON.dpad_down);
         buttons.register("ALLIANCE-RED", gamepad1, BUTTON.b);
