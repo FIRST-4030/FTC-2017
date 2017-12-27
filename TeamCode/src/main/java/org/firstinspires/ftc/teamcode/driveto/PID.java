@@ -69,6 +69,7 @@ public class PID {
         double r = (actual - last) / dt;
 
         double err = target - actual;
+        // Errors in a rotational context are always between -180 and 180
         if (rotational) {
             err = Heading.normalizeErr(err);
         }
@@ -78,11 +79,11 @@ public class PID {
         if (maxAccumulator != null) {
             double accumulatorAbsolute = Math.abs(accumulated);
             if (accumulatorAbsolute > maxAccumulator) {
-                accumulated *= (maxAccumulator / accumulatorAbsolute);
+                accumulated = Math.copySign(maxAccumulator, accumulated);
             }
         }
         // Reset the accumulator when the error sign changes, if requested
-        if (err * error < 0 && resetAccumulatorOnSignChange) {
+        if (resetAccumulatorOnSignChange && Math.signum(err) != Math.signum(error)) {
             acc = 0;
         }
 
