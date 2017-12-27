@@ -1,22 +1,27 @@
 package org.firstinspires.ftc.teamcode.driveto;
 
 public enum DriveToComp {
-    LESS(false),
-    GREATER(false),
-    IN_RANGE(false),
-    OUTSIDE_RANGE(false),
-    ROTATION_LESS(true),
-    ROTATION_GREATER(true),
-    PID(true),
-    ROTATION_PID(true);
+    LESS(false, false),
+    GREATER(false, false),
+    IN_RANGE(false, false),
+    OUTSIDE_RANGE(false, false),
+    ROTATION_LESS(true, false),
+    ROTATION_GREATER(true, false),
+    PID(true, true),
+    ROTATION_PID(true, true);
 
-    private final boolean rotational;
+    private final boolean rotational, pid;
 
-    DriveToComp(boolean rotational) {
+    DriveToComp(boolean rotational, boolean pid) {
         this.rotational = rotational;
+        this.pid = pid;
     }
 
-    public boolean rotataional() {
+    public boolean rotational() {
         return rotational;
+    }
+
+    public boolean pid() {
+        return pid;
     }
 }
