@@ -62,13 +62,13 @@ public class SimpleAuto extends OpMode {
         buttons = new ButtonHandler(robot);
         buttons.spinners.add("TURN_INC", SPINNER_TYPE.DOUBLE,
                 gamepad2, BUTTON.right_bumper, BUTTON.left_bumper,
-                (Double) Drive.TURN_PARAMS.P / 100.0d, (Double) Drive.TURN_PARAMS.P / 10.0d);
+                Drive.TURN_PARAMS.P / 100.0d, Drive.TURN_PARAMS.P / 10.0d);
         buttons.spinners.add("TURN_P", SPINNER_TYPE.DOUBLE,
                 gamepad2, BUTTON.dpad_up, BUTTON.dpad_down,
-                "TURN_INC", (Double) Drive.TURN_PARAMS.P);
+                "TURN_INC", Drive.TURN_PARAMS.P);
         buttons.spinners.add("TURN_I", SPINNER_TYPE.DOUBLE,
                 gamepad2, BUTTON.dpad_right, BUTTON.dpad_left,
-                "TURN_INC", (Double) Drive.TURN_PARAMS.I);
+                "TURN_INC", Drive.TURN_PARAMS.I);
     }
 
     @Override
@@ -90,8 +90,6 @@ public class SimpleAuto extends OpMode {
 
         // Input
         buttons.update();
-
-        // Spinners
         Drive.TURN_PARAMS.P = buttons.spinners.getDouble("TURN_P");
         Drive.TURN_PARAMS.I = buttons.spinners.getDouble("TURN_I");
 
