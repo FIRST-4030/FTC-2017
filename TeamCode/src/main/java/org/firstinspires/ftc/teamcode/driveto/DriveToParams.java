@@ -15,6 +15,7 @@ public class DriveToParams {
     public DriveToComp comparator = DriveToComp.LESS;
     public double limit = 0.0d;
     public double limitRange = 0.0d; // Used in range, rotational, and PID comparators
+    public Double diffRange = null; // Used in PID comparators
     public boolean crossing = false; // Used in rotational comparators
 
     public DriveToParams(DriveToListener parent, Object reference) {
@@ -54,20 +55,25 @@ public class DriveToParams {
         this.crossing = this.limitRange < this.limit;
     }
 
-    public void pid(double target, double tolerance, PIDParams params) {
+    public void pid(double target, PIDParams params, double tolerance, Double diffTolerance) {
         this.comparator = DriveToComp.PID;
         this.pid = new PID(params);
         this.pid.setTarget(target);
         this.limit = target;
         this.limitRange = Math.abs(tolerance);
+        if (diffTolerance != null) {
+            this.diffRange = Math.abs(diffTolerance);
+        }
     }
 
-    public void rotationPid(double target, double tolerance, PIDParams params) {
+    public void rotationPid(double target, PIDParams params, double tolerance, Double diffTolerance) {
         this.comparator = DriveToComp.ROTATION_PID;
         this.pid = new PID(params);
         this.pid.setTarget(target);
-        this.limit = Heading.normalize(target);
         this.limitRange = Math.abs(tolerance);
+        if (diffTolerance != null) {
+            this.diffRange = Math.abs(diffTolerance);
+        }
     }
 
     // And so on

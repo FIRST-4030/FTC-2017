@@ -3,8 +3,6 @@ package org.firstinspires.ftc.teamcode.driveto;
 import org.firstinspires.ftc.teamcode.utils.Heading;
 
 public class PID {
-    public static final double MAX_I_TOLERANCE_RATIO = 5.0d;
-
     public final double P;
     public final double I;
     public final double D;

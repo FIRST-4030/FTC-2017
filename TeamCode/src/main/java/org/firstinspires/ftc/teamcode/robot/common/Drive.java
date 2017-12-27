@@ -8,13 +8,16 @@ import org.firstinspires.ftc.teamcode.driveto.PID;
 import org.firstinspires.ftc.teamcode.driveto.PIDParams;
 import org.firstinspires.ftc.teamcode.robot.Robot;
 import org.firstinspires.ftc.teamcode.utils.Heading;
+import org.firstinspires.ftc.teamcode.utils.Round;
 import org.firstinspires.ftc.teamcode.wheels.MOTOR_SIDE;
 
 public class Drive implements CommonTask, DriveToListener {
+    private static final boolean DEBUG = true;
 
     // PID Turns
-    public static final double TURN_TOLERANCE = 0.75d; // Permitted heading error in degrees
-    public static final PIDParams TURN_PARAMS = new PIDParams(0.0075d, 0.0d, 0.0d);
+    public static final double TURN_TOLERANCE = 0.90d; // Permitted heading error in degrees
+    public static final double TURN_DIFF_TOLERANCE = 0.001d; // Permitted error change rate
+    public static final PIDParams TURN_PARAMS = new PIDParams(0.0046d, 0.090d, 0.0d);
     // Straight drive speed -- Forward is toward the claws, motor positive, tick increasing
     public final static float SPEED_FORWARD = 1.0f;
     public final static float SPEED_FORWARD_SLOW = SPEED_FORWARD * 0.75f;
@@ -62,9 +65,9 @@ public class Drive implements CommonTask, DriveToListener {
     public DriveTo heading(double heading) {
         robot.wheels.setTeleop(false);
         DriveToParams param = new DriveToParams(this, SENSOR_TYPE.GYROSCOPE);
-        param.rotationPid(heading, TURN_TOLERANCE, TURN_PARAMS);
-        // Provide windup protection and do not carry errors past the target
-        param.pid.maxAccumulator = TURN_TOLERANCE * PID.MAX_I_TOLERANCE_RATIO;
+        param.rotationPid(heading, TURN_PARAMS, TURN_TOLERANCE, TURN_DIFF_TOLERANCE);
+        // Provide tight windup protection and do not carry errors past the target
+        param.pid.maxAccumulator = TURN_TOLERANCE;
         param.pid.resetAccumulatorOnErrorSignChange = true;
         // Allow extra time to settle, at least while we are tuning
         param.timeout = DriveTo.TIMEOUT_DEFAULT * 4;
@@ -103,6 +106,13 @@ public class Drive implements CommonTask, DriveToListener {
     @Override
     public void driveToRun(DriveToParams param) {
         double speed;
+        if (DEBUG && param.comparator.pid()) {
+            robot.telemetry.log().add("T(" + Round.truncate(param.pid.target) +
+                    ") E/A/D\t" + Round.truncate(param.pid.error) +
+                    "\t" + Round.truncate(param.pid.accumulated) +
+                    "\t" + Round.truncate(param.pid.differential) +
+                    "\t(" + Round.truncate(param.pid.output()) + ")");
+        }
         switch ((SENSOR_TYPE) param.reference) {
             case DRIVE_ENCODER:
                 if (param.comparator == COMP_FORWARD) {
@@ -115,6 +125,9 @@ public class Drive implements CommonTask, DriveToListener {
                 switch (param.comparator) {
                     case ROTATION_PID:
                         speed = param.pid.output();
+                        // TODO: If we have to keep this put it into setSpeed() so it applies everywhere
+                        // We don't drive well at very low speeds
+                        speed = Math.copySign(Math.max(0.15, Math.abs(speed)), speed);
                         // Left spins forward when heading is increasing
                         robot.wheels.setSpeed(speed, MOTOR_SIDE.LEFT);
                         robot.wheels.setSpeed(-speed, MOTOR_SIDE.RIGHT);
