@@ -2,12 +2,9 @@ package org.firstinspires.ftc.teamcode.robot.test;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
-import org.firstinspires.ftc.teamcode.buttons.BUTTON;
+import org.firstinspires.ftc.teamcode.buttons.PAD_BUTTON;
 import org.firstinspires.ftc.teamcode.buttons.ButtonHandler;
-import org.firstinspires.ftc.teamcode.buttons.SPINNER_TYPE;
-import org.firstinspires.ftc.teamcode.buttons.SpinnerHandler;
 import org.firstinspires.ftc.teamcode.driveto.AutoDriver;
-import org.firstinspires.ftc.teamcode.driveto.DriveToComp;
 import org.firstinspires.ftc.teamcode.robot.common.Common;
 import org.firstinspires.ftc.teamcode.robot.Robot;
 import org.firstinspires.ftc.teamcode.robot.common.Drive;
@@ -60,14 +57,15 @@ public class SimpleAuto extends OpMode {
 
         // Buttons
         buttons = new ButtonHandler(robot);
-        buttons.spinners.add("TURN_INC", SPINNER_TYPE.DOUBLE,
-                gamepad2, BUTTON.right_bumper, BUTTON.left_bumper,
-                Drive.TURN_PARAMS.P / 100.0d, Drive.TURN_PARAMS.P / 10.0d);
-        buttons.spinners.add("TURN_P", SPINNER_TYPE.DOUBLE,
-                gamepad2, BUTTON.dpad_up, BUTTON.dpad_down,
+        buttons.spinners.add("TURN_INC",
+                gamepad2, PAD_BUTTON.right_bumper, PAD_BUTTON.left_bumper,
+                Round.magnitudeValue(Drive.TURN_PARAMS.P / 100.0d),
+                Round.magnitudeValue(Drive.TURN_PARAMS.P / 10.0d));
+        buttons.spinners.add("TURN_P",
+                gamepad2, PAD_BUTTON.dpad_up, PAD_BUTTON.dpad_down,
                 "TURN_INC", Drive.TURN_PARAMS.P);
-        buttons.spinners.add("TURN_I", SPINNER_TYPE.DOUBLE,
-                gamepad2, BUTTON.dpad_right, BUTTON.dpad_left,
+        buttons.spinners.add("TURN_I",
+                gamepad2, PAD_BUTTON.dpad_right, PAD_BUTTON.dpad_left,
                 "TURN_INC", Drive.TURN_PARAMS.I);
     }
 

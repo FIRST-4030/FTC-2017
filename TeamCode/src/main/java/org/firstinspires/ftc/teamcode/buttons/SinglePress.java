@@ -1,10 +1,10 @@
 package org.firstinspires.ftc.teamcode.buttons;
 
-public class SinglePress implements ButtonType {
-    private boolean active = false;
+public class SinglePress extends Button {
     private boolean released = true;
 
     public void update(boolean button) {
+
         // Reset the state on any update
         if (active) {
             active = false;
@@ -25,11 +25,8 @@ public class SinglePress implements ButtonType {
         if (button) {
             active = true;
             released = false;
+            longHeldTimeout = System.currentTimeMillis() + LONG_HOLD_TIMEOUT;
         }
-    }
-
-    public boolean active() {
-        return active;
     }
 
     // Released is set when the button is up

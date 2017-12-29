@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.robot.auto;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
-import org.firstinspires.ftc.teamcode.buttons.BUTTON;
+import org.firstinspires.ftc.teamcode.buttons.PAD_BUTTON;
 import org.firstinspires.ftc.teamcode.buttons.ButtonHandler;
 import org.firstinspires.ftc.teamcode.driveto.AutoDriver;
 import org.firstinspires.ftc.teamcode.field.Field;
@@ -49,12 +49,12 @@ public class OnlyJewel extends OpMode {
 
         // Register buttons
         buttons = new ButtonHandler(robot);
-        buttons.register("DELAY-UP", gamepad1, BUTTON.dpad_up);
-        buttons.register("DELAY-DOWN", gamepad1, BUTTON.dpad_down);
-        buttons.register("WALL-UP", gamepad1, BUTTON.dpad_right);
-        buttons.register("WALL-DOWN", gamepad1, BUTTON.dpad_left);
-        buttons.register("ALLIANCE-RED", gamepad1, BUTTON.b);
-        buttons.register("ALLIANCE-BLUE", gamepad1, BUTTON.x);
+        buttons.register("DELAY-UP", gamepad1, PAD_BUTTON.dpad_up);
+        buttons.register("DELAY-DOWN", gamepad1, PAD_BUTTON.dpad_down);
+        buttons.register("WALL-UP", gamepad1, PAD_BUTTON.dpad_right);
+        buttons.register("WALL-DOWN", gamepad1, PAD_BUTTON.dpad_left);
+        buttons.register("ALLIANCE-RED", gamepad1, PAD_BUTTON.b);
+        buttons.register("ALLIANCE-BLUE", gamepad1, PAD_BUTTON.x);
     }
 
     @Override

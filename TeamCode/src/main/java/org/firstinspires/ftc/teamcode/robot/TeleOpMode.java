@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.robot;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.buttons.BUTTON_TYPE;
-import org.firstinspires.ftc.teamcode.buttons.BUTTON;
+import org.firstinspires.ftc.teamcode.buttons.PAD_BUTTON;
 import org.firstinspires.ftc.teamcode.buttons.ButtonHandler;
 import org.firstinspires.ftc.teamcode.robot.common.Common;
 
@@ -30,10 +30,10 @@ public class TeleOpMode extends OpMode {
 
         // Register buttons
         buttons = new ButtonHandler(robot);
-        buttons.register("CLAW-" + CLAWS.TOP, gamepad2, BUTTON.right_bumper);
-        buttons.register("CLAW-" + CLAWS.BOTTOM, gamepad2, BUTTON.left_bumper);
-        buttons.register("EXTEND-INTAKE", gamepad2, BUTTON.b);
-        buttons.register("SLOW-MODE", gamepad1, BUTTON.a, BUTTON_TYPE.TOGGLE);
+        buttons.register("CLAW-" + CLAWS.TOP, gamepad2, PAD_BUTTON.right_bumper);
+        buttons.register("CLAW-" + CLAWS.BOTTOM, gamepad2, PAD_BUTTON.left_bumper);
+        buttons.register("EXTEND-INTAKE", gamepad2, PAD_BUTTON.b);
+        buttons.register("SLOW-MODE", gamepad1, PAD_BUTTON.a, BUTTON_TYPE.TOGGLE);
 
         // Wait for the game to begin
         telemetry.addData(">", "Init complete");

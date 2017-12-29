@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.actuators.ServoFTC;
-import org.firstinspires.ftc.teamcode.buttons.BUTTON;
+import org.firstinspires.ftc.teamcode.buttons.PAD_BUTTON;
 import org.firstinspires.ftc.teamcode.buttons.BUTTON_TYPE;
 import org.firstinspires.ftc.teamcode.buttons.ButtonHandler;
 import org.firstinspires.ftc.teamcode.robot.CLAWS;
@@ -50,28 +50,28 @@ public class Calibration extends OpMode {
 
         // Motor/Servo buttons
         buttons = new ButtonHandler(robot);
-        buttons.register("CLAW-" + CLAWS.TOP + "-UP", gamepad1, BUTTON.dpad_up);
-        buttons.register("CLAW-" + CLAWS.TOP + "-DOWN", gamepad1, BUTTON.dpad_down);
-        buttons.register("CLAW-" + CLAWS.BOTTOM + "-UP", gamepad1, BUTTON.dpad_right);
-        buttons.register("CLAW-" + CLAWS.BOTTOM + "-DOWN", gamepad1, BUTTON.dpad_left);
-        buttons.register("ARM-UP", gamepad1, BUTTON.a);
-        buttons.register("ARM-DOWN", gamepad1, BUTTON.b);
-        buttons.register("SERVO-INTERVAL-UP", gamepad1, BUTTON.right_stick_button);
-        buttons.register("SERVO-INTERVAL-DOWN", gamepad1, BUTTON.left_stick_button);
+        buttons.register("CLAW-" + CLAWS.TOP + "-UP", gamepad1, PAD_BUTTON.dpad_up);
+        buttons.register("CLAW-" + CLAWS.TOP + "-DOWN", gamepad1, PAD_BUTTON.dpad_down);
+        buttons.register("CLAW-" + CLAWS.BOTTOM + "-UP", gamepad1, PAD_BUTTON.dpad_right);
+        buttons.register("CLAW-" + CLAWS.BOTTOM + "-DOWN", gamepad1, PAD_BUTTON.dpad_left);
+        buttons.register("ARM-UP", gamepad1, PAD_BUTTON.a);
+        buttons.register("ARM-DOWN", gamepad1, PAD_BUTTON.b);
+        buttons.register("SERVO-INTERVAL-UP", gamepad1, PAD_BUTTON.right_stick_button);
+        buttons.register("SERVO-INTERVAL-DOWN", gamepad1, PAD_BUTTON.left_stick_button);
 
         // Image area buttons
-        buttons.register("UL-INCREASE-X", gamepad2, BUTTON.dpad_right);
-        buttons.register("UL-DECREASE-X", gamepad2, BUTTON.dpad_left);
-        buttons.register("UL-INCREASE-Y", gamepad2, BUTTON.dpad_down);
-        buttons.register("UL-DECREASE-Y", gamepad2, BUTTON.dpad_up);
-        buttons.register("LR-INCREASE-X", gamepad2, BUTTON.b);
-        buttons.register("LR-DECREASE-X", gamepad2, BUTTON.x);
-        buttons.register("LR-INCREASE-Y", gamepad2, BUTTON.a);
-        buttons.register("LR-DECREASE-Y", gamepad2, BUTTON.y);
-        buttons.register("AREA-INTERVAL-UP", gamepad2, BUTTON.right_stick_button);
-        buttons.register("AREA-INTERVAL-DOWN", gamepad2, BUTTON.left_stick_button);
-        buttons.register("CAPTURE", gamepad2, BUTTON.left_bumper, BUTTON_TYPE.TOGGLE);
-        buttons.register("SAVE", gamepad2, BUTTON.right_bumper);
+        buttons.register("UL-INCREASE-X", gamepad2, PAD_BUTTON.dpad_right);
+        buttons.register("UL-DECREASE-X", gamepad2, PAD_BUTTON.dpad_left);
+        buttons.register("UL-INCREASE-Y", gamepad2, PAD_BUTTON.dpad_down);
+        buttons.register("UL-DECREASE-Y", gamepad2, PAD_BUTTON.dpad_up);
+        buttons.register("LR-INCREASE-X", gamepad2, PAD_BUTTON.b);
+        buttons.register("LR-DECREASE-X", gamepad2, PAD_BUTTON.x);
+        buttons.register("LR-INCREASE-Y", gamepad2, PAD_BUTTON.a);
+        buttons.register("LR-DECREASE-Y", gamepad2, PAD_BUTTON.y);
+        buttons.register("AREA-INTERVAL-UP", gamepad2, PAD_BUTTON.right_stick_button);
+        buttons.register("AREA-INTERVAL-DOWN", gamepad2, PAD_BUTTON.left_stick_button);
+        buttons.register("CAPTURE", gamepad2, PAD_BUTTON.left_bumper, BUTTON_TYPE.TOGGLE);
+        buttons.register("SAVE", gamepad2, PAD_BUTTON.right_bumper);
     }
 
     @Override

@@ -2,14 +2,15 @@ package org.firstinspires.ftc.teamcode.buttons;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.robot.Robot;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 
 public class ButtonHandler {
-    private final HashMap<String, Button> buttons;
+    private final HashMap<String, PadButton> buttons;
     private final Robot robot;
     public final SpinnerHandler spinners;
 
@@ -19,12 +20,12 @@ public class ButtonHandler {
         this.spinners = new SpinnerHandler(this, robot);
     }
 
-    public void register(String name, Gamepad gamepad, BUTTON button) {
+    public void register(String name, Gamepad gamepad, PAD_BUTTON button) {
         this.register(name, gamepad, button, BUTTON_TYPE.SINGLE_PRESS);
     }
 
     // Register a button for consolidated updates
-    public void register(String name, Gamepad gamepad, BUTTON button, BUTTON_TYPE type) {
+    public void register(String name, Gamepad gamepad, PAD_BUTTON button, BUTTON_TYPE type) {
 
         // Die hard if we're used poorly
         if (name == null || gamepad == null || button == null) {
@@ -39,7 +40,7 @@ public class ButtonHandler {
         }
 
         // Create a button of the appropriate type
-        Button b = new Button(gamepad, button);
+        PadButton b = new PadButton(gamepad, button);
         switch (type) {
             case SINGLE_PRESS:
                 b.listener = new SinglePress();
@@ -51,7 +52,7 @@ public class ButtonHandler {
 
         // Register it in the map
         if (buttons.containsKey(name)) {
-            System.err.println("De-registering existing button: " + name);
+            robot.telemetry.log().add("De-registering existing button: " + name);
         }
         buttons.put(name, b);
     }
@@ -67,7 +68,7 @@ public class ButtonHandler {
     // Call handle for all registered ButtonHandlerListeners
     public void update() {
         for (String name : buttons.keySet()) {
-            Button b = buttons.get(name);
+            PadButton b = buttons.get(name);
             if (b != null) {
                 b.listener.update(read(b));
             }
@@ -76,54 +77,80 @@ public class ButtonHandler {
     }
 
     // Directly read the underlying button state
-    private boolean read(Button b) {
+    private boolean read(PadButton b) {
         boolean pressed = false;
         try {
             Field field = b.gamepad.getClass().getField(b.button.name());
             pressed = field.getBoolean(b.gamepad);
         } catch (Exception e) {
             // We checked this when registering so this shouldn't happen, but log if it does
-            System.err.println("Unable to read button: " + b.button);
+            robot.telemetry.log().add("Unable to read button: " + b.button);
         }
         return pressed;
     }
 
     // Live state of the button
     public boolean raw(String name) {
-        Button button = buttons.get(name);
-        if (button == null) {
-            System.err.println("Unregistered button name: " + name);
+        PadButton padButton = buttons.get(name);
+        if (padButton == null) {
+            robot.telemetry.log().add("Unregistered padButton name: " + name);
             return false;
         }
-        return read(button);
+        return read(padButton);
     }
 
     // Stored state of the button
     public boolean get(String name) {
-        Button button = buttons.get(name);
-        if (button == null) {
-            System.err.println("Unregistered button name: " + name);
-            return false;
-        }
-        return buttons.get(name).listener.active();
+        return get(name, "active");
     }
 
-    // Stored hold state of the button
+    // Stored held state of the button
     public boolean held(String name) {
-        Button button = buttons.get(name);
-        if (button == null) {
-            System.err.println("Unregistered button name: " + name);
-            return false;
-        }
-        return button.listener.held();
+        return get(name, "held");
     }
 
-    private class Button {
-        public final Gamepad gamepad;
-        public final BUTTON button;
-        public ButtonType listener;
+    // Stored held state of the button, delayed
+    public boolean heldLong(String name) {
+        return get(name, "heldLong");
+    }
 
-        public Button(Gamepad gamepad, BUTTON button) {
+    // Stored held state, repeated periodically
+    public boolean autokey(String name) {
+        return get(name, "autokey");
+    }
+
+    // Reflection-based implement of the above stubs
+    private boolean get(String name, String type) {
+        PadButton button = buttons.get(name);
+        if (button == null) {
+            robot.telemetry.log().add("Unregistered button name: " + name);
+            return false;
+        }
+
+        Method method;
+        try {
+            method = button.listener.getClass().getMethod(type);
+        } catch (NoSuchMethodException e) {
+            robot.telemetry.log().add("Invalid button request type: " + type);
+            return false;
+        }
+
+        boolean value;
+        try {
+            value = (boolean) method.invoke(button.listener);
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            robot.telemetry.log().add("Unable to invoke button listener for type: " + type);
+            return false;
+        }
+        return value;
+    }
+
+    private class PadButton {
+        public final Gamepad gamepad;
+        public final PAD_BUTTON button;
+        public Button listener;
+
+        public PadButton(Gamepad gamepad, PAD_BUTTON button) {
             this.gamepad = gamepad;
             this.button = button;
         }

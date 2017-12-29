@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.buttons;
 
-public enum BUTTON {
+public enum PAD_BUTTON {
     a,
     b,
     back,
