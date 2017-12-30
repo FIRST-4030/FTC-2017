@@ -119,7 +119,7 @@ public class ButtonHandler {
         return get(name, "autokey");
     }
 
-    // Reflection-based implement of the above stubs
+    // Reflection-based implementation of the above stubs
     private boolean get(String name, String type) {
         PadButton button = buttons.get(name);
         if (button == null) {

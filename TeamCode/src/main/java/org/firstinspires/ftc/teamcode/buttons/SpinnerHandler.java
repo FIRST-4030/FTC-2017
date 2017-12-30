@@ -44,11 +44,11 @@ public class SpinnerHandler {
     }
 
     public void telemetry(Spinner spinner) {
-        String label = this.getClass().getSimpleName().substring(0, 1) +
-                spinner.dataClass.getSimpleName().substring(0, 1) + ":" + spinner.name;
+        String label = this.getClass().getSimpleName().substring(0, 4) +
+                spinner.dataClass().getSimpleName().substring(0, 1) + ":" + spinner.name;
 
         // General case for most types
-        String value = spinner.dataClass.cast(spinner.value).toString();
+        String value = spinner.dataClass().cast(spinner.value).toString();
         // Special handling for doubles, to avoid runaway approximations
         switch (spinner.type) {
             case DOUBLE:
@@ -128,70 +128,59 @@ public class SpinnerHandler {
         spinner.value = spinner.limits(val);
     }
 
-    // int data, int increment, no limits
+    public void setLimit(String name, int limit, boolean max) {
+        setLimit(name, (Integer) limit, max);
+    }
+
+    public void setLimit(String name, double limit, boolean max) {
+        setLimit(name, (Double) limit, max);
+    }
+
+    private void setLimit(String name, Object lim, boolean max) {
+        Spinner spinner = spinners.get(name);
+        if (spinner == null) {
+            return;
+        }
+        spinner.checkNullOrDataClass(lim, "limit");
+        if (max) {
+            spinner.max = lim;
+        } else {
+            spinner.min = lim;
+        }
+        spinner.value = spinner.limits(spinner.value);
+    }
+
+    // int data + increment
     public void add(String name,
                     Gamepad pad, PAD_BUTTON up, PAD_BUTTON down,
                     int increment, int value) {
-        add(name, SPINNER_TYPE.INT, pad, up, down, increment, value, null, null);
+        add(name, SPINNER_TYPE.INT, pad, up, down, increment, value);
     }
 
-    // init data, int increment, limits
-    public void add(String name,
-                    Gamepad pad, PAD_BUTTON up, PAD_BUTTON down,
-                    int increment, int value,
-                    int min, int max) {
-        add(name, SPINNER_TYPE.INT, pad, up, down, increment, value, min, max);
-    }
-
-    // int data, string increment, no limits
+    // int data, String increment
     public void add(String name,
                     Gamepad pad, PAD_BUTTON up, PAD_BUTTON down,
                     String increment, int value) {
-        add(name, SPINNER_TYPE.INT, pad, up, down, increment, value, null, null);
+        add(name, SPINNER_TYPE.INT, pad, up, down, increment, value);
     }
 
-    // int data, string increment, limits
-    public void add(String name,
-                    Gamepad pad, PAD_BUTTON up, PAD_BUTTON down,
-                    String increment, int value,
-                    int min, int max) {
-        add(name, SPINNER_TYPE.INT, pad, up, down, increment, value, min, max);
-    }
-
-    // double data, double increment, no limits
+    // double data + increment
     public void add(String name,
                     Gamepad pad, PAD_BUTTON up, PAD_BUTTON down,
                     double increment, double value) {
-        add(name, SPINNER_TYPE.DOUBLE, pad, up, down, increment, value, null, null);
+        add(name, SPINNER_TYPE.DOUBLE, pad, up, down, increment, value);
     }
 
-    // double data, double increment, limits
-    public void add(String name,
-                    Gamepad pad, PAD_BUTTON up, PAD_BUTTON down,
-                    double increment, double value,
-                    double min, double max) {
-        add(name, SPINNER_TYPE.DOUBLE, pad, up, down, increment, value, min, max);
-    }
-
-    // double data, String increment, no limits
+    // double data, String increment
     public void add(String name,
                     Gamepad pad, PAD_BUTTON up, PAD_BUTTON down,
                     String increment, double value) {
-        add(name, SPINNER_TYPE.DOUBLE, pad, up, down, increment, value, null, null);
-    }
-
-    // double data, String increment, limits
-    public void add(String name,
-                    Gamepad pad, PAD_BUTTON up, PAD_BUTTON down,
-                    String increment, double value,
-                    double min, double max) {
-        add(name, SPINNER_TYPE.DOUBLE, pad, up, down, increment, value, min, max);
+        add(name, SPINNER_TYPE.DOUBLE, pad, up, down, increment, value);
     }
 
     protected void add(String name, SPINNER_TYPE type,
                        Gamepad pad, PAD_BUTTON up, PAD_BUTTON down,
-                       Object increment, Object value,
-                       Object min, Object max) {
+                       Object increment, Object value) {
         if (name == null || type == null ||
                 pad == null || up == null || down == null ||
                 increment == null || value == null) {
@@ -210,7 +199,7 @@ public class SpinnerHandler {
         if (spinners.containsKey(name)) {
             robot.telemetry.log().add("De-registering existing spinner: " + name);
         }
-        Spinner spinner = new Spinner(this, name, type, increment, value, min, max);
+        Spinner spinner = new Spinner(this, name, type, increment, value);
         spinners.put(name, spinner);
 
         // Register buttons
@@ -244,30 +233,16 @@ public class SpinnerHandler {
         private final SpinnerHandler handler;
         private final String name;
         private final SPINNER_TYPE type;
-        private final Class dataClass;
-        private Object value;
         private final Object increment;
         private final boolean incrementIsName;
-        private final Object min;
-        private final Object max;
+
+        private Object min;
+        private Object max;
+        private Object value;
 
         protected Spinner(SpinnerHandler handler, String name, SPINNER_TYPE type,
-                          Object increment, Object value,
-                          Object min, Object max) {
-
-            Class cls = null;
-            switch (type) {
-                case INT:
-                    cls = Integer.class;
-                    break;
-                case DOUBLE:
-                    cls = Double.class;
-                    break;
-            }
-            dataClass = cls;
+                          Object increment, Object value) {
             checkNullOrDataClass(value, "value");
-            checkNullOrDataClass(min, "min");
-            checkNullOrDataClass(max, "max");
 
             incrementIsName = String.class.isInstance(increment);
             if (!incrementIsName) {
@@ -279,16 +254,29 @@ public class SpinnerHandler {
             this.type = type;
             this.increment = increment;
             this.value = value;
-            this.min = min;
-            this.max = max;
+            this.min = null;
+            this.max = null;
         }
 
         private void checkNullOrDataClass(Object obj, String name) {
-            if (obj != null && !dataClass.isInstance(obj)) {
+            if (obj != null && !dataClass().isInstance(obj)) {
                 throw new IllegalArgumentException(this.getClass().getSimpleName() +
                         ": Parameter '" + name + "' for type " + type +
-                        " must be an instance of: " + dataClass.getName());
+                        " must be an instance of: " + dataClass().getName());
             }
+        }
+
+        protected Class dataClass() {
+            Class cls = null;
+            switch (type) {
+                case INT:
+                    cls = Integer.class;
+                    break;
+                case DOUBLE:
+                    cls = Double.class;
+                    break;
+            }
+            return cls;
         }
 
         protected void increment() {

@@ -54,7 +54,7 @@ public class SimpleAuto extends OpMode {
         // Common init
         robot = new Robot(hardwareMap, telemetry);
         common = new Common(robot);
-        
+
         // Buttons
         buttons = new ButtonHandler(robot);
         buttons.spinners.add("TURN_INC",
