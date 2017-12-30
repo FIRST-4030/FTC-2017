@@ -236,8 +236,8 @@ public class OnlyJewel extends OpMode {
             return milliseconds;
         }
 
-        public double seconds() {
-            return milliseconds / 1000.0d;
+        public float seconds() {
+            return milliseconds / 1000.0f;
         }
 
         public OnlyJewel.DELAY prev() {

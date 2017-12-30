@@ -42,7 +42,7 @@ public class Motor implements Available {
         return enabled && (motor != null);
     }
 
-    public void setPower(double power) {
+    public void setPower(float power) {
         if (!isAvailable()) {
             return;
         }

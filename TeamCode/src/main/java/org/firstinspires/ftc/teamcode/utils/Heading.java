@@ -14,37 +14,29 @@ public class Heading {
         return ((heading % FULL_CIRCLE) + FULL_CIRCLE) % FULL_CIRCLE;
     }
 
-    public static float normalize(float heading) {
-        return (float) normalize((double) heading);
-    }
-
     /**
-     * Modulo arithmetic is not available for doubles
+     * Modulo arithmetic is not available for floats
      *
      * @param heading Any heading
      * @return The same heading projected into the space between 0 and 359, inclusively
      */
-    public static double normalize(double heading) {
-        while (heading >= (double) FULL_CIRCLE) {
-            heading -= (double) FULL_CIRCLE;
+    public static float normalize(float heading) {
+        while (heading >= (float) FULL_CIRCLE) {
+            heading -= (float) FULL_CIRCLE;
         }
-        while (heading < 0.0d) {
-            heading += (double) FULL_CIRCLE;
+        while (heading < 0.0f) {
+            heading += (float) FULL_CIRCLE;
         }
         return heading;
     }
 
-    public static float normalizeErr(float err) {
-        return (float) normalizeErr((double) err);
-    }
-
     /**
-     * Modulo arithmetic is not available for doubles
+     * Modulo arithmetic is not available for floats
      *
      * @param err Any heading differential
      * @return The same heading differential, projected into -180 to +180
      */
-    public static double normalizeErr(double err) {
+    public static float normalizeErr(float err) {
         if (err > HALF_CIRCLE) {
             err -= FULL_CIRCLE;
         } else if (err < -HALF_CIRCLE) {

@@ -46,7 +46,7 @@ public class SimpleAuto extends OpMode {
     private static final int LIFT_TIMEOUT = 1500;
     // In general you should init false, but for testing start with nothing
     private boolean liftReady = true;
-    private double liftTimeout = 0;
+    private float liftTimeout = 0.0f;
 
     @Override
     public void init() {
@@ -162,7 +162,7 @@ public class SimpleAuto extends OpMode {
         if (!liftReady) {
             switch (liftState) {
                 case INIT:
-                    liftTimeout = time + (LIFT_TIMEOUT / 1000);
+                    liftTimeout = (float) time + (LIFT_TIMEOUT / 1000);
                     liftState = liftState.next();
                     break;
                 case RETRACT:

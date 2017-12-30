@@ -5,10 +5,10 @@ import org.firstinspires.ftc.teamcode.config.Config;
 public class ServoConfig implements Config {
     public final String name;
     public final boolean reverse;
-    public final double min;
-    public final double max;
+    public final float min;
+    public final float max;
 
-    public ServoConfig(String name, boolean reverse, double min, double max) {
+    public ServoConfig(String name, boolean reverse, float min, float max) {
         this.name = name;
         this.reverse = reverse;
         this.min = min;
@@ -16,6 +16,6 @@ public class ServoConfig implements Config {
     }
 
     public ServoConfig(String name) {
-        this(name, false, 0.0d, 1.0d);
+        this(name, false, 0.0f, 1.0f);
     }
 }

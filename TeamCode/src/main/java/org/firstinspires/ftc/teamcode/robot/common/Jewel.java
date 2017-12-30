@@ -13,7 +13,7 @@ public class Jewel implements CommonTask {
     private static final boolean DEBUG = false;
 
     // Drive constants
-    public static final double ARM_DELAY = 0.5d;
+    public static final float ARM_DELAY = 0.5f;
     public static final int PIVOT_DEGREES = 10;
 
     // Image constants

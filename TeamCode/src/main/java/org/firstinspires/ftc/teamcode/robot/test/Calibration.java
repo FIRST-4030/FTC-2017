@@ -17,7 +17,7 @@ import org.firstinspires.ftc.teamcode.wheels.MOTOR_SIDE;
 @TeleOp(name = "Calibration", group = "Test")
 public class Calibration extends OpMode {
 
-    private static final double SERVO_INTERVAL_INTERVAL = 0.01d;
+    private static final float SERVO_INTERVAL_INTERVAL = 0.01f;
 
     // Devices and subsystems
     private Robot robot = null;
@@ -26,11 +26,11 @@ public class Calibration extends OpMode {
 
     // Run-time
     private int imageInterval = 10;
-    private double servoInterval = 0.01d;
+    private float servoInterval = 0.01f;
     private long imageTimestamp = 0;
-    private final double[] rate = new double[MOTOR_SIDE.values().length];
-    private final double[] min = new double[MOTOR_SIDE.values().length];
-    private final double[] max = new double[MOTOR_SIDE.values().length];
+    private final float[] rate = new float[MOTOR_SIDE.values().length];
+    private final float[] min = new float[MOTOR_SIDE.values().length];
+    private final float[] max = new float[MOTOR_SIDE.values().length];
 
     @Override
     public void init() {
@@ -41,9 +41,9 @@ public class Calibration extends OpMode {
 
         // Put these servos someplace vaguely safe
         for (ServoFTC claw : robot.claws) {
-            claw.setPositionRaw(.5);
+            claw.setPositionRaw(0.5f);
         }
-        robot.jewelArm.setPositionRaw(.5);
+        robot.jewelArm.setPositionRaw(0.5f);
 
         // Start Vuforia tracking
         robot.vuforia.start();

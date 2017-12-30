@@ -7,7 +7,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class Voltage implements Switch {
     private AnalogInput button;
-    private double threshold = 0.5d;
+    private float threshold = 0.5f;
 
     public Voltage(HardwareMap map, Telemetry telemetry, String name) {
         if (name == null || name.isEmpty()) {
@@ -26,7 +26,7 @@ public class Voltage implements Switch {
         return (button != null);
     }
 
-    public void setThreshold(double volts) {
+    public void setThreshold(float volts) {
         threshold = volts;
     }
 

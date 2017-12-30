@@ -17,7 +17,7 @@ public class StraightLine extends OpMode {
 
     // Auto constants
     private static final int RELEASE_REVERSE_MM = 125;
-    private static final double RELEASE_DELAY = 0.5d;
+    private static final float RELEASE_DELAY = 0.5f;
 
     // Devices and subsystems
     private Robot robot = null;
@@ -244,8 +244,8 @@ public class StraightLine extends OpMode {
             return milliseconds;
         }
 
-        public double seconds() {
-            return milliseconds / 1000.0d;
+        public float seconds() {
+            return milliseconds / 1000.0f;
         }
 
         public DELAY prev() {

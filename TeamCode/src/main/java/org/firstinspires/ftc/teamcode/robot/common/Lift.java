@@ -9,8 +9,8 @@ import org.firstinspires.ftc.teamcode.utils.OrderedEnumHelper;
 public class Lift implements CommonTask {
 
     // LiftAutoStart constants
-    public static final double LIFT_DELAY = 0.5;
-    private static final double CLAW_DELAY = 0.25;
+    public static final float LIFT_DELAY = 0.5f;
+    private static final float CLAW_DELAY = 0.25f;
 
     // Lift speed -- Up is motor positive, ticks increasing
     public final static float LIFT_SPEED_UP = 1.0f;

@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.robot.Robot;
 public class Common {
 
     // Jewel arm post-start retracted position
-    public static final double JEWEL_ARM_RETRACT = 0.40d;
+    public static final float JEWEL_ARM_RETRACT = 0.40f;
 
     // Runtime
     public final Lift lift;

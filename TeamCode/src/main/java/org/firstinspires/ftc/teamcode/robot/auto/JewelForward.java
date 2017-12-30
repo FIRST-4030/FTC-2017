@@ -21,7 +21,7 @@ public class JewelForward extends OpMode {
 
     // Auto constants
     private static final int RELEASE_REVERSE_MM = 125;
-    private static final double RELEASE_DELAY = 0.5d;
+    private static final float RELEASE_DELAY = 0.5f;
     private static final int DRIVE_TO_BOX_MM = 900; // Not tested
 
     // Devices and subsystems
@@ -285,8 +285,8 @@ public class JewelForward extends OpMode {
             return milliseconds;
         }
 
-        public double seconds() {
-            return milliseconds / 1000.0d;
+        public float seconds() {
+            return milliseconds / 1000.0f;
         }
 
         public JewelForward.DELAY prev() {
