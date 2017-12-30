@@ -23,9 +23,6 @@ public class JewelForward extends OpMode {
     private static final int RELEASE_REVERSE_MM = 125;
     private static final double RELEASE_DELAY = 0.5d;
     private static final int DRIVE_TO_BOX_MM = 900; // Not tested
-    private static final double CLAW_DELAY = 0.5d;
-    private static final double ARM_DELAY = 0.5d;
-    private static final int JEWEL_PIVOT_DEGREES = 10;
 
     // Devices and subsystems
     private Robot robot = null;
@@ -35,7 +32,6 @@ public class JewelForward extends OpMode {
     private AutoDriver driver = new AutoDriver();
     private JewelForward.AUTO_STATE state = JewelForward.AUTO_STATE.LIFT_INIT;
     private boolean liftReady = false;
-    private ImageFTC image = null;
 
     // Init-time config
     private ButtonHandler buttons;
@@ -229,7 +225,7 @@ public class JewelForward extends OpMode {
     }
 
     // Probably should not be here
-    private int reverseOnAlliance(int turnDegrees){
+    private int reverseOnAlliance(int turnDegrees) {
         return (alliance == Field.AllianceColor.RED ? 1 : -1) * turnDegrees;
     }
 

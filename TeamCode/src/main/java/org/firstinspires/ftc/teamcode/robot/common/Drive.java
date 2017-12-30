@@ -11,12 +11,12 @@ import org.firstinspires.ftc.teamcode.utils.Round;
 import org.firstinspires.ftc.teamcode.wheels.MOTOR_SIDE;
 
 public class Drive implements CommonTask, DriveToListener {
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = false;
 
     // PID Turns
     public static final double TURN_TOLERANCE = 0.65d; // Permitted heading error in degrees
     public static final double TURN_DIFF_TOLERANCE = 0.001d; // Permitted error change rate
-    public static final int TURN_TIMEOUT = DriveTo.TIMEOUT_DEFAULT * 2; // Extra time for precise turn commands
+    public static final int TURN_TIMEOUT = DriveTo.TIMEOUT_DEFAULT * 2;
     public static final PIDParams TURN_PARAMS = new PIDParams(0.04d, 0.05d, 0.0d);
     // Straight drive speed -- Forward is toward the claws, motor positive, tick increasing
     public final static float SPEED_FORWARD = 1.0f;
@@ -66,16 +66,15 @@ public class Drive implements CommonTask, DriveToListener {
         robot.wheels.setTeleop(false);
         DriveToParams param = new DriveToParams(this, SENSOR_TYPE.GYROSCOPE);
         param.rotationPid(heading, TURN_PARAMS, TURN_TOLERANCE, TURN_DIFF_TOLERANCE);
-        // Provide tight windup protection and do not carry errors past the target
-        //param.pid.maxAccumulator = TURN_TOLERANCE * 5.0d;
+        // Do not carry errors past the target
         param.pid.resetAccumulatorOnErrorSignChange = true;
+        // Allow extra time for turns to settle (we expect them to overshoot)
         param.timeout = TURN_TIMEOUT;
         return new DriveTo(new DriveToParams[]{param});
     }
 
     public DriveTo degrees(double degrees) {
-        double heading = Heading.normalize(degrees + robot.gyro.getHeading());
-        return heading(heading);
+        return heading(degrees + robot.gyro.getHeading());
     }
 
     @Override

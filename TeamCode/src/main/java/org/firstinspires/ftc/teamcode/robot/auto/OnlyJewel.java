@@ -15,11 +15,6 @@ import org.firstinspires.ftc.teamcode.utils.Round;
 @com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "Jewel Only", group = "Auto")
 public class OnlyJewel extends OpMode {
 
-    // Auto constants
-    private static final double CLAW_DELAY = 0.5d;
-    private static final double ARM_DELAY = 0.5d;
-    private static final int JEWEL_PIVOT_DEGREES = 10;
-
     // Devices and subsystems
     private Robot robot = null;
     private Common common = null;
