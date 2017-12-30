@@ -86,7 +86,7 @@ class IMUWaiter implements Runnable {
 public class RevIMU implements Gyro {
     private BNO055IMU gyro = null;
     private boolean ready = false;
-    private double offset = 0.0d;
+    private float offset = 0.0f;
 
     public RevIMU(HardwareMap map, Telemetry telemetry, String name) {
         if (name == null || name.isEmpty()) {
@@ -127,16 +127,16 @@ public class RevIMU implements Gyro {
         this.offset = offset;
     }
 
-    public double getRaw() {
+    public float getRaw() {
         if (!isReady()) {
-            return 0.0d;
+            return 0.0f;
         }
 
         // Invert to make CW rotation increase with the heading
         return -gyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
     }
 
-    public double getHeading() {
+    public float getHeading() {
         return Heading.normalize(getRaw() + offset);
     }
 }

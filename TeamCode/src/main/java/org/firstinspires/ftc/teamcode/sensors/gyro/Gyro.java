@@ -5,9 +5,9 @@ import org.firstinspires.ftc.teamcode.utils.Available;
 public interface Gyro extends Available {
     boolean isReady();
 
-    double getHeading();
+    float getHeading();
 
-    double getRaw();
+    float getRaw();
 
     void setOffset(int offset);
 }

@@ -1,17 +1,17 @@
 package org.firstinspires.ftc.teamcode.driveto;
 
 public class PIDParams {
-    public double P;
-    public double I;
-    public double D;
-    public double maxRate;
-    public double ticksPerMM;
+    public float P;
+    public float I;
+    public float D;
+    public float maxRate;
+    public float ticksPerMM;
 
-    public PIDParams(double p, double i, double d) {
-        this(p, i, d, 1.0d, 1.0d);
+    public PIDParams(float p, float i, float d) {
+        this(p, i, d, 1.0f, 1.0f);
     }
 
-    public PIDParams(double p, double i, double d, double maxRate, double ticksPerMM) {
+    public PIDParams(float p, float i, float d, float maxRate, float ticksPerMM) {
         this.P = p;
         this.I = i;
         this.D = d;

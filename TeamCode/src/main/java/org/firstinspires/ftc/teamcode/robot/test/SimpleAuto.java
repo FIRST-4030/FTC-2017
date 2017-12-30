@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import org.firstinspires.ftc.teamcode.buttons.PAD_BUTTON;
 import org.firstinspires.ftc.teamcode.buttons.ButtonHandler;
 import org.firstinspires.ftc.teamcode.driveto.AutoDriver;
+import org.firstinspires.ftc.teamcode.driveto.PID;
 import org.firstinspires.ftc.teamcode.robot.common.Common;
 import org.firstinspires.ftc.teamcode.robot.Robot;
 import org.firstinspires.ftc.teamcode.robot.common.Drive;
@@ -22,6 +23,7 @@ public class SimpleAuto extends OpMode {
     private Common common = null;
     private ButtonHandler buttons = null;
     private AutoDriver driver = new AutoDriver();
+    private PID pid = new PID();
 
     // Lift zero testing
     enum LIFT_STATE implements OrderedEnum {
@@ -67,6 +69,9 @@ public class SimpleAuto extends OpMode {
         buttons.spinners.add("TURN_I",
                 gamepad2, PAD_BUTTON.dpad_right, PAD_BUTTON.dpad_left,
                 "TURN_INC", Drive.TURN_PARAMS.I);
+
+        // Disable all spinners
+        buttons.spinners.setEnable(false);
     }
 
     @Override
@@ -88,8 +93,8 @@ public class SimpleAuto extends OpMode {
 
         // Input
         buttons.update();
-        Drive.TURN_PARAMS.P = buttons.spinners.getDouble("TURN_P");
-        Drive.TURN_PARAMS.I = buttons.spinners.getDouble("TURN_I");
+        Drive.TURN_PARAMS.P = buttons.spinners.getFloat("TURN_P");
+        Drive.TURN_PARAMS.I = buttons.spinners.getFloat("TURN_I");
 
         // Handle AutoDriver driving
         if (driver.drive != null) {
@@ -102,6 +107,10 @@ public class SimpleAuto extends OpMode {
                 robot.wheels.setTeleop(true);
             }
         }
+
+        // PID rate tracking
+        pid.input((int) pid.last + 1);
+        telemetry.addData("PID", Round.truncate(pid.rate) + "\t" + Round.truncate(pid.last));
 
         // Driver feedback
         telemetry.addData("Wheels L/R", robot.wheels.getEncoder(MOTOR_SIDE.LEFT) +
@@ -125,15 +134,15 @@ public class SimpleAuto extends OpMode {
         }
 
         // Wheel PID testing @ gamepad2
-        double speed = 0.0d;
+        float speed = 0.0f;
         if (gamepad2.a) {
-            speed = 0.25d;
+            speed = 0.25f;
         } else if (gamepad2.b) {
-            speed = 0.50d;
+            speed = 0.50f;
         } else if (gamepad2.x) {
-            speed = 0.75d;
+            speed = 0.75f;
         } else if (gamepad2.y) {
-            speed = -gamepad2.left_stick_y * 0.10d;
+            speed = -gamepad2.left_stick_y * 0.10f;
         }
         if (speed > 0.0d) {
             if (Math.abs(gamepad2.left_trigger) > 0.5) {

@@ -11,8 +11,8 @@ import org.firstinspires.ftc.teamcode.robot.common.Common;
 public class TeleOpMode extends OpMode {
 
     // Drive speeds
-    private final static double SCALE_FULL = 1.0d;
-    private final static double SCALE_SLOW = SCALE_FULL * 0.5d;
+    private final static float SCALE_FULL = 1.0f;
+    private final static float SCALE_SLOW = SCALE_FULL * 0.5f;
 
     // Devices and subsystems
     private Robot robot = null;

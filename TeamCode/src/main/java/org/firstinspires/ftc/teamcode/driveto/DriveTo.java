@@ -66,8 +66,8 @@ public class DriveTo {
     public boolean onTarget() {
         for (DriveToParams param : params) {
             boolean onTarget = false;
-            double actual = param.parent.driveToSensor(param);
-            double heading = 0.0d;
+            float actual = param.parent.driveToSensor(param);
+            float heading = 0.0f;
 
             // Special handling for rotational contexts and PIDs
             if (param.comparator.rotational()) {

@@ -11,7 +11,7 @@ public class MecanumDrive extends TankDrive {
         super(map, telemetry, config);
     }
 
-    public void setSpeed(double speed, MOTOR_SIDE side, MOTOR_END end) {
+    public void setSpeed(float speed, MOTOR_SIDE side, MOTOR_END end) {
         if (!isAvailable()) {
             return;
         }
@@ -23,16 +23,16 @@ public class MecanumDrive extends TankDrive {
         }
     }
 
-    public void translate(double xMagnitude, double yMagnitude, double rotation) {
+    public void translate(float xMagnitude, float yMagnitude, float rotation) {
 
         // modified code from https://ftcforum.usfirst.org/forum/ftc-technology/android-studio/6361-mecanum-wheels-drive-code-example
         // from dmssargent
         double r = Math.hypot(xMagnitude, yMagnitude);
         double robotAngle = Math.atan2(yMagnitude, xMagnitude) - Math.PI / 4;
-        final double v1 = (r * Math.cos(robotAngle)) + rotation;
-        final double v2 = (r * Math.sin(robotAngle)) - rotation;
-        final double v3 = (r * Math.sin(robotAngle)) + rotation;
-        final double v4 = (r * Math.cos(robotAngle)) - rotation;
+        final float v1 = (float) (r * Math.cos(robotAngle)) + rotation;
+        final float v2 = (float) (r * Math.sin(robotAngle)) - rotation;
+        final float v3 = (float) (r * Math.sin(robotAngle)) + rotation;
+        final float v4 = (float) (r * Math.cos(robotAngle)) - rotation;
 
         // except for this, this is mine
         setSpeed(v1, MOTOR_SIDE.LEFT, MOTOR_END.FRONT);
@@ -44,9 +44,9 @@ public class MecanumDrive extends TankDrive {
     @Override
     public void loop(Gamepad pad) {
         // an unconventional implementation, because Lars wanted it so
-        double lStickX = cleanJoystick(pad.left_stick_x);
-        double lStickY = cleanJoystick(-pad.left_stick_y);
-        double rStickX = cleanJoystick(pad.right_stick_x);
+        float lStickX = cleanJoystick(pad.left_stick_x);
+        float lStickY = cleanJoystick(-pad.left_stick_y);
+        float rStickX = cleanJoystick(pad.right_stick_x);
 
         translate(rStickX, lStickY, lStickX);
     }

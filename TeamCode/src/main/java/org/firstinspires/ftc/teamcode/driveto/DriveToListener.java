@@ -5,5 +5,5 @@ public interface DriveToListener {
 
     void driveToRun(DriveToParams param);
 
-    double driveToSensor(DriveToParams param);
+    float driveToSensor(DriveToParams param);
 }

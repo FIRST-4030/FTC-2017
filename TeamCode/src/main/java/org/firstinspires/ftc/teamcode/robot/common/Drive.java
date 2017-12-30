@@ -14,11 +14,12 @@ public class Drive implements CommonTask, DriveToListener {
     private static final boolean DEBUG = false;
 
     // PID Turns
-    public static final double TURN_TOLERANCE = 0.65d; // Permitted heading error in degrees
-    public static final double TURN_DIFF_TOLERANCE = 0.001d; // Permitted error change rate
+    public static final float TURN_TOLERANCE = 0.65f; // Permitted heading error in degrees
+    public static final float TURN_DIFF_TOLERANCE = 0.001f; // Permitted error change rate
     public static final int TURN_TIMEOUT = DriveTo.TIMEOUT_DEFAULT * 2;
-    public static final PIDParams TURN_PARAMS = new PIDParams(0.04d, 0.05d, 0.0d);
-    // Straight drive speed -- Forward is toward the claws, motor positive, tick increasing
+    public static final PIDParams TURN_PARAMS = new PIDParams(0.04f, 0.05f, 0.0f);
+
+    // Straight drive speed -- Forward is toward the claws, motor positive, ticks increasing
     public final static float SPEED_FORWARD = 1.0f;
     public final static float SPEED_FORWARD_SLOW = SPEED_FORWARD * 0.75f;
     public final static float SPEED_REVERSE = -SPEED_FORWARD;
@@ -38,7 +39,28 @@ public class Drive implements CommonTask, DriveToListener {
     // Sensor reference types for our DriveTo callbacks
     public enum SENSOR_TYPE {
         DRIVE_ENCODER,
-        GYROSCOPE
+        GYROSCOPE,
+        TIME,
+        TIME_TURN
+    }
+
+    public DriveTo time(int mills, float speed) {
+        return time(mills, speed, false);
+    }
+
+    public DriveTo timeTurn(int mills, float speed) {
+        return time(mills, speed, true);
+    }
+
+    private DriveTo time(int mills, float speed, boolean turn) {
+        robot.wheels.setTeleop(false);
+
+        SENSOR_TYPE type = turn ? SENSOR_TYPE.TIME_TURN : SENSOR_TYPE.TIME;
+        DriveToParams param = new DriveToParams(this, type);
+        param.greaterThan(1);
+        param.limitRange = speed;
+        param.timeout = Math.abs(mills);
+        return new DriveTo(new DriveToParams[]{param});
     }
 
     public DriveTo distance(int distance) {
@@ -51,7 +73,7 @@ public class Drive implements CommonTask, DriveToListener {
 
         // Calculate the drive in encoder ticks relative to the current position
         DriveToParams param = new DriveToParams(this, SENSOR_TYPE.DRIVE_ENCODER);
-        int target = (int) ((double) distance * robot.wheels.getTicksPerMM()) + robot.wheels.getEncoder();
+        int target = (int) ((float) distance * robot.wheels.getTicksPerMM()) + robot.wheels.getEncoder();
 
         // Drive forward or backward as selected
         if (distance > 0) {
@@ -62,18 +84,18 @@ public class Drive implements CommonTask, DriveToListener {
         return new DriveTo(new DriveToParams[]{param});
     }
 
-    public DriveTo heading(double heading) {
+    public DriveTo heading(float heading) {
         robot.wheels.setTeleop(false);
+        heading = Heading.normalize(heading);
+
         DriveToParams param = new DriveToParams(this, SENSOR_TYPE.GYROSCOPE);
         param.rotationPid(heading, TURN_PARAMS, TURN_TOLERANCE, TURN_DIFF_TOLERANCE);
-        // Do not carry errors past the target
-        param.pid.resetAccumulatorOnErrorSignChange = true;
-        // Allow extra time for turns to settle (we expect them to overshoot)
-        param.timeout = TURN_TIMEOUT;
+        param.pid.resetAccumulatorOnErrorSignChange = true; // Do not carry errors past the target
+        param.timeout = TURN_TIMEOUT; // Allow extra time for turns to settle (we expect them to overshoot)
         return new DriveTo(new DriveToParams[]{param});
     }
 
-    public DriveTo degrees(double degrees) {
+    public DriveTo degrees(float degrees) {
         return heading(degrees + robot.gyro.getHeading());
     }
 
@@ -82,14 +104,20 @@ public class Drive implements CommonTask, DriveToListener {
         switch ((SENSOR_TYPE) param.reference) {
             case DRIVE_ENCODER:
             case GYROSCOPE:
+            case TIME:
+            case TIME_TURN:
                 robot.wheels.stop();
                 break;
+            default:
+                robot.wheels.stop();
+                throw new IllegalStateException("Unhandled driveToStop: " +
+                        param.reference + " ::" + param.comparator);
         }
     }
 
     @Override
-    public double driveToSensor(DriveToParams param) {
-        double value = 0;
+    public float driveToSensor(DriveToParams param) {
+        float value = 0;
         switch ((SENSOR_TYPE) param.reference) {
             case DRIVE_ENCODER:
                 value = robot.wheels.getEncoder();
@@ -97,13 +125,20 @@ public class Drive implements CommonTask, DriveToListener {
             case GYROSCOPE:
                 value = robot.gyro.getHeading();
                 break;
+            case TIME:
+            case TIME_TURN:
+                value = 0;
+                break;
+            default:
+                throw new IllegalStateException("Unhandled driveToSensor: " +
+                        param.reference + " ::" + param.comparator);
         }
         return value;
     }
 
     @Override
     public void driveToRun(DriveToParams param) {
-        double speed;
+        float speed;
         if (DEBUG && param.comparator.pid()) {
             robot.telemetry.log().add("T(" + Round.truncate(param.pid.target) +
                     ") E/A/D\t" + Round.truncate(param.pid.error) +
@@ -131,6 +166,13 @@ public class Drive implements CommonTask, DriveToListener {
                         throw new IllegalStateException("Unhandled driveToRun: " +
                                 param.reference + "::" + param.comparator);
                 }
+                break;
+            case TIME:
+                robot.wheels.setSpeed(param.limitRange);
+                break;
+            case TIME_TURN:
+                robot.wheels.setSpeed(param.limitRange, MOTOR_SIDE.LEFT);
+                robot.wheels.setSpeed(-param.limitRange, MOTOR_SIDE.RIGHT);
                 break;
             default:
                 throw new IllegalStateException("Unhandled driveToRun: " +

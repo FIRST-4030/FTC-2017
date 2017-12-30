@@ -6,15 +6,15 @@ public class PID {
     public final PIDParams params;
 
     public long timestamp;
-    public double last;
-    public double error;
-    public double accumulated;
-    public double differential;
-    public double rate;
-    public double target;
+    public float last;
+    public float error;
+    public float accumulated;
+    public float differential;
+    public float rate;
+    public float target;
 
     // If set, limit the accumulator value to the range ±maxAccumulator
-    public Double maxAccumulator;
+    public Float maxAccumulator;
     // If true, reset the accumulated error whenever the error sign changes
     // This is useful when the input() values are not rate-based (e.g. raw displacement or heading)
     public boolean resetAccumulatorOnErrorSignChange;
@@ -23,65 +23,65 @@ public class PID {
     public boolean resetAccumulatorOnTargetSignChange;
 
     public PID() {
-        this(new PIDParams(0.1d, 0.01d, 0.0d));
+        this(new PIDParams(0.1f, 0.01f, 0.0f));
     }
 
     public PID(PIDParams params) {
         this.params = params;
-        this.target = 0.0d;
+        this.target = 0.0f;
         this.maxAccumulator = null;
         this.resetAccumulatorOnErrorSignChange = false;
         this.resetAccumulatorOnTargetSignChange = true;
         reset();
     }
 
-    public void setTarget(double newTarget) {
+    public void setTarget(float newTarget) {
         // If the target sign changes our accumulator is probably invalid
         if (resetAccumulatorOnTargetSignChange &&
                 Math.signum(target) != Math.signum(newTarget)) {
-            accumulated = 0;
+            accumulated = 0.0f;
         }
         target = newTarget;
     }
 
     public void reset() {
         this.timestamp = System.currentTimeMillis();
-        this.last = 0.0d;
-        this.error = 0.0d;
-        this.accumulated = 0.0d;
-        this.differential = 0.0d;
-        this.rate = 0.0d;
+        this.last = 0.0f;
+        this.error = 0.0f;
+        this.accumulated = 0.0f;
+        this.differential = 0.0f;
+        this.rate = 0.0f;
     }
 
-    public double run(double actual) {
+    public float run(float actual) {
         input(actual);
         return output();
     }
 
-    public double output() {
+    public float output() {
         return (params.P * error) + (params.I * accumulated) + (params.D * differential);
     }
 
-    public void input(double actual) {
+    public void input(float actual) {
         input(actual, false);
     }
 
-    public void inputRotational(double actual) {
+    public void inputRotational(float actual) {
         input(actual, true);
     }
 
-    protected void input(double actual, boolean rotational) {
+    protected void input(float actual, boolean rotational) {
         long now = System.currentTimeMillis();
-        double dt = now - timestamp;
-        double r = (actual - last) / dt;
+        float dt = now - timestamp;
+        float r = (actual - last) / dt;
 
-        double err = target - actual;
+        float err = target - actual;
         // Errors in a rotational context are always between -180 and 180
         if (rotational) {
             err = Heading.normalizeErr(err);
         }
 
-        double acc = accumulated + (err / dt);
+        float acc = accumulated + (err / dt);
         // Limit the accumulator to avoid wind-up errors
         if (maxAccumulator != null) {
             if (Math.abs(accumulated) > maxAccumulator) {
@@ -93,7 +93,7 @@ public class PID {
             acc = 0;
         }
 
-        double diff = (err - error) / dt;
+        float diff = (err - error) / dt;
 
         // Save new values
         last = actual;

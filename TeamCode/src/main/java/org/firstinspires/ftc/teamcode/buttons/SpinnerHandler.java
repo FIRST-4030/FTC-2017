@@ -74,6 +74,10 @@ public class SpinnerHandler {
         return 0.0d;
     }
 
+    public float getFloat(String name) {
+        return (float) getDouble(name);
+    }
+
     public int getInt(String name) {
         Spinner spinner = spinners.get(name);
         if (spinner == null) {

@@ -7,19 +7,19 @@ import org.firstinspires.ftc.teamcode.utils.Available;
 public interface Wheels extends Available {
     void stop();
 
-    void setSpeed(double speed);
+    void setSpeed(float speed);
 
-    void setSpeed(double speed, MOTOR_SIDE side);
+    void setSpeed(float speed, MOTOR_SIDE side);
 
-    void setPowerRaw(double speed);
+    void setPowerRaw(float speed);
 
-    void setPowerRaw(double speed, MOTOR_SIDE side);
+    void setPowerRaw(float speed, MOTOR_SIDE side);
 
-    double getTicksPerMM();
+    float getTicksPerMM();
 
-    double getTicksPerMM(MOTOR_SIDE side);
+    float getTicksPerMM(MOTOR_SIDE side);
 
-    double getTicksPerMM(MOTOR_SIDE side, MOTOR_END end);
+    float getTicksPerMM(MOTOR_SIDE side, MOTOR_END end);
 
     int getEncoder();
 
@@ -37,11 +37,11 @@ public interface Wheels extends Available {
 
     void resetEncoder(MOTOR_SIDE side, MOTOR_END end);
 
-    double getRate();
+    float getRate();
 
-    double getRate(MOTOR_SIDE side);
+    float getRate(MOTOR_SIDE side);
 
-    double getRate(MOTOR_SIDE side, MOTOR_END end);
+    float getRate(MOTOR_SIDE side, MOTOR_END end);
 
     void loop(Gamepad pad);
 
@@ -49,5 +49,5 @@ public interface Wheels extends Available {
 
     void setTeleop(boolean enabled);
 
-    void setSpeedScale(double scale);
+    void setSpeedScale(float scale);
 }

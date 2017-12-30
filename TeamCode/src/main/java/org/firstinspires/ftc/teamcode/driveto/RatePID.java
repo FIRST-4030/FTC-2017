@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.driveto;
 public class RatePID extends PID {
     private final PID displacement = new PID();
 
-    public RatePID(double p, double i, double d) {
+    public RatePID(float p, float i, float d) {
         super(new PIDParams(p, i, d));
     }
 
@@ -12,17 +12,17 @@ public class RatePID extends PID {
     }
 
     @Override
-    public void input(double actual) {
+    public void input(float actual) {
         this.input(actual, false);
     }
 
     @Override
-    public void inputRotational(double actual) {
+    public void inputRotational(float actual) {
         this.input(actual, true);
     }
 
     @Override
-    protected void input(double actual, boolean rotational) {
+    protected void input(float actual, boolean rotational) {
         displacement.input(actual, rotational);
         super.input(displacement.rate, rotational);
     }

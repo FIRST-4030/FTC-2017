@@ -11,12 +11,12 @@ import org.firstinspires.ftc.teamcode.utils.Round;
 
 public class TankDrive implements Wheels {
     private static final boolean DEBUG = false;
-    private static final double JOYSTICK_DEADZONE = 0.1d;
-    private static final double SPEED_DEADZONE = JOYSTICK_DEADZONE * 0.85;
+    private static final float JOYSTICK_DEADZONE = 0.1f;
+    private static final float SPEED_DEADZONE = JOYSTICK_DEADZONE * 0.85f;
 
     protected WheelsConfig config = null;
     protected final Telemetry telemetry;
-    protected double speedScale = 1.0d;
+    protected float speedScale = 1.0f;
     private boolean teleop = false;
     private int[] offsets;
     private RatePID[] pids;
@@ -126,19 +126,19 @@ public class TankDrive implements Wheels {
         return motor;
     }
 
-    public double getTicksPerMM() {
+    public float getTicksPerMM() {
         return getTicksPerMM(null, null);
     }
 
-    public double getTicksPerMM(MOTOR_SIDE side) {
+    public float getTicksPerMM(MOTOR_SIDE side) {
         return getTicksPerMM(side, null);
     }
 
-    public double getTicksPerMM(MOTOR_SIDE side, MOTOR_END end) {
+    public float getTicksPerMM(MOTOR_SIDE side, MOTOR_END end) {
         if (!isAvailable()) {
-            return 0;
+            return 0.0f;
         }
-        double ticks = 0.0d;
+        float ticks = 0.0f;
         Integer index = findEncoderIndex(side, end);
         if (index != null) {
             ticks = config.motors[index].pid.ticksPerMM;
@@ -174,20 +174,20 @@ public class TankDrive implements Wheels {
             telemetry.log().add("No encoder on motor: " + index);
             return 0;
         }
-        return (int) ((double) (config.motors[index].motor.getCurrentPosition() + offsets[index]));
+        return (config.motors[index].motor.getCurrentPosition() + offsets[index]);
     }
 
-    public double getRate() {
+    public float getRate() {
         return getRate(null, null);
     }
 
-    public double getRate(MOTOR_SIDE side) {
+    public float getRate(MOTOR_SIDE side) {
         return getRate(side, null);
     }
 
-    public double getRate(MOTOR_SIDE side, MOTOR_END end) {
+    public float getRate(MOTOR_SIDE side, MOTOR_END end) {
         if (!isAvailable()) {
-            return 0.0d;
+            return 0.0f;
         }
 
         // Update all PIDs
@@ -198,7 +198,7 @@ public class TankDrive implements Wheels {
         }
 
         // Find something that matches the filter
-        double rate = 0.0d;
+        float rate = 0.0f;
         Integer index = findEncoderIndex(side, end);
         if (index != null) {
             rate = pids[index].last; // .last not .rate because we're using RatePID
@@ -206,13 +206,13 @@ public class TankDrive implements Wheels {
         return rate;
     }
 
-    public void setSpeed(double speed) {
+    public void setSpeed(float speed) {
         for (MOTOR_SIDE side : MOTOR_SIDE.values()) {
             setSpeed(speed, side);
         }
     }
 
-    public void setSpeed(double speed, MOTOR_SIDE side) {
+    public void setSpeed(float speed, MOTOR_SIDE side) {
         if (side == null) {
             throw new IllegalArgumentException(this.getClass().getSimpleName() + ": Null SIDE");
         }
@@ -222,11 +222,11 @@ public class TankDrive implements Wheels {
 
         // Update the matching PIDs and run one of them
         speed = limit(speed);
-        double pidSpeed = 0.0d;
+        float pidSpeed = 0.0f;
         for (int i = 0; i < config.motors.length; i++) {
             if (config.motors[i].side == side && pids[i] != null) {
                 // Special case to settle at exactly 0 instantly
-                if (speed == 0.0d) {
+                if (speed == 0.0f) {
                     pids[i].setTarget(speed);
                     pids[i].reset();
                     if (DEBUG) {
@@ -251,13 +251,13 @@ public class TankDrive implements Wheels {
         setPowerRaw(pidSpeed, side);
     }
 
-    public void setPowerRaw(double speed) {
+    public void setPowerRaw(float speed) {
         for (MOTOR_SIDE side : MOTOR_SIDE.values()) {
             setPowerRaw(speed, side);
         }
     }
 
-    public void setPowerRaw(double speed, MOTOR_SIDE side) {
+    public void setPowerRaw(float speed, MOTOR_SIDE side) {
         if (!isAvailable()) {
             return;
         }
@@ -291,7 +291,7 @@ public class TankDrive implements Wheels {
         this.teleop = enabled;
     }
 
-    public void setSpeedScale(double scale) {
+    public void setSpeedScale(float scale) {
         this.speedScale = limit(scale);
     }
 
@@ -301,21 +301,21 @@ public class TankDrive implements Wheels {
         }
 
         // Negative is forward; this is typically the opposite of native motor config
-        double left = cleanJoystick(-pad.left_stick_y);
+        float left = cleanJoystick(-pad.left_stick_y);
         this.setSpeed(left, MOTOR_SIDE.LEFT);
 
-        double right = cleanJoystick(-pad.right_stick_y);
+        float right = cleanJoystick(-pad.right_stick_y);
         this.setSpeed(right, MOTOR_SIDE.RIGHT);
     }
 
-    protected double limit(double input) {
-        return com.qualcomm.robotcore.util.Range.clip(input, -1.0d, 1.0d);
+    protected float limit(float input) {
+        return com.qualcomm.robotcore.util.Range.clip(input, -1.0f, 1.0f);
     }
 
-    protected double cleanJoystick(double power) {
+    protected float cleanJoystick(float power) {
         power = limit(power);
         if (Math.abs(power) < JOYSTICK_DEADZONE) {
-            power = 0.0d;
+            power = 0.0f;
         }
         return power;
     }

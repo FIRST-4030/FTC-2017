@@ -14,6 +14,10 @@ public class Heading {
         return ((heading % FULL_CIRCLE) + FULL_CIRCLE) % FULL_CIRCLE;
     }
 
+    public static float normalize(float heading) {
+        return (float) normalize((double) heading);
+    }
+
     /**
      * Modulo arithmetic is not available for doubles
      *
@@ -28,6 +32,10 @@ public class Heading {
             heading += (double) FULL_CIRCLE;
         }
         return heading;
+    }
+
+    public static float normalizeErr(float err) {
+        return (float) normalizeErr((double) err);
     }
 
     /**
