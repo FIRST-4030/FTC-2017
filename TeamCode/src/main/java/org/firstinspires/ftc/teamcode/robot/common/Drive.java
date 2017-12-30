@@ -14,9 +14,10 @@ public class Drive implements CommonTask, DriveToListener {
     private static final boolean DEBUG = true;
 
     // PID Turns
-    public static final double TURN_TOLERANCE = 0.90d; // Permitted heading error in degrees
+    public static final double TURN_TOLERANCE = 0.65d; // Permitted heading error in degrees
     public static final double TURN_DIFF_TOLERANCE = 0.001d; // Permitted error change rate
-    public static final PIDParams TURN_PARAMS = new PIDParams(0.0030d, 0.20d, 0.0d);
+    public static final int TURN_TIMEOUT = DriveTo.TIMEOUT_DEFAULT * 2; // Extra time for precise turn commands
+    public static final PIDParams TURN_PARAMS = new PIDParams(0.04d, 0.05d, 0.0d);
     // Straight drive speed -- Forward is toward the claws, motor positive, tick increasing
     public final static float SPEED_FORWARD = 1.0f;
     public final static float SPEED_FORWARD_SLOW = SPEED_FORWARD * 0.75f;
@@ -66,10 +67,9 @@ public class Drive implements CommonTask, DriveToListener {
         DriveToParams param = new DriveToParams(this, SENSOR_TYPE.GYROSCOPE);
         param.rotationPid(heading, TURN_PARAMS, TURN_TOLERANCE, TURN_DIFF_TOLERANCE);
         // Provide tight windup protection and do not carry errors past the target
-        param.pid.maxAccumulator = TURN_TOLERANCE;
+        //param.pid.maxAccumulator = TURN_TOLERANCE * 5.0d;
         param.pid.resetAccumulatorOnErrorSignChange = true;
-        // Allow extra time to settle, at least while we are tuning
-        param.timeout = DriveTo.TIMEOUT_DEFAULT * 4;
+        param.timeout = TURN_TIMEOUT;
         return new DriveTo(new DriveToParams[]{param});
     }
 
@@ -124,9 +124,6 @@ public class Drive implements CommonTask, DriveToListener {
                 switch (param.comparator) {
                     case ROTATION_PID:
                         speed = param.pid.output();
-                        // TODO: If we have to keep this put it into setSpeed() so it applies everywhere
-                        // We don't drive well at very low speeds
-                        speed = Math.copySign(Math.max(0.15, Math.abs(speed)), speed);
                         // Left spins forward when heading is increasing
                         robot.wheels.setSpeed(speed, MOTOR_SIDE.LEFT);
                         robot.wheels.setSpeed(-speed, MOTOR_SIDE.RIGHT);

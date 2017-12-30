@@ -11,6 +11,8 @@ import org.firstinspires.ftc.teamcode.utils.Round;
 
 public class TankDrive implements Wheels {
     private static final boolean DEBUG = false;
+    private static final double JOYSTICK_DEADZONE = 0.1d;
+    private static final double SPEED_DEADZONE = JOYSTICK_DEADZONE * 0.85;
 
     protected WheelsConfig config = null;
     protected final Telemetry telemetry;
@@ -233,6 +235,9 @@ public class TankDrive implements Wheels {
                 } else {
                     pids[i].setTarget(speed * config.motors[i].pid.maxRate * speedScale);
                     pidSpeed = pids[i].run(getEncoder(side));
+                    // Motion is unreliable at very low speeds so set a minimum PID speed
+                    // So long as SPEED_DEADZONE < JOYSTICK_DEADZONE this only affects auto
+                    pidSpeed = Math.copySign(Math.max(SPEED_DEADZONE, Math.abs(pidSpeed)), pidSpeed);
                     if (DEBUG) {
                         telemetry.log().add(side + " (" + Round.truncate(pidSpeed) + "):\t" +
                                 "t: " + Round.truncate(pids[i].target) + "\t\t" +
@@ -309,10 +314,9 @@ public class TankDrive implements Wheels {
 
     protected double cleanJoystick(double power) {
         power = limit(power);
-        if (power < 0.1 && power > -0.1) {
-            return 0;
-        } else {
-            return power;
+        if (Math.abs(power) < JOYSTICK_DEADZONE) {
+            power = 0.0d;
         }
+        return power;
     }
 }
