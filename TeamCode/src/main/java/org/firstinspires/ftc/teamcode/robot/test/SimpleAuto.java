@@ -2,10 +2,12 @@ package org.firstinspires.ftc.teamcode.robot.test;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
+import org.firstinspires.ftc.teamcode.buttons.BUTTON_TYPE;
 import org.firstinspires.ftc.teamcode.buttons.PAD_BUTTON;
 import org.firstinspires.ftc.teamcode.buttons.ButtonHandler;
 import org.firstinspires.ftc.teamcode.driveto.AutoDriver;
 import org.firstinspires.ftc.teamcode.driveto.PID;
+import org.firstinspires.ftc.teamcode.field.Field;
 import org.firstinspires.ftc.teamcode.robot.common.Common;
 import org.firstinspires.ftc.teamcode.robot.Robot;
 import org.firstinspires.ftc.teamcode.robot.common.Drive;
@@ -59,6 +61,7 @@ public class SimpleAuto extends OpMode {
 
         // Buttons
         buttons = new ButtonHandler(robot);
+        buttons.register("ARM", gamepad1, PAD_BUTTON.right_stick_x);
         buttons.spinners.add("TURN_INC",
                 gamepad2, PAD_BUTTON.right_bumper, PAD_BUTTON.left_bumper,
                 Round.magnitudeValue(Drive.TURN_PARAMS.P / 100.0d),
@@ -110,6 +113,7 @@ public class SimpleAuto extends OpMode {
 
         // PID rate tracking
         pid.input((int) pid.last + 1);
+        telemetry.addData("Arm", buttons.held("ARM"));
         telemetry.addData("PID", Round.truncate(pid.rate) + "\t" + Round.truncate(pid.last));
 
         // Driver feedback
@@ -187,12 +191,29 @@ public class SimpleAuto extends OpMode {
         }
 
         if (gamepad1.a) {
-            driver.drive = common.drive.distance((int) (25.4 * 10));
+            int distance = (int) (Field.MM_PER_INCH * 20);
+            if (Math.abs(gamepad1.left_trigger) > 0.5) {
+                distance *= -1;
+            }
+            driver.drive = common.drive.distance(distance);
         } else if (gamepad1.y) {
-            driver.drive = common.drive.distance((int) (25.4 * 20));
+            Field.AllianceColor color = Field.AllianceColor.RED;
+            if (Math.abs(gamepad1.left_trigger) > 0.5) {
+                color = Field.AllianceColor.opposite(color);
+            }
+            driver = common.jewel.hit(color);
         } else if (gamepad1.b) {
-            liftReady = false;
-            liftState = LIFT_STATE.INIT;
+            speed = Drive.SPEED_FORWARD;
+            if (Math.abs(gamepad1.left_trigger) > 0.5) {
+                speed *= -1;
+            }
+            driver.drive = common.drive.timeTurn(500, speed);
+        } else if (gamepad1.x) {
+            speed = Drive.SPEED_FORWARD;
+            if (Math.abs(gamepad1.left_trigger) > 0.5) {
+                speed *= -1;
+            }
+            driver.drive = common.drive.time(500, speed);
         } else if (gamepad1.dpad_left) {
             driver.drive = common.drive.heading(270);
         } else if (gamepad1.dpad_right) {
