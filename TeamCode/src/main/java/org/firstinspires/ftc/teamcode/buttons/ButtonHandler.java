@@ -10,6 +10,8 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 
 public class ButtonHandler {
+    private final static float AXIS_THRESHOLD = 0.50f;
+
     private final HashMap<String, PadButton> buttons;
     private final Robot robot;
     public final SpinnerHandler spinners;
@@ -81,7 +83,11 @@ public class ButtonHandler {
         boolean pressed = false;
         try {
             Field field = b.gamepad.getClass().getField(b.button.name());
-            pressed = field.getBoolean(b.gamepad);
+            if (boolean.class.isAssignableFrom((field.getType()))) {
+                pressed = field.getBoolean(b.gamepad);
+            } else {
+                pressed = (Math.abs(field.getFloat(b.gamepad)) >= AXIS_THRESHOLD);
+            }
         } catch (Exception e) {
             // We checked this when registering so this shouldn't happen, but log if it does
             robot.telemetry.log().add("Unable to read button: " + b.button);

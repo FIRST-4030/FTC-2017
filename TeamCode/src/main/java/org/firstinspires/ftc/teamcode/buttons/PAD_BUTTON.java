@@ -15,5 +15,11 @@ public enum PAD_BUTTON {
     right_stick_button,
     start,
     x,
-    y
+    y,
+    left_trigger,
+    right_trigger,
+    left_stick_x,
+    left_stick_y,
+    right_stick_x,
+    right_stick_y,
 }
