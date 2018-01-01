@@ -13,13 +13,13 @@ import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 import org.firstinspires.ftc.teamcode.utils.Heading;
 
 class IMUWaiter implements Runnable {
-    public static final int TIMEOUT = 2500;
+    private static final int TIMEOUT = 2500;
 
-    public static final String LOG_NAME = null;
-    public static final String CALIBRATION_FILE = null;
+    private static final String LOG_NAME = null;
+    private static final String CALIBRATION_FILE = null;
 
-    public static final int INTEGRATION_INTERVAL = 1000;
-    public static final BNO055IMU.AccelerationIntegrator INTEGRATOR = new JustLoggingAccelerationIntegrator();
+    private static final int INTEGRATION_INTERVAL = 1000;
+    private static final BNO055IMU.AccelerationIntegrator INTEGRATOR = new JustLoggingAccelerationIntegrator();
 
     private final BNO055IMU imu;
     private final RevIMU parent;

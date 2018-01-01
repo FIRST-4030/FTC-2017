@@ -111,16 +111,7 @@ public class OnlyJewel extends OpMode {
     @Override
     public void loop() {
         // Handle AutoDriver driving
-        if (driver.drive != null) {
-            // DriveTo
-            driver.drive.drive();
-
-            // Return to teleop when complete
-            if (driver.drive.isDone()) {
-                driver.drive = null;
-                robot.wheels.setTeleop(true);
-            }
-        }
+        driver = common.drive.loop(driver);
 
         // Driver feedback
         telemetry.addData("State", state);
@@ -149,13 +140,13 @@ public class OnlyJewel extends OpMode {
                 }
                 break;
             case PARSE_JEWEL:
-                driver = delegateDriver(common.jewel.parse(), state.next());
+                driver = delegateDriver(common.jewel.parse(driver));
                 break;
             case LIFT_INIT:
-                driver = delegateDriver(common.lift.autoStart(), state.next());
+                driver = delegateDriver(common.lift.autoStart(driver));
                 break;
             case HIT_JEWEL:
-                driver = delegateDriver(common.jewel.hit(alliance), state.next());
+                driver = delegateDriver(common.jewel.hit(driver, alliance));
                 break;
             case DELAY:
                 driver.interval = delay.seconds();
@@ -169,10 +160,10 @@ public class OnlyJewel extends OpMode {
 
     // Utility function to delegate our AutoDriver to an external provider
     // Driver is proxied back up to caller, state is advanced when delegate sets ::done
-    private AutoDriver delegateDriver(AutoDriver autoDriver, OnlyJewel.AUTO_STATE next) {
+    private AutoDriver delegateDriver(AutoDriver autoDriver) {
         if (autoDriver.isDone()) {
             autoDriver.done = false;
-            state = next;
+            state = state.next();
         }
         return autoDriver;
     }

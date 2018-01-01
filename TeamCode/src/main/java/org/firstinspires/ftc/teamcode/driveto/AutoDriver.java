@@ -3,15 +3,12 @@ package org.firstinspires.ftc.teamcode.driveto;
 public class AutoDriver {
     public boolean done = false;
     public float interval = 0;
-    public float timer = 0;
+    private float timer = 0;
     public DriveTo drive = null;
+    public boolean timeout = false;
 
     public boolean isDone() {
         return done;
-    }
-
-    public void setTime(float time) {
-        isRunning(time);
     }
 
     public boolean isRunning(double time) {

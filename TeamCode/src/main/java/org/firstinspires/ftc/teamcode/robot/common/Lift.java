@@ -40,11 +40,10 @@ public class Lift implements CommonTask {
         this.robot = robot;
     }
 
-    public AutoDriver autoStart() {
-        AutoDriver driver = new AutoDriver();
-
+    public AutoDriver autoStart(AutoDriver driver) {
         switch (liftState) {
             case INIT:
+                driver.done = false;
                 robot.jewelArm.setPosition(Common.JEWEL_ARM_RETRACT);
                 liftState = liftState.next();
                 break;
@@ -67,7 +66,6 @@ public class Lift implements CommonTask {
                 driver.done = true;
                 break;
         }
-
         return driver;
     }
 }

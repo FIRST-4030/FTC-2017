@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.robot.common;
 
+import org.firstinspires.ftc.teamcode.driveto.AutoDriver;
 import org.firstinspires.ftc.teamcode.driveto.DriveTo;
 import org.firstinspires.ftc.teamcode.driveto.DriveToComp;
 import org.firstinspires.ftc.teamcode.driveto.DriveToListener;
@@ -14,9 +15,9 @@ public class Drive implements CommonTask, DriveToListener {
     private static final boolean DEBUG = false;
 
     // PID Turns
-    public static final float TURN_TOLERANCE = 0.65f; // Permitted heading error in degrees
-    public static final float TURN_DIFF_TOLERANCE = 0.001f; // Permitted error change rate
-    public static final int TURN_TIMEOUT = DriveTo.TIMEOUT_DEFAULT * 2;
+    private static final float TURN_TOLERANCE = 0.65f; // Permitted heading error in degrees
+    private static final float TURN_DIFF_TOLERANCE = 0.001f; // Permitted error change rate
+    private static final int TURN_TIMEOUT = DriveTo.TIMEOUT_DEFAULT * 2;
     public static final PIDParams TURN_PARAMS = new PIDParams(0.04f, 0.05f, 0.0f);
 
     // Straight drive speed -- Forward is toward the claws, motor positive, ticks increasing
@@ -25,15 +26,31 @@ public class Drive implements CommonTask, DriveToListener {
     public final static float SPEED_REVERSE = -SPEED_FORWARD;
 
     // An estimate of the number of ricks we slip on inertia after calling wheels.stop()
-    public final static int OVERRUN_ENCODER = 10;
+    private final static int OVERRUN_ENCODER = 10;
     // Forward is toward the claws, motor positive, ticks increasing
-    public final static DriveToComp COMP_FORWARD = DriveToComp.GREATER;
+    private final static DriveToComp COMP_FORWARD = DriveToComp.GREATER;
 
     // Runtime
     private final Robot robot;
 
     public Drive(Robot robot) {
         this.robot = robot;
+    }
+
+    public AutoDriver loop(AutoDriver driver) {
+        if (driver.drive != null) {
+            driver.drive.drive();
+
+            // Remember timeouts (until the next drive())
+            driver.timeout = driver.drive.isTimeout();
+
+            // Cancel autodrive when we're done
+            if (driver.drive.isDone()) {
+                driver.drive = null;
+                robot.wheels.setTeleop(true);
+            }
+        }
+        return driver;
     }
 
     // Sensor reference types for our DriveTo callbacks
@@ -90,7 +107,7 @@ public class Drive implements CommonTask, DriveToListener {
 
         DriveToParams param = new DriveToParams(this, SENSOR_TYPE.GYROSCOPE);
         param.rotationPid(heading, TURN_PARAMS, TURN_TOLERANCE, TURN_DIFF_TOLERANCE);
-        param.pid.resetAccumulatorOnErrorSignChange = true; // Do not carry errors past the target
+        param.pid.params.resetAccumulatorOnErrorSignChange = true; // Do not carry errors past the target
         param.timeout = TURN_TIMEOUT; // Allow extra time for turns to settle (we expect them to overshoot)
         return new DriveTo(new DriveToParams[]{param});
     }

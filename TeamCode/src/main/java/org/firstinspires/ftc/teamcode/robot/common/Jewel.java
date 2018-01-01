@@ -13,12 +13,12 @@ public class Jewel implements CommonTask {
     private static final boolean DEBUG = false;
 
     // Drive constants
-    public static final float ARM_DELAY = 0.5f;
-    public static final int PIVOT_DEGREES = 10;
+    private static final float ARM_DELAY = 0.5f;
+    private static final int PIVOT_DEGREES = 10;
 
     // Image constants
     private int[] IMAGE_MAX = new int[]{1279, 719};
-    public static final Field.AllianceColor PIVOT_CCW_COLOR = Field.AllianceColor.BLUE;
+    private static final Field.AllianceColor PIVOT_CCW_COLOR = Field.AllianceColor.BLUE;
 
     // Jewel parse default values
     public int[] UL = new int[]{0, 0};
@@ -139,7 +139,7 @@ public class Jewel implements CommonTask {
         }
     }
 
-    public void makeAreaSafe(int[] a, boolean isLR) {
+    private void makeAreaSafe(int[] a, boolean isLR) {
         if (isLR) {
             a[0] = Math.max(UL[0] + 1, Math.min(IMAGE_MAX[0], a[0]));
             a[1] = Math.max(UL[1] + 1, Math.min(IMAGE_MAX[1], a[1]));
@@ -149,14 +149,14 @@ public class Jewel implements CommonTask {
         }
     }
 
-    public AutoDriver hit(Field.AllianceColor alliance) {
-        AutoDriver driver = new AutoDriver();
+    public AutoDriver hit(AutoDriver driver, Field.AllianceColor alliance) {
         if (DEBUG) {
             robot.telemetry.log().add("hitState: " + hitState);
         }
 
         switch (hitState) {
             case INIT:
+                driver.done = false;
                 hitState = hitState.next();
                 break;
             case DEPLOY_ARM:
@@ -182,14 +182,14 @@ public class Jewel implements CommonTask {
         return driver;
     }
 
-    public AutoDriver parse() {
-        AutoDriver driver = new AutoDriver();
+    public AutoDriver parse(AutoDriver driver) {
         if (DEBUG) {
             robot.telemetry.log().add("parseState: " + parseState);
         }
 
         switch (parseState) {
             case INIT:
+                driver.done = false;
                 parseState = parseState.next();
                 break;
             case ENABLE_CAPTURE:

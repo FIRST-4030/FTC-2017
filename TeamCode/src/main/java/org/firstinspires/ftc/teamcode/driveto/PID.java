@@ -13,31 +13,19 @@ public class PID {
     public float rate;
     public float target;
 
-    // If set, limit the accumulator value to the range ±maxAccumulator
-    public Float maxAccumulator;
-    // If true, reset the accumulated error whenever the error sign changes
-    // This is useful when the input() values are not rate-based (e.g. raw displacement or heading)
-    public boolean resetAccumulatorOnErrorSignChange;
-    // If true, reset the accumulator error whenever the target sign changes
-    // This is usually desirable but might interfere with non-rate, non-normalized input() values
-    public boolean resetAccumulatorOnTargetSignChange;
-
     public PID() {
-        this(new PIDParams(0.1f, 0.01f, 0.0f));
+        this(new PIDParams());
     }
 
     public PID(PIDParams params) {
         this.params = params;
         this.target = 0.0f;
-        this.maxAccumulator = null;
-        this.resetAccumulatorOnErrorSignChange = false;
-        this.resetAccumulatorOnTargetSignChange = true;
         reset();
     }
 
     public void setTarget(float newTarget) {
         // If the target sign changes our accumulator is probably invalid
-        if (resetAccumulatorOnTargetSignChange &&
+        if (params.resetAccumulatorOnTargetSignChange &&
                 Math.signum(target) != Math.signum(newTarget)) {
             accumulated = 0.0f;
         }
@@ -83,13 +71,13 @@ public class PID {
 
         float acc = accumulated + (err / dt);
         // Limit the accumulator to avoid wind-up errors
-        if (maxAccumulator != null) {
-            if (Math.abs(accumulated) > maxAccumulator) {
-                accumulated = Math.copySign(maxAccumulator, accumulated);
+        if (params.maxAccumulator != null) {
+            if (Math.abs(accumulated) > params.maxAccumulator) {
+                accumulated = Math.copySign(params.maxAccumulator, accumulated);
             }
         }
         // Reset the accumulator when the error sign changes, if requested
-        if (resetAccumulatorOnErrorSignChange && Math.signum(err) != Math.signum(error)) {
+        if (params.resetAccumulatorOnErrorSignChange && Math.signum(err) != Math.signum(error)) {
             acc = 0;
         }
 

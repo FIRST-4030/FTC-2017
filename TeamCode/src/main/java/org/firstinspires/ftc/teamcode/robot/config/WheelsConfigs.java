@@ -16,9 +16,9 @@ import org.firstinspires.ftc.teamcode.wheels.WheelMotor;
 import org.firstinspires.ftc.teamcode.wheels.Wheels;
 
 public class WheelsConfigs extends Configs {
-    public final static float DERATE = 0.875f;
-    public final static float WC_MAX_RATE = 2.655f * DERATE;
-    public final static float WC_TICKS_PER_MM = 0.92f;
+    private final static float DERATE = 0.875f;
+    private final static float WC_MAX_RATE = 2.655f * DERATE;
+    private final static float WC_TICKS_PER_MM = 0.92f;
 
     public WheelsConfigs(HardwareMap map, Telemetry telemetry, BOT bot) {
         super(map, telemetry, bot);

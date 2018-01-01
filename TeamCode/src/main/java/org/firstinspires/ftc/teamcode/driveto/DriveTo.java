@@ -9,7 +9,7 @@ public class DriveTo {
     public final boolean any;
     private boolean done;
     private long started = 0;
-    public final DriveToParams[] params;
+    private final DriveToParams[] params;
 
     public DriveTo(DriveToParams[] params, boolean any) {
         this.any = any;

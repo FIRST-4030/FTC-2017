@@ -23,7 +23,7 @@ public class MecanumDrive extends TankDrive {
         }
     }
 
-    public void translate(float xMagnitude, float yMagnitude, float rotation) {
+    private void translate(float xMagnitude, float yMagnitude, float rotation) {
 
         // modified code from https://ftcforum.usfirst.org/forum/ftc-technology/android-studio/6361-mecanum-wheels-drive-code-example
         // from dmssargent

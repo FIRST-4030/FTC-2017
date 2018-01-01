@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.robot.test;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
-import org.firstinspires.ftc.teamcode.buttons.BUTTON_TYPE;
 import org.firstinspires.ftc.teamcode.buttons.PAD_BUTTON;
 import org.firstinspires.ftc.teamcode.buttons.ButtonHandler;
 import org.firstinspires.ftc.teamcode.driveto.AutoDriver;
@@ -25,7 +24,7 @@ public class SimpleAuto extends OpMode {
     private Common common = null;
     private ButtonHandler buttons = null;
     private AutoDriver driver = new AutoDriver();
-    private PID pid = new PID();
+    private final PID pid = new PID();
 
     // Lift zero testing
     enum LIFT_STATE implements OrderedEnum {
@@ -100,16 +99,7 @@ public class SimpleAuto extends OpMode {
         Drive.TURN_PARAMS.I = buttons.spinners.getFloat("TURN_I");
 
         // Handle AutoDriver driving
-        if (driver.drive != null) {
-            // DriveTo
-            driver.drive.drive();
-
-            // Return to teleop when complete
-            if (driver.drive.isDone()) {
-                driver.drive = null;
-                robot.wheels.setTeleop(true);
-            }
-        }
+        driver = common.drive.loop(driver);
 
         // PID rate tracking
         pid.input((int) pid.last + 1);
@@ -201,7 +191,7 @@ public class SimpleAuto extends OpMode {
             if (Math.abs(gamepad1.left_trigger) > 0.5) {
                 color = Field.AllianceColor.opposite(color);
             }
-            driver = common.jewel.hit(color);
+            driver = common.jewel.hit(driver, color);
         } else if (gamepad1.b) {
             speed = Drive.SPEED_FORWARD;
             if (Math.abs(gamepad1.left_trigger) > 0.5) {

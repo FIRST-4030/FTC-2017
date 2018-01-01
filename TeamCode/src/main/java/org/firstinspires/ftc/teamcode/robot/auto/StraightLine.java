@@ -115,16 +115,7 @@ public class StraightLine extends OpMode {
     @Override
     public void loop() {
         // Handle AutoDriver driving
-        if (driver.drive != null) {
-            // DriveTo
-            driver.drive.drive();
-
-            // Return to teleop when complete
-            if (driver.drive.isDone()) {
-                driver.drive = null;
-                robot.wheels.setTeleop(true);
-            }
-        }
+        driver = common.drive.loop(driver);
 
         // Driver feedback
         telemetry.addData("State", state);
@@ -146,7 +137,7 @@ public class StraightLine extends OpMode {
                 state = state.next();
                 break;
             case LIFT_INIT:
-                driver = delegateDriver(common.lift.autoStart(), state.next());
+                driver = delegateDriver(common.lift.autoStart(driver));
                 break;
             case DELAY:
                 driver.interval = delay.seconds();
@@ -177,10 +168,10 @@ public class StraightLine extends OpMode {
 
     // Utility function to delegate our AutoDriver to an external provider
     // Driver is proxied back up to caller, state is advanced when delegate sets ::done
-    private AutoDriver delegateDriver(AutoDriver autoDriver, AUTO_STATE next) {
+    private AutoDriver delegateDriver(AutoDriver autoDriver) {
         if (autoDriver.isDone()) {
             autoDriver.done = false;
-            state = next;
+            state = state.next();
         }
         return autoDriver;
     }
