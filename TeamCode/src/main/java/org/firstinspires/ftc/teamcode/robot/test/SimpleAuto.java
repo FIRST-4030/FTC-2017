@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.robot.test;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
+import org.firstinspires.ftc.teamcode.buttons.BUTTON_TYPE;
 import org.firstinspires.ftc.teamcode.buttons.PAD_BUTTON;
 import org.firstinspires.ftc.teamcode.buttons.ButtonHandler;
 import org.firstinspires.ftc.teamcode.driveto.AutoDriver;
@@ -60,7 +61,10 @@ public class SimpleAuto extends OpMode {
 
         // Buttons
         buttons = new ButtonHandler(robot);
-        buttons.register("ARM", gamepad1, PAD_BUTTON.right_stick_x);
+        buttons.register("REVERSE", gamepad1, PAD_BUTTON.left_trigger);
+        buttons.register("VUFORIA", gamepad1, PAD_BUTTON.left_stick_button);
+
+        // Spinners
         buttons.spinners.add("TURN_INC",
                 gamepad2, PAD_BUTTON.right_bumper, PAD_BUTTON.left_bumper,
                 Round.magnitudeValue(Drive.TURN_PARAMS.P / 100.0d),
@@ -71,7 +75,6 @@ public class SimpleAuto extends OpMode {
         buttons.spinners.add("TURN_I",
                 gamepad2, PAD_BUTTON.dpad_right, PAD_BUTTON.dpad_left,
                 "TURN_INC", Drive.TURN_PARAMS.I);
-
         // Disable all spinners
         buttons.spinners.setEnable(false);
     }
@@ -97,13 +100,15 @@ public class SimpleAuto extends OpMode {
         buttons.update();
         Drive.TURN_PARAMS.P = buttons.spinners.getFloat("TURN_P");
         Drive.TURN_PARAMS.I = buttons.spinners.getFloat("TURN_I");
+        if (buttons.get("VUFORIA") && !robot.vuforia.isRunning()) {
+            robot.vuforia.start();
+        }
 
         // Handle AutoDriver driving
         driver = common.drive.loop(driver);
 
         // PID rate tracking
         pid.input((int) pid.last + 1);
-        telemetry.addData("Arm", buttons.held("ARM"));
         telemetry.addData("PID", Round.truncate(pid.rate) + "\t\t" +
                 Round.truncate(pid.last) + "\t\t" + Round.truncate(pid.last / time));
 
@@ -183,28 +188,28 @@ public class SimpleAuto extends OpMode {
 
         if (gamepad1.a) {
             int distance = (int) (Field.MM_PER_INCH * 20);
-            if (Math.abs(gamepad1.left_trigger) > 0.5) {
+            if (buttons.get("REVERSE")) {
                 distance *= -1;
             }
             driver.drive = common.drive.distance(distance);
         } else if (gamepad1.y) {
             Field.AllianceColor color = Field.AllianceColor.RED;
-            if (Math.abs(gamepad1.left_trigger) > 0.5) {
+            if (buttons.get("REVERSE")) {
                 color = Field.AllianceColor.opposite(color);
             }
             driver = common.jewel.hit(driver, color);
         } else if (gamepad1.b) {
             speed = Drive.SPEED_FORWARD;
-            if (Math.abs(gamepad1.left_trigger) > 0.5) {
+            if (buttons.get("REVERSE")) {
                 speed *= -1;
             }
-            driver.drive = common.drive.timeTurn(500, speed);
+            driver.drive = common.drive.timeTurn(1000, speed);
         } else if (gamepad1.x) {
             speed = Drive.SPEED_FORWARD;
-            if (Math.abs(gamepad1.left_trigger) > 0.5) {
+            if (buttons.get("REVERSE")) {
                 speed *= -1;
             }
-            driver.drive = common.drive.time(500, speed);
+            driver.drive = common.drive.time(1000, speed);
         } else if (gamepad1.dpad_left) {
             driver.drive = common.drive.heading(270);
         } else if (gamepad1.dpad_right) {
