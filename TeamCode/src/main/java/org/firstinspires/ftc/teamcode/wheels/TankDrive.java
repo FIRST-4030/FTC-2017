@@ -141,7 +141,7 @@ public class TankDrive implements Wheels {
         float ticks = 0.0f;
         Integer index = findEncoderIndex(side, end);
         if (index != null) {
-            ticks = config.motors[index].pid.ticksPerMM;
+            ticks = config.motors[index].ticksPerMM;
         }
         return ticks;
     }
@@ -233,7 +233,7 @@ public class TankDrive implements Wheels {
                         telemetry.log().add(side + "(" + Round.truncate(pidSpeed) + "): reset");
                     }
                 } else {
-                    pids[i].setTarget(speed * config.motors[i].pid.maxRate * speedScale);
+                    pids[i].setTarget(speed * config.motors[i].maxRate * speedScale);
                     pidSpeed = pids[i].run(getEncoder(side));
                     // Motion is unreliable at very low speeds so set a minimum PID speed
                     // So long as SPEED_DEADZONE < JOYSTICK_DEADZONE this only affects auto

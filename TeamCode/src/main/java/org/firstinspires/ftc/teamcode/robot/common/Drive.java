@@ -18,7 +18,8 @@ public class Drive implements CommonTask, DriveToListener {
     private static final float TURN_TOLERANCE = 0.65f; // Permitted heading error in degrees
     private static final float TURN_DIFF_TOLERANCE = 0.001f; // Permitted error change rate
     private static final int TURN_TIMEOUT = DriveTo.TIMEOUT_DEFAULT * 2;
-    public static final PIDParams TURN_PARAMS = new PIDParams(0.04f, 0.05f, 0.0f);
+    public static final PIDParams TURN_PARAMS = new PIDParams(0.04f, 0.05f, 0.0f,
+            null, true, true);
 
     // Straight drive speed -- Forward is toward the claws, motor positive, ticks increasing
     public final static float SPEED_FORWARD = 1.0f;
@@ -107,7 +108,6 @@ public class Drive implements CommonTask, DriveToListener {
 
         DriveToParams param = new DriveToParams(this, SENSOR_TYPE.GYROSCOPE);
         param.rotationPid(heading, TURN_PARAMS, TURN_TOLERANCE, TURN_DIFF_TOLERANCE);
-        param.pid.params.resetAccumulatorOnErrorSignChange = true; // Do not carry errors past the target
         param.timeout = TURN_TIMEOUT; // Allow extra time for turns to settle (we expect them to overshoot)
         return new DriveTo(new DriveToParams[]{param});
     }
