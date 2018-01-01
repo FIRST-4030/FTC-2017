@@ -246,13 +246,6 @@ public class SpinnerHandler {
 
         protected Spinner(SpinnerHandler handler, String name, SPINNER_TYPE type,
                           Object increment, Object value) {
-            checkNullOrDataClass(value, "value");
-
-            incrementIsName = String.class.isInstance(increment);
-            if (!incrementIsName) {
-                checkNullOrDataClass(increment, "increment");
-            }
-
             this.handler = handler;
             this.name = name;
             this.type = type;
@@ -260,6 +253,12 @@ public class SpinnerHandler {
             this.value = value;
             this.min = null;
             this.max = null;
+
+            incrementIsName = String.class.isInstance(increment);
+            if (!incrementIsName) {
+                checkNullOrDataClass(increment, "increment");
+            }
+            checkNullOrDataClass(value, "value");
         }
 
         private void checkNullOrDataClass(Object obj, String name) {

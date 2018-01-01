@@ -104,7 +104,8 @@ public class SimpleAuto extends OpMode {
         // PID rate tracking
         pid.input((int) pid.last + 1);
         telemetry.addData("Arm", buttons.held("ARM"));
-        telemetry.addData("PID", Round.truncate(pid.rate) + "\t" + Round.truncate(pid.last));
+        telemetry.addData("PID", Round.truncate(pid.rate) + "\t\t" +
+                Round.truncate(pid.last) + "\t\t" + Round.truncate(pid.last / time));
 
         // Driver feedback
         telemetry.addData("Wheels L/R", robot.wheels.getEncoder(MOTOR_SIDE.LEFT) +
