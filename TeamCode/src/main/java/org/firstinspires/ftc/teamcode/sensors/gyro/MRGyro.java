@@ -45,7 +45,7 @@ public class MRGyro implements Gyro {
         gyro.resetZAxisIntegrator();
     }
 
-    public void setOffset(int offset) {
+    public void setOffset(float offset) {
         this.offset = offset;
     }
 

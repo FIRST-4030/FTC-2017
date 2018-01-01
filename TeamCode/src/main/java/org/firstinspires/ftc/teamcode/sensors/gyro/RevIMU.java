@@ -123,7 +123,7 @@ public class RevIMU implements Gyro {
         return ready;
     }
 
-    public void setOffset(int offset) {
+    public void setOffset(float offset) {
         this.offset = offset;
     }
 

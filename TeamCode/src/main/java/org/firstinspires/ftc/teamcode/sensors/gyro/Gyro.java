@@ -9,5 +9,5 @@ public interface Gyro extends Available {
 
     float getRaw();
 
-    void setOffset(int offset);
+    void setOffset(float offset);
 }
