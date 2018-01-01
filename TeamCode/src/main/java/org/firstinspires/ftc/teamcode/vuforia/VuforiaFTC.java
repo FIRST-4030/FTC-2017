@@ -135,6 +135,10 @@ public class VuforiaFTC {
         targetsRaw.activate();
     }
 
+    public boolean isRunning() {
+        return (vuforia != null);
+    }
+
     public void track() {
         for (VuforiaTrackable trackable : targets) {
             // Per-target visibility (somewhat imaginary but still useful)
