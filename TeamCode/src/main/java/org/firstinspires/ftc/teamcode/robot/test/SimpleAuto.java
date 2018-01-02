@@ -8,6 +8,7 @@ import org.firstinspires.ftc.teamcode.buttons.ButtonHandler;
 import org.firstinspires.ftc.teamcode.driveto.AutoDriver;
 import org.firstinspires.ftc.teamcode.driveto.PID;
 import org.firstinspires.ftc.teamcode.field.Field;
+import org.firstinspires.ftc.teamcode.field.VuforiaConfigs;
 import org.firstinspires.ftc.teamcode.robot.common.Common;
 import org.firstinspires.ftc.teamcode.robot.Robot;
 import org.firstinspires.ftc.teamcode.robot.common.Drive;
@@ -16,6 +17,8 @@ import org.firstinspires.ftc.teamcode.utils.OrderedEnum;
 import org.firstinspires.ftc.teamcode.utils.OrderedEnumHelper;
 import org.firstinspires.ftc.teamcode.utils.Round;
 import org.firstinspires.ftc.teamcode.wheels.MOTOR_SIDE;
+
+import java.util.HashMap;
 
 @com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "Simple Auto", group = "Test")
 public class SimpleAuto extends OpMode {
@@ -61,22 +64,22 @@ public class SimpleAuto extends OpMode {
 
         // Buttons
         buttons = new ButtonHandler(robot);
-        buttons.register("REVERSE", gamepad1, PAD_BUTTON.left_trigger);
+        buttons.register("REVERSE", gamepad1, PAD_BUTTON.left_trigger, BUTTON_TYPE.TOGGLE);
         buttons.register("VUFORIA", gamepad1, PAD_BUTTON.left_stick_button);
 
         // Spinners
-        buttons.spinners.add("TURN_INC",
+        buttons.spinners.add("DRIVE_INC",
                 gamepad2, PAD_BUTTON.right_bumper, PAD_BUTTON.left_bumper,
-                Round.magnitudeValue(Drive.TURN_PARAMS.P / 100.0d),
-                Round.magnitudeValue(Drive.TURN_PARAMS.P / 10.0d));
-        buttons.spinners.add("TURN_P",
+                Round.magnitudeValue(Drive.DRIVE_PARAMS.P / 100.0d),
+                Round.magnitudeValue(Drive.DRIVE_PARAMS.P / 10.0d));
+        buttons.spinners.add("DRIVE_P",
                 gamepad2, PAD_BUTTON.dpad_up, PAD_BUTTON.dpad_down,
-                "TURN_INC", Drive.TURN_PARAMS.P);
-        buttons.spinners.add("TURN_I",
+                "DRIVE_INC", Drive.DRIVE_PARAMS.P);
+        buttons.spinners.add("DRIVE_I",
                 gamepad2, PAD_BUTTON.dpad_right, PAD_BUTTON.dpad_left,
-                "TURN_INC", Drive.TURN_PARAMS.I);
+                "DRIVE_INC", Drive.DRIVE_PARAMS.I);
         // Disable all spinners
-        buttons.spinners.setEnable(false);
+        //buttons.spinners.setEnable(false);
     }
 
     @Override
@@ -98,10 +101,19 @@ public class SimpleAuto extends OpMode {
 
         // Input
         buttons.update();
-        Drive.TURN_PARAMS.P = buttons.spinners.getFloat("TURN_P");
-        Drive.TURN_PARAMS.I = buttons.spinners.getFloat("TURN_I");
+        Drive.DRIVE_PARAMS.P = buttons.spinners.getFloat("DRIVE_P");
+        Drive.DRIVE_PARAMS.I = buttons.spinners.getFloat("DRIVE_I");
         if (buttons.get("VUFORIA") && !robot.vuforia.isRunning()) {
             robot.vuforia.start();
+        }
+
+        // Vuforia tracking, when available
+        String vuforiaAngle = "<Not Visible>";
+        if (robot.vuforia.isRunning()) {
+            robot.vuforia.track();
+            if (!robot.vuforia.isStale() && robot.vuforia.getVisible(VuforiaConfigs.TargetNames[0])) {
+                vuforiaAngle = robot.vuforia.getTargetAngle(VuforiaConfigs.TargetNames[0]) + "°";
+            }
         }
 
         // Handle AutoDriver driving
@@ -117,6 +129,7 @@ public class SimpleAuto extends OpMode {
                 "/" + robot.wheels.getEncoder(MOTOR_SIDE.RIGHT));
         telemetry.addData("Wheels Rate L/R", Round.truncate(robot.wheels.getRate(MOTOR_SIDE.LEFT)) +
                 "/" + Round.truncate(robot.wheels.getRate(MOTOR_SIDE.RIGHT)));
+        telemetry.addData("Vuforia Angle", vuforiaAngle);
         telemetry.addData("LiftZero", liftState);
         telemetry.addData("Lift", robot.lift.getEncoder() +
                 "/" + (robot.liftSwitch.get() ? "Down" : "Up") +
@@ -198,6 +211,9 @@ public class SimpleAuto extends OpMode {
                 color = Field.AllianceColor.opposite(color);
             }
             driver = common.jewel.hit(driver, color);
+            if (driver.isDone()) {
+                common.jewel.reset();
+            }
         } else if (gamepad1.b) {
             speed = Drive.SPEED_FORWARD;
             if (buttons.get("REVERSE")) {

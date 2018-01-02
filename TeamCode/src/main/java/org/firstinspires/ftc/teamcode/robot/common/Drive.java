@@ -21,6 +21,12 @@ public class Drive implements CommonTask, DriveToListener {
     public static final PIDParams TURN_PARAMS = new PIDParams(0.04f, 0.05f, 0.0f,
             null, true, true);
 
+    // PID Drive
+    private static final float DRIVE_TOLERANCE = 100.0f; // Permitted distance error in encoder ticks
+    private static final float DRIVE_DIFF_TOLERANCE = 1.0f; // Permitted error change rate
+    public static final PIDParams DRIVE_PARAMS = new PIDParams(0.006f, 0.045f, 0.0f,
+            null, true, true);
+
     // Straight drive speed -- Forward is toward the claws, motor positive, ticks increasing
     public final static float SPEED_FORWARD = 1.0f;
     public final static float SPEED_FORWARD_SLOW = SPEED_FORWARD * 0.75f;
@@ -28,8 +34,6 @@ public class Drive implements CommonTask, DriveToListener {
 
     // An estimate of the number of ricks we slip on inertia after calling wheels.stop()
     private final static int OVERRUN_ENCODER = 10;
-    // Forward is toward the claws, motor positive, ticks increasing
-    private final static DriveToComp COMP_FORWARD = DriveToComp.GREATER;
 
     // Runtime
     private final Robot robot;
@@ -81,24 +85,12 @@ public class Drive implements CommonTask, DriveToListener {
         return new DriveTo(new DriveToParams[]{param});
     }
 
-    public DriveTo distance(int distance) {
+    public DriveTo distance(int millimeters) {
         robot.wheels.setTeleop(false);
 
-        // Skip this motion if the error tolerance exceeds the target
-        if (Math.abs(distance) <= OVERRUN_ENCODER) {
-            return null;
-        }
-
-        // Calculate the drive in encoder ticks relative to the current position
         DriveToParams param = new DriveToParams(this, SENSOR_TYPE.DRIVE_ENCODER);
-        int target = (int) ((float) distance * robot.wheels.getTicksPerMM()) + robot.wheels.getEncoder();
-
-        // Drive forward or backward as selected
-        if (distance > 0) {
-            param.greaterThan(target - OVERRUN_ENCODER);
-        } else {
-            param.lessThan(target - OVERRUN_ENCODER);
-        }
+        int target = (int) ((float) millimeters * robot.wheels.getTicksPerMM()) + robot.wheels.getEncoder();
+        param.pid(target, DRIVE_PARAMS, DRIVE_TOLERANCE, DRIVE_DIFF_TOLERANCE);
         return new DriveTo(new DriveToParams[]{param});
     }
 
@@ -165,10 +157,20 @@ public class Drive implements CommonTask, DriveToListener {
         }
         switch ((SENSOR_TYPE) param.reference) {
             case DRIVE_ENCODER:
-                if (param.comparator == COMP_FORWARD) {
-                    robot.wheels.setSpeed(SPEED_FORWARD_SLOW);
-                } else {
-                    robot.wheels.setSpeed(SPEED_REVERSE);
+                switch (param.comparator) {
+                    case PID:
+                        speed = param.pid.output();
+                        robot.wheels.setSpeed(speed);
+                        break;
+                    case GREATER:
+                        robot.wheels.setSpeed(SPEED_FORWARD_SLOW);
+                        break;
+                    case LESS:
+                        robot.wheels.setSpeed(SPEED_REVERSE);
+                        break;
+                    default:
+                        throw new IllegalStateException("Unhandled driveToRun: " +
+                                param.reference + "::" + param.comparator);
                 }
                 break;
             case GYROSCOPE:

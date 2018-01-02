@@ -14,7 +14,7 @@ public class Jewel implements CommonTask {
 
     // Drive constants
     private static final float ARM_DELAY = 0.5f;
-    private static final int PIVOT_DEGREES = 10;
+    private static final int PIVOT_MILLS = 1000;
 
     // Image constants
     private int[] IMAGE_MAX = new int[]{1279, 719};
@@ -38,6 +38,11 @@ public class Jewel implements CommonTask {
     public Jewel(Robot robot, Common common) {
         this.robot = robot;
         this.common = common;
+        this.reset();
+    }
+
+    public void reset() {
+        setImage(null);
         parseState = PARSE_STATE.values()[0];
         hitState = HIT_STATE.values()[0];
         isLeftRed = null;
@@ -165,8 +170,8 @@ public class Jewel implements CommonTask {
                 hitState = hitState.next();
                 break;
             case HIT_JEWEL:
-                //turns -90 if we're hitting the left jewel, 90 if we're hitting the right.
-                driver.drive = common.drive.degrees((pivotCCW(alliance) ? -1 : 1) * PIVOT_DEGREES);
+                driver.drive = common.drive.timeTurn(PIVOT_MILLS,
+                        (pivotCCW(alliance) ? -1 : 1) * Drive.SPEED_FORWARD);
                 hitState = hitState.next();
                 break;
             case RETRACT_ARM:
