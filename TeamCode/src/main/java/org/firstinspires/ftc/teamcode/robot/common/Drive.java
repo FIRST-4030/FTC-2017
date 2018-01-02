@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.robot.common;
 
 import org.firstinspires.ftc.teamcode.driveto.AutoDriver;
 import org.firstinspires.ftc.teamcode.driveto.DriveTo;
-import org.firstinspires.ftc.teamcode.driveto.DriveToComp;
 import org.firstinspires.ftc.teamcode.driveto.DriveToListener;
 import org.firstinspires.ftc.teamcode.driveto.DriveToParams;
 import org.firstinspires.ftc.teamcode.driveto.PIDParams;
@@ -161,12 +160,6 @@ public class Drive implements CommonTask, DriveToListener {
                     case PID:
                         speed = param.pid.output();
                         robot.wheels.setSpeed(speed);
-                        break;
-                    case GREATER:
-                        robot.wheels.setSpeed(SPEED_FORWARD_SLOW);
-                        break;
-                    case LESS:
-                        robot.wheels.setSpeed(SPEED_REVERSE);
                         break;
                     default:
                         throw new IllegalStateException("Unhandled driveToRun: " +

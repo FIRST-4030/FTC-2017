@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.driveto;
 
-import org.firstinspires.ftc.teamcode.robot.Robot;
 import org.firstinspires.ftc.teamcode.utils.Heading;
 
 public class DriveTo {

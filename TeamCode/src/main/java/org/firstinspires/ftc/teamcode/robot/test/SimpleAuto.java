@@ -18,8 +18,6 @@ import org.firstinspires.ftc.teamcode.utils.OrderedEnumHelper;
 import org.firstinspires.ftc.teamcode.utils.Round;
 import org.firstinspires.ftc.teamcode.wheels.MOTOR_SIDE;
 
-import java.util.HashMap;
-
 @com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "Simple Auto", group = "Test")
 public class SimpleAuto extends OpMode {
 
