@@ -37,7 +37,7 @@ public class Calibration extends OpMode {
 
         // Init the common tasks elements
         robot = new Robot(hardwareMap, telemetry);
-        common = new Common(robot);
+        common = robot.common;
 
         // Put these servos someplace vaguely safe
         for (ServoFTC claw : robot.claws) {

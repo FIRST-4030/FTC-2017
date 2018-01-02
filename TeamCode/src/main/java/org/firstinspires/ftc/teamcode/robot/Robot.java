@@ -7,6 +7,7 @@ import org.firstinspires.ftc.teamcode.actuators.Motor;
 import org.firstinspires.ftc.teamcode.actuators.ServoFTC;
 import org.firstinspires.ftc.teamcode.field.VuforiaConfigs;
 import org.firstinspires.ftc.teamcode.config.BOT;
+import org.firstinspires.ftc.teamcode.robot.common.Common;
 import org.firstinspires.ftc.teamcode.robot.config.GyroConfigs;
 import org.firstinspires.ftc.teamcode.robot.config.MotorConfigs;
 import org.firstinspires.ftc.teamcode.robot.config.ServoConfigs;
@@ -19,15 +20,16 @@ import org.firstinspires.ftc.teamcode.wheels.Wheels;
 
 public class Robot {
     public static Robot robot = null;
+    public final Common common;
 
-    public BOT bot = null;
-    public Wheels wheels = null;
-    public Motor lift = null;
-    public ServoFTC[] claws = null;
-    public Gyro gyro = null;
-    public Switch liftSwitch = null;
-    public VuforiaFTC vuforia = null;
-    public ServoFTC jewelArm = null;
+    public final BOT bot;
+    public final Wheels wheels;
+    public final Motor lift;
+    public final ServoFTC[] claws;
+    public final Gyro gyro;
+    public final Switch liftSwitch;
+    public final VuforiaFTC vuforia;
+    public final ServoFTC jewelArm;
 
     public final HardwareMap map;
     public final Telemetry telemetry;
@@ -45,31 +47,6 @@ public class Robot {
         }
         this.bot = bot;
 
-        init();
-    }
-
-    public BOT detectBot() {
-        // Try WheelsConfigs from each bot until something succeeds
-        bot = null;
-        for (BOT b : BOT.values()) {
-            WheelsConfigs wheels = new WheelsConfigs(map, telemetry, b);
-            Wheels w = wheels.init();
-            if (w != null && w.isAvailable()) {
-                bot = b;
-                break;
-            }
-        }
-        if (bot == null) {
-            bot = BOT.values()[0];
-            telemetry.log().add("BOT detection failed. Default: " + bot);
-        }
-        if (bot.ordinal() != 0) {
-            telemetry.log().add("Using BOT: " + bot);
-        }
-        return bot;
-    }
-
-    private void init() {
         GyroConfigs gyros = new GyroConfigs(map, telemetry, bot);
         WheelsConfigs wheels = new WheelsConfigs(map, telemetry, bot);
         MotorConfigs motors = new MotorConfigs(map, telemetry, bot);
@@ -97,5 +74,28 @@ public class Robot {
 
         vuforia = new VuforiaFTC(VuforiaConfigs.AssetName, VuforiaConfigs.TargetCount,
                 VuforiaConfigs.Field(), VuforiaConfigs.Bot());
+
+        this.common = new Common(this);
+    }
+
+    public BOT detectBot() {
+        // Try WheelsConfigs from each bot until something succeeds
+        BOT bot = null;
+        for (BOT b : BOT.values()) {
+            WheelsConfigs wheels = new WheelsConfigs(map, telemetry, b);
+            Wheels w = wheels.init();
+            if (w != null && w.isAvailable()) {
+                bot = b;
+                break;
+            }
+        }
+        if (bot == null) {
+            bot = BOT.values()[0];
+            telemetry.log().add("BOT detection failed. Default: " + bot);
+        }
+        if (bot.ordinal() != 0) {
+            telemetry.log().add("Using BOT: " + bot);
+        }
+        return bot;
     }
 }

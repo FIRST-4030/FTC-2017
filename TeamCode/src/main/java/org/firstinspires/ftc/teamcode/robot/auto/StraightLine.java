@@ -41,7 +41,7 @@ public class StraightLine extends OpMode {
 
         // Init the robot and common tasks
         robot = new Robot(hardwareMap, telemetry);
-        common = new Common(robot);
+        common = robot.common;
 
         // Register buttons
         buttons = new ButtonHandler(robot);

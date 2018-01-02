@@ -37,7 +37,7 @@ public class OnlyJewel extends OpMode {
 
         // Init the common tasks elements
         robot = new Robot(hardwareMap, telemetry);
-        common = new Common(robot);
+        common = robot.common;
 
         // Init the camera system
         robot.vuforia.start();

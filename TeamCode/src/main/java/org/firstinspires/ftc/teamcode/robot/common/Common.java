@@ -26,7 +26,7 @@ public class Common {
         this.robot = r;
 
         this.lift = new Lift(robot);
-        this.jewel = new Jewel(robot, this);
+        this.jewel = new Jewel(robot);
         this.drive = new Drive(robot);
     }
 }

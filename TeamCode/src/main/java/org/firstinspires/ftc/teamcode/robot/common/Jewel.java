@@ -29,15 +29,13 @@ public class Jewel implements CommonTask {
 
     // Runtime
     private final Robot robot;
-    private final Common common;
     private ImageFTC image;
     private Boolean isLeftRed;
     private PARSE_STATE parseState;
     private HIT_STATE hitState;
 
-    public Jewel(Robot robot, Common common) {
+    public Jewel(Robot robot) {
         this.robot = robot;
-        this.common = common;
         this.reset();
     }
 
@@ -170,7 +168,7 @@ public class Jewel implements CommonTask {
                 hitState = hitState.next();
                 break;
             case HIT_JEWEL:
-                driver.drive = common.drive.timeTurn(PIVOT_MILLS,
+                driver.drive = robot.common.drive.timeTurn(PIVOT_MILLS,
                         (pivotCCW(alliance) ? -1 : 1) * Drive.SPEED_FORWARD);
                 hitState = hitState.next();
                 break;

@@ -58,7 +58,7 @@ public class SimpleAuto extends OpMode {
 
         // Common init
         robot = new Robot(hardwareMap, telemetry);
-        common = new Common(robot);
+        common = robot.common;
 
         // Buttons
         buttons = new ButtonHandler(robot);
