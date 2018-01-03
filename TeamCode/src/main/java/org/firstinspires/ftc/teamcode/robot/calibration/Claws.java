@@ -80,6 +80,6 @@ public class Claws extends Subsystem {
     }
 
     private String clawName(MM m, CLAWS claw) {
-        return "CLAW-" + claw + m;
+        return "CLAW-" + claw + "-" + m;
     }
 }
