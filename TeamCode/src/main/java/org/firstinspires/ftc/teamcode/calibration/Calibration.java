@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.robot.calibration;
+package org.firstinspires.ftc.teamcode.calibration;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -6,6 +6,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.buttons.ButtonHandler;
 import org.firstinspires.ftc.teamcode.buttons.PAD_BUTTON;
 import org.firstinspires.ftc.teamcode.robot.Robot;
+import org.firstinspires.ftc.teamcode.robot.config.calibration.Claws;
+import org.firstinspires.ftc.teamcode.robot.config.calibration.Wheels;
 
 import java.util.Vector;
 
@@ -31,6 +33,7 @@ public class Calibration extends OpMode {
         buttons.register("NEXT_SUBSYSTEM", gamepad1, PAD_BUTTON.guide);
 
         // Manual registration of subsystems
+        // These subsystems will change year-to-year but the framework is bot-agnostic
         subsystems.add(new Claws(this, robot, buttons));
         subsystems.add(new Wheels(this, robot, buttons));
     }
@@ -67,7 +70,7 @@ public class Calibration extends OpMode {
     }
 
     private Subsystem next(Subsystem last) {
-        Subsystem next = null;
+        Subsystem next;
         if (last == null) {
             next = subsystems.firstElement();
         } else {

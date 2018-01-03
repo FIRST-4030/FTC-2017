@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.utils.Round;
 import org.firstinspires.ftc.teamcode.vuforia.ImageFTC;
 
 @TeleOp(name = "Calibration-Old", group = "Calibration")
-public class Calibration extends OpMode {
+public class CalibrationOld extends OpMode {
 
     private static final float SERVO_INTERVAL_INTERVAL = 0.01f;
 
