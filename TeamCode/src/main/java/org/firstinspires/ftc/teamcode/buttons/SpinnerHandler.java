@@ -329,20 +329,20 @@ public class SpinnerHandler {
             if (min != null) {
                 switch (type) {
                     case INT:
-                        val = Math.min((Integer) val, (Integer) min);
+                        val = Math.max((Integer) val, (Integer) min);
                         break;
                     case DOUBLE:
-                        val = Math.min((Double) val, (Double) min);
+                        val = Math.max((Double) val, (Double) min);
                         break;
                 }
             }
             if (max != null) {
                 switch (type) {
                     case INT:
-                        val = Math.max((Integer) val, (Integer) max);
+                        val = Math.min((Integer) val, (Integer) max);
                         break;
                     case DOUBLE:
-                        val = Math.max((Double) val, (Double) max);
+                        val = Math.min((Double) val, (Double) max);
                         break;
                 }
             }
