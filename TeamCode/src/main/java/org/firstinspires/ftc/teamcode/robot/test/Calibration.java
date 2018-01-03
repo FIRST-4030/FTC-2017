@@ -131,23 +131,11 @@ public class Calibration extends OpMode {
         }
 
         // Wheel rates
-        for (MOTOR_SIDE side : MOTOR_SIDE.values()) {
-            rate[side.ordinal()] = robot.wheels.getRate(side);
-            max[side.ordinal()] = Math.max(rate[side.ordinal()], max[side.ordinal()]);
-            min[side.ordinal()] = Math.min(rate[side.ordinal()], min[side.ordinal()]);
-        }
 
         // Feedback
         telemetry.addData("Servo Interval", Round.truncate(servoInterval));
         telemetry.addData("Lift", robot.lift.getEncoder());
         telemetry.addData("Lift Switch", robot.liftSwitch.get());
-        telemetry.addData("Wheels L/R", robot.wheels.getEncoder(MOTOR_SIDE.LEFT) +
-                "/" + robot.wheels.getEncoder(MOTOR_SIDE.RIGHT));
-        telemetry.addData("Wheels Rate", Round.truncate(robot.wheels.getRate()));
-        telemetry.addData("Left Rate (Min/Max)", Round.truncate(rate[MOTOR_SIDE.LEFT.ordinal()]) +
-                "\t(" + Round.truncate(min[MOTOR_SIDE.LEFT.ordinal()]) + "/" + Round.truncate(max[MOTOR_SIDE.LEFT.ordinal()]) + ")");
-        telemetry.addData("Right Rate (Min/Max)", Round.truncate(rate[MOTOR_SIDE.RIGHT.ordinal()]) +
-                "\t(" + Round.truncate(min[MOTOR_SIDE.RIGHT.ordinal()]) + "/" + Round.truncate(max[MOTOR_SIDE.RIGHT.ordinal()]) + ")");
         telemetry.addData("Arm", Round.truncate(robot.jewelArm.getPostion()));
         telemetry.addData("Gyro", robot.gyro.isReady() ? Round.truncate(robot.gyro.getHeading()) : "<Not Ready>");
         telemetry.addData("", "");

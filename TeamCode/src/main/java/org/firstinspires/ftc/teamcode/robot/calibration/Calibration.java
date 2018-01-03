@@ -32,6 +32,7 @@ public class Calibration extends OpMode {
 
         // Manual registration of subsystems
         subsystems.add(new Claws(this, robot, buttons));
+        subsystems.add(new Wheels(this, robot, buttons));
     }
 
     @Override

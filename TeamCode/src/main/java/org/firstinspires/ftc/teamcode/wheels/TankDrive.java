@@ -54,6 +54,14 @@ public class TankDrive implements Wheels {
         resetEncoder();
     }
 
+    public RatePID getPID(MOTOR_SIDE side, MOTOR_END end) {
+        Integer index = findEncoderIndex(side, end);
+        if (index == null) {
+            return null;
+        }
+        return pids[index];
+    }
+
     public boolean isAvailable() {
         return config != null;
     }

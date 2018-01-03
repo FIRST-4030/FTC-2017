@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.wheels;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
 
+import org.firstinspires.ftc.teamcode.driveto.RatePID;
 import org.firstinspires.ftc.teamcode.utils.Available;
 
 public interface Wheels extends Available {
@@ -20,6 +21,8 @@ public interface Wheels extends Available {
     float getTicksPerMM(MOTOR_SIDE side);
 
     float getTicksPerMM(MOTOR_SIDE side, MOTOR_END end);
+
+    RatePID getPID(MOTOR_SIDE side, MOTOR_END end);
 
     int getEncoder();
 
