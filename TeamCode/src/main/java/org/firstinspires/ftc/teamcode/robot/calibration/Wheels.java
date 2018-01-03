@@ -16,6 +16,15 @@ public class Wheels extends Subsystem {
     private static final float MAX_INCREMENT = 1.0f;
     private static final float DEFAULT_INCREMENT = 0.01f;
 
+    private static final String SPEED = "WHEELS-SPEED";
+    private static final float SPEED_INCREMENT = 0.01f;
+    private static final float SPEED_MIN = 0.01f;
+    private static final float SPEED_MAX = 1.0f;
+    private static final float SPEED_DEFAULT = 0.5f;
+    private static final String DRIVE = "WHEELS-DRIVE";
+    private static final String REVERSE = "WHEELS-REVERSE";
+    private static final String RAW = "WHEELS-RAW";
+
     private enum PIDVal {P, I}
 
     private final RatePID pids[] = new RatePID[MOTOR_SIDE.values().length];
@@ -38,7 +47,17 @@ public class Wheels extends Subsystem {
     }
 
     public void load() {
-        buttons.register("REVERSE", opmode.gamepad1, PAD_BUTTON.left_bumper, BUTTON_TYPE.TOGGLE);
+        robot.wheels.resetEncoder();
+
+        buttons.register(DRIVE, opmode.gamepad1, PAD_BUTTON.right_trigger);
+        buttons.register(RAW, opmode.gamepad1, PAD_BUTTON.left_trigger);
+        buttons.register(REVERSE, opmode.gamepad1, PAD_BUTTON.back, BUTTON_TYPE.TOGGLE);
+
+        buttons.spinners.add(SPEED,
+                opmode.gamepad1, PAD_BUTTON.right_stick_y, PAD_BUTTON.left_stick_y,
+                SPEED_INCREMENT, SPEED_DEFAULT);
+        buttons.spinners.setLimit(SPEED, SPEED_MIN, false);
+        buttons.spinners.setLimit(SPEED, SPEED_MAX, true);
 
         buttons.spinners.add(INCREMENT,
                 opmode.gamepad1, PAD_BUTTON.right_bumper, PAD_BUTTON.left_bumper,
@@ -53,6 +72,11 @@ public class Wheels extends Subsystem {
     }
 
     public void unload() {
+        buttons.deregister(DRIVE);
+        buttons.deregister(REVERSE);
+        buttons.deregister(RAW);
+        buttons.spinners.remove(SPEED);
+
         for (MOTOR_SIDE side : MOTOR_SIDE.values()) {
             for (PIDVal p : PIDVal.values()) {
                 buttons.spinners.remove(pidName(side, p));
@@ -62,9 +86,17 @@ public class Wheels extends Subsystem {
     }
 
     public void loop() {
-        // TODO: Drive
-        if (buttons.get("REVERSE")) {
-            
+        if (buttons.held(RAW)) {
+            robot.wheels.setPowerRaw(-opmode.gamepad1.left_stick_y, MOTOR_SIDE.LEFT);
+            robot.wheels.setPowerRaw(-opmode.gamepad1.right_stick_y, MOTOR_SIDE.RIGHT);
+        } else if (buttons.held(DRIVE)) {
+            float speed = buttons.spinners.getFloat(SPEED);
+            if (buttons.get(REVERSE)) {
+                speed *= -1;
+            }
+            robot.wheels.setSpeed(speed);
+        } else {
+            robot.wheels.stop();
         }
 
         for (MOTOR_SIDE side : MOTOR_SIDE.values()) {

@@ -3,18 +3,15 @@ package org.firstinspires.ftc.teamcode.robot.test;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.actuators.ServoFTC;
 import org.firstinspires.ftc.teamcode.buttons.PAD_BUTTON;
 import org.firstinspires.ftc.teamcode.buttons.BUTTON_TYPE;
 import org.firstinspires.ftc.teamcode.buttons.ButtonHandler;
-import org.firstinspires.ftc.teamcode.robot.CLAWS;
 import org.firstinspires.ftc.teamcode.robot.Robot;
 import org.firstinspires.ftc.teamcode.robot.common.Common;
 import org.firstinspires.ftc.teamcode.utils.Round;
 import org.firstinspires.ftc.teamcode.vuforia.ImageFTC;
-import org.firstinspires.ftc.teamcode.wheels.MOTOR_SIDE;
 
-@TeleOp(name = "Calibration-Old", group = "Test")
+@TeleOp(name = "Calibration-Old", group = "Calibration")
 public class Calibration extends OpMode {
 
     private static final float SERVO_INTERVAL_INTERVAL = 0.01f;
@@ -28,9 +25,6 @@ public class Calibration extends OpMode {
     private int imageInterval = 10;
     private float servoInterval = 0.01f;
     private long imageTimestamp = 0;
-    private final float[] rate = new float[MOTOR_SIDE.values().length];
-    private final float[] min = new float[MOTOR_SIDE.values().length];
-    private final float[] max = new float[MOTOR_SIDE.values().length];
 
     @Override
     public void init() {
@@ -40,9 +34,6 @@ public class Calibration extends OpMode {
         common = robot.common;
 
         // Put these servos someplace vaguely safe
-        for (ServoFTC claw : robot.claws) {
-            claw.setPositionRaw(0.5f);
-        }
         robot.jewelArm.setPositionRaw(0.5f);
 
         // Start Vuforia tracking
@@ -83,7 +74,6 @@ public class Calibration extends OpMode {
     public void start() {
         telemetry.clearAll();
         robot.lift.resetEncoder();
-        robot.wheels.resetEncoder();
     }
 
     @Override
@@ -94,7 +84,6 @@ public class Calibration extends OpMode {
         jewelAreaInput();
 
         // Adjust the lift and wheels
-        robot.wheels.setPowerRaw(-gamepad1.left_stick_y);
         robot.lift.setPower(-gamepad1.right_stick_y);
 
         // Adjust the jewel arm
@@ -129,8 +118,6 @@ public class Calibration extends OpMode {
                 image.savePNG("calibration-" + image.getTimestamp() + ".png");
             }
         }
-
-        // Wheel rates
 
         // Feedback
         telemetry.addData("Servo Interval", Round.truncate(servoInterval));
