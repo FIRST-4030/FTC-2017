@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.utils.Round;
 import org.firstinspires.ftc.teamcode.vuforia.ImageFTC;
 import org.firstinspires.ftc.teamcode.wheels.MOTOR_SIDE;
 
-@TeleOp(name = "Calibration", group = "Test")
+@TeleOp(name = "Calibration-Old", group = "Test")
 public class Calibration extends OpMode {
 
     private static final float SERVO_INTERVAL_INTERVAL = 0.01f;
@@ -50,10 +50,6 @@ public class Calibration extends OpMode {
 
         // Motor/Servo buttons
         buttons = new ButtonHandler(robot);
-        buttons.register("CLAW-" + CLAWS.TOP + "-UP", gamepad1, PAD_BUTTON.dpad_up);
-        buttons.register("CLAW-" + CLAWS.TOP + "-DOWN", gamepad1, PAD_BUTTON.dpad_down);
-        buttons.register("CLAW-" + CLAWS.BOTTOM + "-UP", gamepad1, PAD_BUTTON.dpad_right);
-        buttons.register("CLAW-" + CLAWS.BOTTOM + "-DOWN", gamepad1, PAD_BUTTON.dpad_left);
         buttons.register("ARM-UP", gamepad1, PAD_BUTTON.a);
         buttons.register("ARM-DOWN", gamepad1, PAD_BUTTON.b);
         buttons.register("SERVO-INTERVAL-UP", gamepad1, PAD_BUTTON.right_stick_button);
@@ -101,15 +97,6 @@ public class Calibration extends OpMode {
         robot.wheels.setPowerRaw(-gamepad1.left_stick_y);
         robot.lift.setPower(-gamepad1.right_stick_y);
 
-        // Adjust the claws
-        for (CLAWS claw : CLAWS.values()) {
-            if (buttons.get("CLAW-" + claw + "-UP")) {
-                robot.claws[claw.ordinal()].setPositionRaw(robot.claws[claw.ordinal()].getPostion() + servoInterval);
-            } else if (buttons.get("CLAW-" + claw + "-DOWN")) {
-                robot.claws[claw.ordinal()].setPositionRaw(robot.claws[claw.ordinal()].getPostion() - servoInterval);
-            }
-        }
-
         // Adjust the jewel arm
         if (buttons.get("ARM-UP")) {
             robot.jewelArm.setPositionRaw(robot.jewelArm.getPostion() + servoInterval);
@@ -151,9 +138,6 @@ public class Calibration extends OpMode {
         }
 
         // Feedback
-        for (CLAWS claw : CLAWS.values()) {
-            telemetry.addData("Claw " + claw, Round.truncate(robot.claws[claw.ordinal()].getPostion()));
-        }
         telemetry.addData("Servo Interval", Round.truncate(servoInterval));
         telemetry.addData("Lift", robot.lift.getEncoder());
         telemetry.addData("Lift Switch", robot.liftSwitch.get());
