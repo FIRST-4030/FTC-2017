@@ -88,15 +88,18 @@ public class Wheels extends Subsystem {
 
     public void loop() {
         if (buttons.held(RAW)) {
+            robot.telemetry.addData("Drive Mode", "RAW");
             robot.wheels.setPowerRaw(-opmode.gamepad1.left_stick_y, MOTOR_SIDE.LEFT);
             robot.wheels.setPowerRaw(-opmode.gamepad1.right_stick_y, MOTOR_SIDE.RIGHT);
         } else if (buttons.held(DRIVE)) {
+            robot.telemetry.addData("Drive Mode", "SPEED");
             float speed = buttons.spinners.getFloat(SPEED);
             if (buttons.get(REVERSE)) {
                 speed *= -1;
             }
             robot.wheels.setSpeed(speed);
         } else {
+            robot.telemetry.addData("Drive Mode", "STOP");
             robot.wheels.stop();
         }
 
