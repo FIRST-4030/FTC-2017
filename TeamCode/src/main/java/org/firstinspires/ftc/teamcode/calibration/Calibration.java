@@ -13,11 +13,10 @@ import java.util.Vector;
 
 @TeleOp(name = "Calibration", group = "Calibration")
 public class Calibration extends OpMode {
+    private static final String NEXT_SUBSYSTEM = "NEXT_SUBSYSTEM";
 
-    // Devices
+    // Devices & Buttons
     private Robot robot = null;
-
-    // Buttons
     private ButtonHandler buttons = null;
 
     // Subsystems
@@ -30,7 +29,7 @@ public class Calibration extends OpMode {
         buttons = new ButtonHandler(robot);
 
         // Our master switch
-        buttons.register("NEXT_SUBSYSTEM", gamepad1, PAD_BUTTON.guide);
+        buttons.register(NEXT_SUBSYSTEM, gamepad1, PAD_BUTTON.guide);
 
         // Manual registration of subsystems
         // These subsystems will change year-to-year but the framework is bot-agnostic
@@ -40,9 +39,9 @@ public class Calibration extends OpMode {
 
     @Override
     public void start() {
-        // Select and load the first subsystem
+        // Select and activate the first subsystem
         current = next(current);
-        current.load();
+        current.activate();
     }
 
     @Override
@@ -55,11 +54,11 @@ public class Calibration extends OpMode {
         buttons.update();
 
         // Cycle through the registered subsystems
-        if (buttons.get("NEXT_SUBSYSTEM")) {
-            current.unload();
+        if (buttons.get(NEXT_SUBSYSTEM)) {
+            current.deactivate();
             telemetry.clearAll();
             current = next(current);
-            current.load();
+            current.activate();
         }
 
         // Do whatever the subsystem wants

@@ -9,18 +9,58 @@ abstract public class Subsystem {
     protected final OpMode opmode;
     protected final Robot robot;
     protected final ButtonHandler buttons;
+    private boolean active;
+
+    public abstract String name();
+
+    protected abstract void load();
+
+    protected abstract void unload();
+
+    protected abstract void update();
 
     public Subsystem(OpMode opmode, Robot robot, ButtonHandler buttons) {
         this.opmode = opmode;
         this.robot = robot;
         this.buttons = buttons;
+        this.active = false;
     }
 
-    public abstract String name();
+    public boolean isActive() {
+        return active;
+    }
 
-    public abstract void load();
+    public void activate() {
+        setActive(true);
+    }
 
-    public abstract void unload();
+    public void deactivate() {
+        setActive(false);
+    }
 
-    public abstract void loop();
+    private void setActive(boolean active) {
+        // Short-circuit if there is no change
+        if (active == isActive()) {
+            return;
+        }
+
+        // Load or unload
+        if (active) {
+            load();
+        } else {
+            unload();
+        }
+        this.active = active;
+    }
+
+    public void loop() {
+        if (!isActive()) {
+            return;
+        }
+        update();
+    }
+
+    public void toggle() {
+        setActive(!isActive());
+    }
 }

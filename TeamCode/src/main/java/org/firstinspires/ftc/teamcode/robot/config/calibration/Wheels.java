@@ -47,7 +47,7 @@ public class Wheels extends Subsystem {
         return this.getClass().getSimpleName();
     }
 
-    public void load() {
+    protected void load() {
         robot.wheels.resetEncoder();
 
         buttons.register(DRIVE, opmode.gamepad1, PAD_BUTTON.right_trigger);
@@ -72,7 +72,7 @@ public class Wheels extends Subsystem {
         add(MOTOR_SIDE.RIGHT, PIDVal.I, PAD_BUTTON.x, PAD_BUTTON.b);
     }
 
-    public void unload() {
+    protected void unload() {
         buttons.deregister(DRIVE);
         buttons.deregister(REVERSE);
         buttons.deregister(RAW);
@@ -86,7 +86,7 @@ public class Wheels extends Subsystem {
         buttons.spinners.remove(INCREMENT);
     }
 
-    public void loop() {
+    protected void update() {
         if (buttons.held(RAW)) {
             robot.telemetry.addData("Drive Mode", "RAW");
             robot.wheels.setPowerRaw(-opmode.gamepad1.left_stick_y, MOTOR_SIDE.LEFT);

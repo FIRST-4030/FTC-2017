@@ -38,7 +38,7 @@ public class Claws extends Subsystem {
         return this.getClass().getSimpleName();
     }
 
-    public void load() {
+    protected void load() {
         buttons.spinners.add(INCREMENT,
                 opmode.gamepad1, PAD_BUTTON.right_bumper, PAD_BUTTON.left_bumper,
                 MIN_INCREMENT, DEFAULT_INCREMENT);
@@ -51,7 +51,7 @@ public class Claws extends Subsystem {
         add(MM.MAX, CLAWS.BOTTOM, PAD_BUTTON.x, PAD_BUTTON.b);
     }
 
-    public void unload() {
+    protected void unload() {
         for (CLAWS claw : CLAWS.values()) {
             for (MM m : MM.values()) {
                 buttons.spinners.remove(clawName(m, claw));
@@ -60,7 +60,7 @@ public class Claws extends Subsystem {
         buttons.spinners.remove(INCREMENT);
     }
 
-    public void loop() {
+    protected void update() {
         for (CLAWS claw : CLAWS.values()) {
             for (MM m : MM.values()) {
                 float val = buttons.spinners.getFloat(clawName(m, claw));
