@@ -47,6 +47,10 @@ public class PID {
     }
 
     public float output() {
+        //this tells us what we feed to the motors as power in order to reach our target.
+        //caluclating error is already factored into this calculation, so we can just feed this value to motors
+        //want P to be as big as possible without oscilating
+        //I will be used to overcome static friction, like P, too much I will result in the system oscillating.
         return (params.P * error) + (params.I * accumulated) + (params.D * differential);
     }
 
