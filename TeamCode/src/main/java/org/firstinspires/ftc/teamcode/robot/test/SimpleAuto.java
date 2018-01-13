@@ -66,16 +66,16 @@ public class SimpleAuto extends OpMode {
         buttons.register("VUFORIA", gamepad1, PAD_BUTTON.left_stick_button);
 
         // Spinners
-        buttons.spinners.add("DRIVE_INC",
+        buttons.spinners.add("TURN_INC",
                 gamepad2, PAD_BUTTON.right_bumper, PAD_BUTTON.left_bumper,
-                Round.magnitudeValue(Drive.DRIVE_PARAMS.P / 100.0d),
-                Round.magnitudeValue(Drive.DRIVE_PARAMS.P / 10.0d));
+                Round.magnitudeValue(Drive.TURN_PARAMS.P / 100.0d),
+                Round.magnitudeValue(Drive.TURN_PARAMS.P / 10.0d));
         buttons.spinners.add("TURN_P",
                 gamepad2, PAD_BUTTON.dpad_up, PAD_BUTTON.dpad_down,
-                "DRIVE_INC", Drive.TURN_PARAMS.P);
+                "TURN_INC", Drive.TURN_PARAMS.P);
         buttons.spinners.add("TURN_I",
                 gamepad2, PAD_BUTTON.dpad_right, PAD_BUTTON.dpad_left,
-                "DRIVE_INC", Drive.TURN_PARAMS.I);
+                "TURN_INC", Drive.TURN_PARAMS.I);
         // Disable all spinners
         //buttons.spinners.setEnable(false);
     }
