@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.driveto.RatePID;
 import org.firstinspires.ftc.teamcode.utils.Round;
 
 public class TankDrive implements Wheels {
-    private static final boolean DEBUG = false;
+    private static final boolean DEBUG = true;
     private static final float JOYSTICK_DEADZONE = 0.1f;
     private static final float SPEED_DEADZONE = JOYSTICK_DEADZONE * 0.85f;
 
@@ -250,7 +250,9 @@ public class TankDrive implements Wheels {
                         telemetry.log().add(side + " (" + Round.truncate(pidSpeed) + "):\t" +
                                 "t: " + Round.truncate(pids[i].target) + "\t\t" +
                                 "l: " + Round.truncate(pids[i].last) + "\t" +
-                                "e: " + Round.truncate(pids[i].error)
+                                "e: " + Round.truncate(pids[i].error) + "\t" +
+                                "m: " + Round.truncate(config.motors[i].maxRate) +
+                                "s: " + Round.truncate(speedScale)
                         );
                     }
                 }
