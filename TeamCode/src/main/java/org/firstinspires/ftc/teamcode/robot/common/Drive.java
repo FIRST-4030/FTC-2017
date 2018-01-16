@@ -180,7 +180,7 @@ public class Drive implements CommonTask, DriveToListener {
                 }
                 break;
             case TIME:
-                robot.wheels.setSpeed(param.limitRange);
+                robot.wheels.setPowerRaw(param.limitRange);
                 break;
             case TIME_TURN:
                 robot.wheels.setSpeed(param.limitRange, MOTOR_SIDE.LEFT);
