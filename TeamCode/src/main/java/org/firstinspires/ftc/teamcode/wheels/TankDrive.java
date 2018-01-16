@@ -251,7 +251,7 @@ public class TankDrive implements Wheels {
                                 "t: " + Round.truncate(pids[i].target) + "\t\t" +
                                 "l: " + Round.truncate(pids[i].last) + "\t" +
                                 "e: " + Round.truncate(pids[i].error) + "\t" +
-                                "m: " + Round.truncate(config.motors[i].maxRate) +
+                                "m: " + Round.truncate(config.motors[i].maxRate) + "\t" +
                                 "s: " + Round.truncate(speedScale)
                         );
                     }
@@ -312,10 +312,10 @@ public class TankDrive implements Wheels {
 
         // Negative is forward; this is typically the opposite of native motor config
         float left = cleanJoystick(-pad.left_stick_y);
-        this.setSpeed(left, MOTOR_SIDE.LEFT);
+        this.setPowerRaw(left, MOTOR_SIDE.LEFT);
 
         float right = cleanJoystick(-pad.right_stick_y);
-        this.setSpeed(right, MOTOR_SIDE.RIGHT);
+        this.setPowerRaw(right, MOTOR_SIDE.RIGHT);
     }
 
     protected float limit(float input) {
