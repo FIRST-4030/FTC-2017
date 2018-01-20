@@ -14,7 +14,7 @@ public class Jewel implements CommonTask {
 
     // Drive constants
     private static final float ARM_DELAY = 0.5f;
-    private static final int PIVOT_MILLS = 1000;
+    private static final int PIVOT_MILLS = 75;
 
     // Image constants
     private int[] IMAGE_MAX = new int[]{1279, 719};
@@ -169,7 +169,7 @@ public class Jewel implements CommonTask {
                 break;
             case HIT_JEWEL:
                 driver.drive = robot.common.drive.timeTurn(PIVOT_MILLS,
-                        (pivotCCW(alliance) ? -1 : 1) * Drive.SPEED_FORWARD);
+                        (pivotCCW(alliance) ? -1 : 1) * Drive.SPEED_FORWARD_SLOW);
                 hitState = hitState.next();
                 break;
             case RETRACT_ARM:
