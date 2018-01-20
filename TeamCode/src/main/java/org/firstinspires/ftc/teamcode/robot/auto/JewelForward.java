@@ -9,6 +9,7 @@ import org.firstinspires.ftc.teamcode.driveto.AutoDriver;
 import org.firstinspires.ftc.teamcode.field.Field;
 import org.firstinspires.ftc.teamcode.robot.Robot;
 import org.firstinspires.ftc.teamcode.robot.common.Common;
+import org.firstinspires.ftc.teamcode.robot.common.Drive;
 import org.firstinspires.ftc.teamcode.robot.common.Lift;
 import org.firstinspires.ftc.teamcode.utils.OrderedEnum;
 import org.firstinspires.ftc.teamcode.utils.OrderedEnumHelper;
@@ -150,7 +151,8 @@ public class JewelForward extends OpMode {
                 state = state.next();
                 break;
             case PIVOT_BACK:
-                driver.drive = common.drive.heading(reverseOnAlliance(0));
+                // Skip now that we have better turns
+                //driver.drive = common.drive.heading(reverseOnAlliance(0));
                 state = state.next();
                 break;
             case PIVOT_BACK2:
@@ -204,7 +206,7 @@ public class JewelForward extends OpMode {
                 state = state.next();
                 break;
             case RELEASE_TURN:
-                driver.drive = common.drive.degrees(reverseOnAlliance(5));
+                driver.drive = common.drive.timeTurn(100, Drive.SPEED_FORWARD_SLOW);
                 state = state.next();
                 break;
             case DONE:

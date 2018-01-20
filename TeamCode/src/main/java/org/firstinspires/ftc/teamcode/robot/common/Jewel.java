@@ -14,7 +14,7 @@ public class Jewel implements CommonTask {
 
     // Drive constants
     private static final float ARM_DELAY = 0.5f;
-    private static final int PIVOT_MILLS = 75;
+    private static final int PIVOT_MILLS = 50;
 
     // Image constants
     private int[] IMAGE_MAX = new int[]{1279, 719};
