@@ -64,20 +64,6 @@ public class SimpleAuto extends OpMode {
         buttons = new ButtonHandler(robot);
         buttons.register("REVERSE", gamepad1, PAD_BUTTON.left_trigger, BUTTON_TYPE.TOGGLE);
         buttons.register("VUFORIA", gamepad1, PAD_BUTTON.left_stick_button);
-
-        // Spinners
-        buttons.spinners.add("TURN_INC",
-                gamepad2, PAD_BUTTON.right_bumper, PAD_BUTTON.left_bumper,
-                Round.magnitudeValue(Drive.TURN_PARAMS.P / 100.0d),
-                Round.magnitudeValue(Drive.TURN_PARAMS.P / 10.0d));
-        buttons.spinners.add("TURN_P",
-                gamepad2, PAD_BUTTON.dpad_up, PAD_BUTTON.dpad_down,
-                "TURN_INC", Drive.TURN_PARAMS.P);
-        buttons.spinners.add("TURN_I",
-                gamepad2, PAD_BUTTON.dpad_right, PAD_BUTTON.dpad_left,
-                "TURN_INC", Drive.TURN_PARAMS.I);
-        // Disable all spinners
-        //buttons.spinners.setEnable(false);
     }
 
     @Override
@@ -99,8 +85,6 @@ public class SimpleAuto extends OpMode {
 
         // Input
         buttons.update();
-        Drive.TURN_PARAMS.P = buttons.spinners.getFloat("TURN_P");
-        Drive.TURN_PARAMS.I = buttons.spinners.getFloat("TURN_I");
         if (buttons.get("VUFORIA") && !robot.vuforia.isRunning()) {
             robot.vuforia.start();
         }
@@ -123,10 +107,6 @@ public class SimpleAuto extends OpMode {
                 Round.truncate(pid.last) + "\t\t" + Round.truncate(pid.last / time));
 
         // Driver feedback
-        telemetry.addData("Wheels L/R", robot.wheels.getEncoder(MOTOR_SIDE.LEFT) +
-                "/" + robot.wheels.getEncoder(MOTOR_SIDE.RIGHT));
-        telemetry.addData("Wheels Rate L/R", Round.truncate(robot.wheels.getRate(MOTOR_SIDE.LEFT)) +
-                "/" + Round.truncate(robot.wheels.getRate(MOTOR_SIDE.RIGHT)));
         telemetry.addData("Vuforia Angle", vuforiaAngle);
         telemetry.addData("LiftZero", liftState);
         telemetry.addData("Lift", robot.lift.getEncoder() +
@@ -142,31 +122,6 @@ public class SimpleAuto extends OpMode {
          */
         if (driver.isRunning(time)) {
             return;
-        }
-
-        // Wheel PID testing @ gamepad2
-        float speed = 0.0f;
-        if (gamepad2.a) {
-            speed = 0.25f;
-        } else if (gamepad2.b) {
-            speed = 0.50f;
-        } else if (gamepad2.x) {
-            speed = 0.75f;
-        } else if (gamepad2.y) {
-            speed = -gamepad2.left_stick_y * 0.10f;
-        }
-        if (speed > 0.0d) {
-            if (Math.abs(gamepad2.left_trigger) > 0.5) {
-                robot.wheels.setSpeed(-speed, MOTOR_SIDE.LEFT);
-                robot.wheels.setSpeed(speed, MOTOR_SIDE.RIGHT);
-            } else if (Math.abs(gamepad2.right_trigger) > 0.5) {
-                robot.wheels.setSpeed(speed, MOTOR_SIDE.LEFT);
-                robot.wheels.setSpeed(-speed, MOTOR_SIDE.RIGHT);
-            } else {
-                robot.wheels.setSpeed(speed);
-            }
-        } else {
-            robot.wheels.stop();
         }
 
         // Test lift zero, with persistent timeout
@@ -213,29 +168,17 @@ public class SimpleAuto extends OpMode {
                 common.jewel.reset();
             }
         } else if (gamepad1.b) {
-            speed = Drive.SPEED_FORWARD;
+            float speed = Drive.SPEED_FORWARD;
             if (buttons.get("REVERSE")) {
                 speed *= -1;
             }
             driver.drive = common.drive.timeTurn(1000, speed);
         } else if (gamepad1.x) {
-            speed = Drive.SPEED_FORWARD;
+            float speed = Drive.SPEED_FORWARD;
             if (buttons.get("REVERSE")) {
                 speed *= -1;
             }
             driver.drive = common.drive.time(1000, speed);
-        } else if (gamepad1.dpad_left) {
-            driver.drive = common.drive.heading(270);
-        } else if (gamepad1.dpad_right) {
-            driver.drive = common.drive.heading(90);
-        } else if (gamepad1.dpad_up) {
-            driver.drive = common.drive.heading(0);
-        } else if (gamepad1.dpad_down) {
-            driver.drive = common.drive.heading(180);
-        } else if (gamepad1.left_bumper) {
-            driver.drive = common.drive.heading(315);
-        } else if (gamepad1.right_bumper) {
-            driver.drive = common.drive.heading(45);
         }
     }
 }
