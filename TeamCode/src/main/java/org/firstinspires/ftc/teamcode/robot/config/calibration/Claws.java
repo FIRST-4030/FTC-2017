@@ -20,7 +20,7 @@ public class Claws extends Subsystem {
 
     private enum MM {MIN, MAX}
 
-    private float[][] minMax = new float[CLAWS.values().length][MM.values().length];
+    private final float[][] minMax = new float[CLAWS.values().length][MM.values().length];
 
     public Claws(OpMode opmode, Robot robot, ButtonHandler buttons) {
         super(opmode, robot, buttons);

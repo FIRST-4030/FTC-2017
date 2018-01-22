@@ -125,7 +125,7 @@ public class Drive implements CommonTask, DriveToListener {
 
     @Override
     public float driveToSensor(DriveToParams param) {
-        float value = 0;
+        float value;
         switch ((SENSOR_TYPE) param.reference) {
             case DRIVE_ENCODER:
                 value = robot.wheels.getEncoder();

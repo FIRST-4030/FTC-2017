@@ -22,7 +22,7 @@ public class Calibration extends OpMode {
 
     // Subsystems
     private Subsystem current = null;
-    private Vector<Subsystem> subsystems = new Vector<>();
+    private final Vector<Subsystem> subsystems = new Vector<>();
 
     @Override
     public void init() {
