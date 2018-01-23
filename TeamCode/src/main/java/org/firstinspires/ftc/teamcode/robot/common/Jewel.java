@@ -177,6 +177,11 @@ public class Jewel implements CommonTask {
                 driver.interval = ARM_DELAY;
                 hitState = hitState.next();
                 break;
+            case HIT_JEWEL_REVERSE:
+                driver.drive = robot.common.drive.timeTurn(PIVOT_MILLS,
+                        (pivotCCW(alliance) ? -1 : 1) * -Drive.SPEED_FORWARD_SLOW);
+                hitState = hitState.next();
+                break;
             case DONE:
                 driver.done = true;
                 break;
@@ -231,6 +236,7 @@ public class Jewel implements CommonTask {
         DEPLOY_ARM,         // Move the arm down so we can hit the jewel
         HIT_JEWEL,          // Pivot to hit the correct jewel
         RETRACT_ARM,        // Retract the arm so we don't accidentally hit the jewels again
+        HIT_JEWEL_REVERSE,  // Blind pivot back toward the starting heading
         DONE;
 
         public HIT_STATE prev() {

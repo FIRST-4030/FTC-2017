@@ -22,7 +22,7 @@ public class JewelForward extends OpMode {
     // Auto constants
     private static final int RELEASE_REVERSE_MM = 125;
     private static final float RELEASE_DELAY = 0.5f;
-    private static final int DRIVE_TO_BOX_MM = 600;
+    private static final int DRIVE_TO_BOX_MM = 575;
 
     // Devices and subsystems
     private Robot robot = null;
@@ -150,12 +150,16 @@ public class JewelForward extends OpMode {
                 driver.interval = delay.seconds();
                 state = state.next();
                 break;
-            case PIVOT_BACK:
+            case DRIVE_DOWN:
+                driver.drive = common.drive.distance(150);
+                state = state.next();
+                break;
+            case PIVOT_ZERO:
                 driver.drive = common.drive.heading(reverseOnAlliance(alliance == Field.AllianceColor.BLUE ? 3 : 7));
                 state = state.next();
                 break;
             case DRIVE_FORWARD:
-                driver.drive = common.drive.distance(600);
+                driver.drive = common.drive.distance(525);
                 state = state.next();
                 break;
             case PIVOT135:
@@ -166,7 +170,7 @@ public class JewelForward extends OpMode {
                 break;
             case DRIVE_DIAGONAL:
                 driver.drive = (alliance == Field.AllianceColor.RED ?
-                        common.drive.distance(1000) :
+                        common.drive.distance(700) :
                         common.drive.distance(-725));
                 state = state.next();
                 break;
@@ -233,7 +237,8 @@ public class JewelForward extends OpMode {
         LIFT_INIT,          // Initiate lift & grab block
         HIT_JEWEL,          // Turn to hit the jewel
         DELAY,              // Optionally wait for our alliance partner
-        PIVOT_BACK,         // Pivot back to a heading of 0
+        DRIVE_DOWN,         // Get our wheels off the ramp
+        PIVOT_ZERO,         // Pivot back to a heading of 0
         DRIVE_FORWARD,      // Drive distance to appropriate point
         PIVOT135,           // Pivot to align with the desired rack
         DRIVE_DIAGONAL,     // drive to the spot between the balancing plates
