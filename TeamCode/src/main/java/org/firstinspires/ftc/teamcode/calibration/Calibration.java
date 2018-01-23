@@ -7,6 +7,7 @@ import org.firstinspires.ftc.teamcode.buttons.ButtonHandler;
 import org.firstinspires.ftc.teamcode.buttons.PAD_BUTTON;
 import org.firstinspires.ftc.teamcode.robot.Robot;
 import org.firstinspires.ftc.teamcode.robot.calibration.Claws;
+import org.firstinspires.ftc.teamcode.robot.calibration.Distance;
 import org.firstinspires.ftc.teamcode.robot.calibration.Turns;
 import org.firstinspires.ftc.teamcode.robot.calibration.Wheels;
 
@@ -34,6 +35,7 @@ public class Calibration extends OpMode {
 
         // Manual registration of subsystems
         // These subsystems will change year-to-year but the framework is bot-agnostic
+        subsystems.add(new Distance(this, robot, buttons));
         subsystems.add(new Turns(this, robot, buttons));
         subsystems.add(new Claws(this, robot, buttons));
         subsystems.add(new Wheels(this, robot, buttons));
