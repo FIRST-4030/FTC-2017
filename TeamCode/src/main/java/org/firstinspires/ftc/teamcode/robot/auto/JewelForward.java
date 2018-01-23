@@ -20,9 +20,9 @@ import org.firstinspires.ftc.teamcode.utils.Round;
 public class JewelForward extends OpMode {
 
     // Auto constants
-    private static final int RELEASE_REVERSE_MM = 90;
+    private static final int RELEASE_REVERSE_MM = 125;
     private static final float RELEASE_DELAY = 0.5f;
-    private static final int DRIVE_TO_BOX_MM = 675;
+    private static final int DRIVE_TO_BOX_MM = 600;
 
     // Devices and subsystems
     private Robot robot = null;
@@ -155,7 +155,7 @@ public class JewelForward extends OpMode {
                 state = state.next();
                 break;
             case DRIVE_FORWARD:
-                driver.drive = common.drive.distance(650);
+                driver.drive = common.drive.distance(600);
                 state = state.next();
                 break;
             case PIVOT135:
@@ -166,7 +166,7 @@ public class JewelForward extends OpMode {
                 break;
             case DRIVE_DIAGONAL:
                 driver.drive = (alliance == Field.AllianceColor.RED ?
-                        common.drive.distance(1100) :
+                        common.drive.distance(1000) :
                         common.drive.distance(-725));
                 state = state.next();
                 break;
@@ -196,12 +196,12 @@ public class JewelForward extends OpMode {
                 driver.interval = RELEASE_DELAY;
                 state = state.next();
                 break;
-            case RELEASE_REVERSE:
-                driver.drive = common.drive.distance(-RELEASE_REVERSE_MM);
-                state = state.next();
-                break;
             case RELEASE_TURN:
                 driver.drive = common.drive.timeTurn(50, Drive.SPEED_FORWARD_SLOW);
+                state = state.next();
+                break;
+            case RELEASE_REVERSE:
+                driver.drive = common.drive.distance(-RELEASE_REVERSE_MM);
                 state = state.next();
                 break;
             case DONE:

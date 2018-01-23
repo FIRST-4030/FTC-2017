@@ -17,7 +17,7 @@ public class Drive implements CommonTask, DriveToListener {
     private static final float TURN_TOLERANCE = 1.5f; // Permitted heading error in degrees
     private static final float TURN_DIFF_TOLERANCE = 0.001f; // Permitted error change rate
     private static final int TURN_TIMEOUT = (int) (DriveTo.TIMEOUT_DEFAULT * 1.5);
-    public static final PIDParams TURN_PARAMS = new PIDParams(0.07f, 0.45f, 0.0f,
+    public static final PIDParams TURN_PARAMS = new PIDParams(0.05f, 0.42f, 0.0f,
             null, true, true);
 
     // PID Drive
