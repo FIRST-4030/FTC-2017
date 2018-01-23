@@ -6,9 +6,9 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.buttons.ButtonHandler;
 import org.firstinspires.ftc.teamcode.buttons.PAD_BUTTON;
 import org.firstinspires.ftc.teamcode.robot.Robot;
-import org.firstinspires.ftc.teamcode.robot.config.calibration.Claws;
-import org.firstinspires.ftc.teamcode.robot.config.calibration.Turns;
-import org.firstinspires.ftc.teamcode.robot.config.calibration.Wheels;
+import org.firstinspires.ftc.teamcode.robot.calibration.Claws;
+import org.firstinspires.ftc.teamcode.robot.calibration.Turns;
+import org.firstinspires.ftc.teamcode.robot.calibration.Wheels;
 
 import java.util.Vector;
 

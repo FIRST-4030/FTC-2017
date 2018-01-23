@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.robot.config.calibration;
+package org.firstinspires.ftc.teamcode.robot.calibration;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
