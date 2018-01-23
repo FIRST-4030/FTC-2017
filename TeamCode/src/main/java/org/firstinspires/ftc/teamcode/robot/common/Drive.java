@@ -14,10 +14,10 @@ public class Drive implements CommonTask, DriveToListener {
     private static final boolean DEBUG = false;
 
     // PID Turns
-    private static final float TURN_TOLERANCE = 1.0f; // Permitted heading error in degrees
+    private static final float TURN_TOLERANCE = 1.5f; // Permitted heading error in degrees
     private static final float TURN_DIFF_TOLERANCE = 0.001f; // Permitted error change rate
-    private static final int TURN_TIMEOUT = DriveTo.TIMEOUT_DEFAULT * 2;
-    public static final PIDParams TURN_PARAMS = new PIDParams(0.02f, 0.4f, 0.0f,
+    private static final int TURN_TIMEOUT = (int) (DriveTo.TIMEOUT_DEFAULT * 1.5);
+    public static final PIDParams TURN_PARAMS = new PIDParams(0.07f, 0.45f, 0.0f,
             null, true, true);
 
     // PID Drive
@@ -30,9 +30,6 @@ public class Drive implements CommonTask, DriveToListener {
     public final static float SPEED_FORWARD = 1.0f;
     public final static float SPEED_FORWARD_SLOW = SPEED_FORWARD * 0.75f;
     public final static float SPEED_REVERSE = -SPEED_FORWARD;
-
-    // An estimate of the number of ricks we slip on inertia after calling wheels.stop()
-    private final static int OVERRUN_ENCODER = 10;
 
     // Runtime
     private final Robot robot;
@@ -48,7 +45,7 @@ public class Drive implements CommonTask, DriveToListener {
             // Remember timeouts (until the next drive())
             driver.timeout = driver.drive.isTimeout();
 
-            // Cancel autodrive when we're done
+            // Cancel AutoDrive when we're done
             if (driver.drive.isDone()) {
                 driver.drive = null;
                 robot.wheels.setTeleop(true);

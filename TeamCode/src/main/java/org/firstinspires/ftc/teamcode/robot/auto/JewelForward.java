@@ -155,7 +155,7 @@ public class JewelForward extends OpMode {
                 state = state.next();
                 break;
             case DRIVE_FORWARD:
-                driver.drive = common.drive.distance(750);
+                driver.drive = common.drive.distance(650);
                 state = state.next();
                 break;
             case PIVOT135:
@@ -166,8 +166,8 @@ public class JewelForward extends OpMode {
                 break;
             case DRIVE_DIAGONAL:
                 driver.drive = (alliance == Field.AllianceColor.RED ?
-                        common.drive.distance(1310) :
-                        common.drive.distance(-785));
+                        common.drive.distance(1100) :
+                        common.drive.distance(-725));
                 state = state.next();
                 break;
             case PIVOT_TO_FACE:
