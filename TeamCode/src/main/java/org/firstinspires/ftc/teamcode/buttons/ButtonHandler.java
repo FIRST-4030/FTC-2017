@@ -10,7 +10,7 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 
 public class ButtonHandler {
-    private final static float AXIS_THRESHOLD = 0.50f;
+    private final static float AXIS_THRESHOLD = 0.6f;
 
     private final HashMap<String, PadButton> buttons;
     private final Robot robot;
