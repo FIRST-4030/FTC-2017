@@ -140,6 +140,10 @@ public class JewelForward extends OpMode {
             case PARSE_JEWEL:
                 driver = delegateDriver(common.jewel.parse(driver));
                 break;
+            case VUFORIA_STOP:
+                robot.vuforia.stop();
+                state = state.next();
+                break;
             case LIFT_INIT:
                 driver = delegateDriver(common.lift.autoStart(driver));
                 break;
@@ -234,6 +238,7 @@ public class JewelForward extends OpMode {
     enum AUTO_STATE implements OrderedEnum {
         INIT,               // Initiate stuff
         PARSE_JEWEL,        // Parse which jewel is on which side
+        VUFORIA_STOP,       // Disable vuforia processing
         LIFT_INIT,          // Initiate lift & grab block
         HIT_JEWEL,          // Turn to hit the jewel
         DELAY,              // Optionally wait for our alliance partner
