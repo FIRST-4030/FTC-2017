@@ -32,8 +32,11 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 package org.firstinspires.ftc.teamcode.vuforia;
 
+import android.app.Application;
+
 import com.qualcomm.ftcrobotcontroller.R;
 import com.qualcomm.robotcore.util.RobotLog;
+import com.vuforia.CameraDevice;
 import com.vuforia.HINT;
 import com.vuforia.Image;
 import com.vuforia.Vuforia;
@@ -49,6 +52,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
+import org.firstinspires.ftc.robotcore.internal.vuforia.VuforiaLocalizerImpl;
+import org.firstinspires.ftc.teamcode.field.VuforiaConfigs;
 import org.firstinspires.ftc.teamcode.utils.Heading;
 
 import java.util.ArrayList;
@@ -89,6 +94,7 @@ public class VuforiaFTC {
     // Dynamic things we need to remember
     private VuforiaLocalizer vuforia = null;
     private int trackingTimeout = 100;
+    private VuforiaTrackables targetsRaw;
     private final List<VuforiaTrackable> targets = new ArrayList<>();
 
     // The actual data we care about
@@ -108,8 +114,15 @@ public class VuforiaFTC {
     }
 
     public void start() {
+        if (isRunning()) {
+            return;
+        }
+
         // Init Vuforia
-        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(DEBUG ? R.id.cameraMonitorViewId : null);
+        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
+        if (DEBUG) {
+            parameters.cameraMonitorViewIdParent = R.id.cameraMonitorViewId;
+        }
         parameters.vuforiaLicenseKey = VUFORIA_KEY;
         parameters.cameraDirection = CAMERA_DIRECTION;
         vuforia = ClassFactory.createVuforiaLocalizer(parameters);
@@ -118,7 +131,7 @@ public class VuforiaFTC {
          * Pre-processed target images from the Vuforia target manager:
          * https://developer.vuforia.com/target-manager.
          */
-        VuforiaTrackables targetsRaw = vuforia.loadTrackablesFromAsset(CONFIG_ASSET);
+        targetsRaw = vuforia.loadTrackablesFromAsset(CONFIG_ASSET);
         com.vuforia.Vuforia.setHint(HINT.HINT_MAX_SIMULTANEOUS_IMAGE_TARGETS, CONFIG_TARGETS_NUM);
         targets.addAll(targetsRaw);
 
@@ -137,11 +150,26 @@ public class VuforiaFTC {
         targetsRaw.activate();
     }
 
+    // This doesn't completely disable tracking, but it's a start
+    public void stop() {
+        if (!isRunning()) {
+            return;
+        }
+        targetsRaw.deactivate();
+        targetsRaw = null;
+        targets.clear();
+        vuforia = null;
+    }
+
     public boolean isRunning() {
         return (vuforia != null);
     }
 
     public void track() {
+        if (!isRunning()) {
+            return;
+        }
+
         for (VuforiaTrackable trackable : targets) {
             // Per-target visibility (somewhat imaginary but still useful)
             targetVisible.put(trackable.getName(), ((VuforiaTrackableDefaultListener) trackable.getListener()).isVisible());
@@ -183,6 +211,9 @@ public class VuforiaFTC {
     }
 
     public void display(Telemetry telemetry) {
+        if (!isRunning()) {
+            return;
+        }
 
         // Is the location track valid?
         telemetry.addData("Valid", isStale() ? "No" : "Yes");
@@ -217,6 +248,9 @@ public class VuforiaFTC {
      * @return True if frame capture is enabled
      */
     public boolean capturing() {
+        if (!isRunning()) {
+            return false;
+        }
         return vuforia.getFrameQueueCapacity() > CAPTURE_QUEUE_DISABLE;
     }
 
@@ -224,6 +258,9 @@ public class VuforiaFTC {
      * @param enable Enable or disable frame capture
      */
     public void enableCapture(boolean enable) {
+        if (!isRunning()) {
+            return;
+        }
         vuforia.setFrameQueueCapacity(enable ? CAPTURE_QUEUE_LEN : CAPTURE_QUEUE_DISABLE);
         if (!Vuforia.setFrameFormat(ImageFTC.FORMAT_VUFORIA_DEFAULT, enable)) {
             throw new IllegalArgumentException("Could not enable image capture format: " + ImageFTC.FORMAT_VUFORIA_DEFAULT);

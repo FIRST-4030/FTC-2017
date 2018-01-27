@@ -151,7 +151,7 @@ public class JewelForward extends OpMode {
                 state = state.next();
                 break;
             case DRIVE_DOWN:
-                driver.drive = common.drive.distance(150);
+                driver.drive = common.drive.distance(250);
                 state = state.next();
                 break;
             case PIVOT_ZERO:
