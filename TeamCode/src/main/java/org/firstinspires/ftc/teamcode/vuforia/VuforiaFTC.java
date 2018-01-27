@@ -58,6 +58,8 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 
 public class VuforiaFTC {
+    private static final boolean DEBUG = false;
+
     /**
      * TODO: If you downloaded this file from another team you need to get your own Vuforia key
      * See https://library.vuforia.com/articles/Solution/How-To-Create-an-App-License for instructions
@@ -107,7 +109,7 @@ public class VuforiaFTC {
 
     public void start() {
         // Init Vuforia
-        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(R.id.cameraMonitorViewId);
+        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(DEBUG ? R.id.cameraMonitorViewId : null);
         parameters.vuforiaLicenseKey = VUFORIA_KEY;
         parameters.cameraDirection = CAMERA_DIRECTION;
         vuforia = ClassFactory.createVuforiaLocalizer(parameters);
