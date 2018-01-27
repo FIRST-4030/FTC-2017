@@ -89,6 +89,7 @@ public class VuforiaFTC {
     // Dynamic things we need to remember
     private VuforiaLocalizer vuforia = null;
     private int trackingTimeout = 100;
+    private VuforiaTrackables targetsRaw;
     private final List<VuforiaTrackable> targets = new ArrayList<>();
 
     // The actual data we care about
@@ -118,7 +119,7 @@ public class VuforiaFTC {
          * Pre-processed target images from the Vuforia target manager:
          * https://developer.vuforia.com/target-manager.
          */
-        VuforiaTrackables targetsRaw = vuforia.loadTrackablesFromAsset(CONFIG_ASSET);
+        targetsRaw = vuforia.loadTrackablesFromAsset(CONFIG_ASSET);
         com.vuforia.Vuforia.setHint(HINT.HINT_MAX_SIMULTANEOUS_IMAGE_TARGETS, CONFIG_TARGETS_NUM);
         targets.addAll(targetsRaw);
 
@@ -135,6 +136,13 @@ public class VuforiaFTC {
 
         // Start tracking
         targetsRaw.activate();
+    }
+
+    public void stop() {
+        targetsRaw.deactivate();
+        targetsRaw = null;
+        targets.clear();
+        vuforia = null;
     }
 
     public boolean isRunning() {
