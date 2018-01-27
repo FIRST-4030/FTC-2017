@@ -49,6 +49,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
+import org.firstinspires.ftc.teamcode.field.VuforiaConfigs;
 import org.firstinspires.ftc.teamcode.utils.Heading;
 
 import java.util.ArrayList;
@@ -89,6 +90,7 @@ public class VuforiaFTC {
     // Dynamic things we need to remember
     private VuforiaLocalizer vuforia = null;
     private int trackingTimeout = 100;
+    private VuforiaTrackables targetsRaw;
     private final List<VuforiaTrackable> targets = new ArrayList<>();
 
     // The actual data we care about
@@ -109,7 +111,10 @@ public class VuforiaFTC {
 
     public void start() {
         // Init Vuforia
-        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(DEBUG ? R.id.cameraMonitorViewId : null);
+        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
+        if (DEBUG) {
+            parameters.cameraMonitorViewIdParent = R.id.cameraMonitorViewId;
+        }
         parameters.vuforiaLicenseKey = VUFORIA_KEY;
         parameters.cameraDirection = CAMERA_DIRECTION;
         vuforia = ClassFactory.createVuforiaLocalizer(parameters);
@@ -118,7 +123,7 @@ public class VuforiaFTC {
          * Pre-processed target images from the Vuforia target manager:
          * https://developer.vuforia.com/target-manager.
          */
-        VuforiaTrackables targetsRaw = vuforia.loadTrackablesFromAsset(CONFIG_ASSET);
+        targetsRaw = vuforia.loadTrackablesFromAsset(CONFIG_ASSET);
         com.vuforia.Vuforia.setHint(HINT.HINT_MAX_SIMULTANEOUS_IMAGE_TARGETS, CONFIG_TARGETS_NUM);
         targets.addAll(targetsRaw);
 
@@ -135,6 +140,15 @@ public class VuforiaFTC {
 
         // Start tracking
         targetsRaw.activate();
+    }
+
+    public void stop() {
+        targetsRaw.deactivate();
+        targetsRaw = null;
+        targets.clear();
+        vuforia = null;
+        Vuforia.onPause();
+        Vuforia.deinit();
     }
 
     public boolean isRunning() {
