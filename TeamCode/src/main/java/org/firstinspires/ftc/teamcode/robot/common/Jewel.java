@@ -108,7 +108,8 @@ public class Jewel implements CommonTask {
         // Outline for humans
         drawOutline();
 
-        return (left > right);
+        isLeftRed = (left > right);
+        return isLeftRed;
     }
 
     public boolean pivotCCW(Field.AllianceColor alliance) {
