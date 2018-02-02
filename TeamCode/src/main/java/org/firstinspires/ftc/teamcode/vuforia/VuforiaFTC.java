@@ -243,10 +243,7 @@ public class VuforiaFTC {
      * @return True if frame capture is enabled
      */
     public boolean capturing() {
-        if (!isRunning()) {
-            return false;
-        }
-        return vuforia.getFrameQueueCapacity() > CAPTURE_QUEUE_DISABLE;
+        return isRunning() && vuforia.getFrameQueueCapacity() > CAPTURE_QUEUE_DISABLE;
     }
 
     /**

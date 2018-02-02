@@ -259,7 +259,6 @@ public class Jewel extends OpMode {
                 state = state.next();
                 break;
             case DONE:
-                // Exit the opmode
                 driver.done = true;
                 break;
         }
