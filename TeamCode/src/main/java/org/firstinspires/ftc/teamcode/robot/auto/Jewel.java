@@ -7,6 +7,7 @@ import org.firstinspires.ftc.teamcode.buttons.PAD_BUTTON;
 import org.firstinspires.ftc.teamcode.buttons.ButtonHandler;
 import org.firstinspires.ftc.teamcode.driveto.AutoDriver;
 import org.firstinspires.ftc.teamcode.field.Field;
+import org.firstinspires.ftc.teamcode.field.VuforiaConfigs;
 import org.firstinspires.ftc.teamcode.robot.Robot;
 import org.firstinspires.ftc.teamcode.robot.common.Common;
 import org.firstinspires.ftc.teamcode.robot.common.Drive;
@@ -17,9 +18,10 @@ import org.firstinspires.ftc.teamcode.utils.Round;
 
 //@Disabled
 @com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "Jewel + Block", group = "Auto")
-public class JewelForward extends OpMode {
+public class Jewel extends OpMode {
 
     // Auto constants
+    private static final String TARGET = VuforiaConfigs.TargetNames[0];
     private static final int RELEASE_REVERSE_MM = 125;
     private static final float RELEASE_DELAY = 0.5f;
     private static final int DRIVE_TO_BOX_MM = 575;
@@ -30,13 +32,18 @@ public class JewelForward extends OpMode {
 
     // Runtime state
     private AutoDriver driver = new AutoDriver();
-    private JewelForward.AUTO_STATE state = JewelForward.AUTO_STATE.LIFT_INIT;
+    private AUTO_STATE state = AUTO_STATE.LIFT_INIT;
     private boolean liftReady = false;
+    private boolean targetReady = false;
+    private boolean offsetReady = false;
+    private boolean gameReady = false;
 
     // Init-time config
     private ButtonHandler buttons;
-    private Field.AllianceColor alliance = Field.AllianceColor.BLUE;
-    private JewelForward.DELAY delay = JewelForward.DELAY.NONE;
+    private Field.AllianceColor alliance = Field.AllianceColor.RED;
+    private DELAY delay = DELAY.NONE;
+    private STONE stone = STONE.SAME_WALL;
+    private MODE mode = MODE.JEWEL_BLOCK;
 
     @Override
     public void init() {
@@ -52,6 +59,8 @@ public class JewelForward extends OpMode {
 
         // Register buttons
         buttons = new ButtonHandler(robot);
+        buttons.register("STONE-UP", gamepad1, PAD_BUTTON.y);
+        buttons.register("STONE-DOWN", gamepad1, PAD_BUTTON.a);
         buttons.register("DELAY-UP", gamepad1, PAD_BUTTON.dpad_up);
         buttons.register("DELAY-DOWN", gamepad1, PAD_BUTTON.dpad_down);
         buttons.register("ALLIANCE-RED", gamepad1, PAD_BUTTON.b);
@@ -63,35 +72,48 @@ public class JewelForward extends OpMode {
 
         // Zero the lift
         if (!liftReady) {
-            // TODO: We need to zero the lift, for now just pretend
+            // TODO: We need to zero the lift; for now just pretend
             liftReady = true;
         }
 
-        // Update the buttons
+        // Process driver input
         buttons.update();
-
-        // Adjust delay
-        if (buttons.get("DELAY-UP")) {
-            delay = delay.next();
-        } else if (buttons.get("DELAY-DOWN")) {
-            delay = delay.prev();
-        }
-
-        // Adjust alliance color
+        mode = (MODE) updateEnum("MODE", mode);
+        delay = (DELAY) updateEnum("DELAY", delay);
+        stone = (STONE) updateEnum("STONE", stone);
         if (buttons.get("ALLIANCE-RED")) {
             alliance = Field.AllianceColor.RED;
         } else if (buttons.get("ALLIANCE-BLUE")) {
             alliance = Field.AllianceColor.BLUE;
         }
 
-        // Driver feedback
+        // Update Vuforia tracking, when available
+        if (robot.vuforia.isRunning()) {
+            robot.vuforia.track();
+        }
+        targetReady = (robot.vuforia.isRunning() && !robot.vuforia.isStale() && robot.vuforia.getVisible(TARGET));
+
+        // Driver setup
+        telemetry.addData("Mode", mode);
         telemetry.addData("Alliance", alliance);
+        telemetry.addData("Stone", stone);
         telemetry.addData("Delay", delay);
+
+        // Driver feedback
+        telemetry.addData("", "");
+        telemetry.addData("Target ∠",
+                targetReady ? robot.vuforia.getTargetAngle(TARGET) + "°" : "<Not Visible>");
+        telemetry.addData("Position",
+                targetReady ?
+                        robot.vuforia.getX() + "/" + robot.vuforia.getY() + " " + robot.vuforia.getHeading() + "°" :
+                        "<Not Visible>");
         telemetry.addData("Gyro", robot.gyro.isReady() ? "Ready" : "Calibrating…");
         telemetry.addData("Lift", liftReady ? "Ready" : "Zeroing");
-        if (robot.gyro.isReady() && liftReady) {
-            telemetry.addData(">", "Ready for game start");
-        }
+
+        // Overall ready status
+        gameReady = (robot.gyro.isReady() && targetReady && liftReady);
+        telemetry.addData("", "");
+        telemetry.addData(">", gameReady ? "Ready for game state" : "NOT READY");
         telemetry.update();
     }
 
@@ -99,11 +121,28 @@ public class JewelForward extends OpMode {
     public void start() {
         telemetry.clearAll();
 
-        // Disable the lift if it isn't ready
-        robot.lift.setEnabled(liftReady);
+        // Log if we didn't exit init as expected
+        if (!gameReady) {
+            telemetry.log().add("Started before ready");
+        }
 
-        // Steady...
-        state = JewelForward.AUTO_STATE.values()[0];
+        // Disable the lift if it isn't ready
+        if (!liftReady) {
+            robot.lift.setEnabled(false);
+            telemetry.log().add("Running without lift");
+        }
+
+        // Set the gyro offset, if available
+        if (targetReady) {
+            // TODO: Make sure this is the angle we mean
+            //robot.gyro.setOffset(robot.vuforia.getTargetAngle(TARGET));
+            offsetReady = true;
+        } else {
+            telemetry.log().add("Running without target alignment");
+        }
+
+        // Steady…
+        state = AUTO_STATE.values()[0];
     }
 
     @Override
@@ -112,7 +151,7 @@ public class JewelForward extends OpMode {
         // Handle AutoDriver driving
         driver = common.drive.loop(driver);
 
-        // Driver feedback
+        // Debug feedback
         telemetry.addData("State", state);
         telemetry.addData("Running", driver.isRunning(time));
         telemetry.addData("Pivot CCW", common.jewel.getImage() != null ? common.jewel.pivotCCW(alliance) : "<No Image>");
@@ -144,6 +183,10 @@ public class JewelForward extends OpMode {
                 driver = delegateDriver(common.jewel.hit(driver, alliance));
                 break;
             case DELAY:
+                if (mode == MODE.JEWEL_ONLY) {
+                    state = AUTO_STATE.DONE;
+                    break;
+                }
                 driver.interval = delay.seconds();
                 state = state.next();
                 break;
@@ -152,9 +195,10 @@ public class JewelForward extends OpMode {
                 state = state.next();
                 break;
             case GYRO_WAIT:
-                // We cannot do the rest of this routine without the gyro, so wait for it
                 if (robot.gyro.isReady()) {
                     state = state.next();
+                } else {
+                    telemetry.log().add("Waiting for gyro…");
                 }
                 break;
             case PIVOT_ZERO:
@@ -204,7 +248,7 @@ public class JewelForward extends OpMode {
                 state = state.next();
                 break;
             case RELEASE_TURN:
-                driver.drive = common.drive.timeTurn(50, Drive.SPEED_FORWARD_SLOW);
+                driver.drive = common.drive.timeTurn(75, Drive.SPEED_FORWARD_SLOW);
                 state = state.next();
                 break;
             case RELEASE_REVERSE:
@@ -215,6 +259,92 @@ public class JewelForward extends OpMode {
                 // Exit the opmode
                 driver.done = true;
                 break;
+        }
+    }
+
+    // Define the order of auto routine components
+    enum AUTO_STATE implements OrderedEnum {
+        INIT,               // Initiate stuff
+        PARSE_JEWEL,        // Parse which jewel is on which side
+        LIFT_INIT,          // Initiate lift & grab block
+        HIT_JEWEL,          // Turn to hit the jewel
+        DELAY,              // Optionally wait for our alliance partner
+        // End here if we are in JEWEL_ONLY mode
+        DRIVE_DOWN,         // Get our wheels off the ramp
+        GYRO_WAIT,          // Wait for the gyro
+        // Hold indefinitely if the gyro isn't available
+        PIVOT_ZERO,         // Pivot back to a heading of 0
+        DRIVE_FORWARD,      // Drive distance to appropriate point
+        PIVOT135,           // Pivot to align with the desired rack
+        DRIVE_DIAGONAL,     // drive to the spot between the balancing plates
+        PIVOT_TO_FACE,      // Pivot to face the rack\
+        LOWER_LIFT,         // Lower the lift so that we don't drop the block on the bottom claw
+        LOWER_LIFT_STOP,    // Stop lowering the lift
+        DRIVE_TO_BOX,       // Drive up to the rack
+        RELEASE,            // Release the block
+        RELEASE_TURN,       // Turn, so we push the block into a specific column if we hit an edge
+        RELEASE_REVERSE,    // Reverse away from the block
+        DONE;               // Finish
+
+        public Jewel.AUTO_STATE prev() {
+            return OrderedEnumHelper.prev(this);
+        }
+
+        public Jewel.AUTO_STATE next() {
+            return OrderedEnumHelper.next(this);
+        }
+    }
+
+    // Configurable delay
+    enum DELAY implements OrderedEnum {
+        NONE(0),
+        SHORT(5000),
+        LONG(10000);
+
+        private final int milliseconds;
+
+        DELAY(int milliseconds) {
+            this.milliseconds = milliseconds;
+        }
+
+        public float seconds() {
+            return milliseconds / 1000.0f;
+        }
+
+        public Jewel.DELAY prev() {
+            return OrderedEnumHelper.prev(this);
+        }
+
+        public Jewel.DELAY next() {
+            return OrderedEnumHelper.next(this);
+        }
+    }
+
+    // Balance stone positions
+    enum STONE implements OrderedEnum {
+        SAME_WALL,
+        CORNER_WALL;
+
+        public Jewel.STONE prev() {
+            return OrderedEnumHelper.prev(this);
+        }
+
+        public Jewel.STONE next() {
+            return OrderedEnumHelper.next(this);
+        }
+    }
+
+    // Balance stone positions
+    enum MODE implements OrderedEnum {
+        JEWEL_BLOCK,
+        JEWEL_ONLY;
+
+        public Jewel.MODE prev() {
+            return OrderedEnumHelper.prev(this);
+        }
+
+        public Jewel.MODE next() {
+            return OrderedEnumHelper.next(this);
         }
     }
 
@@ -233,64 +363,15 @@ public class JewelForward extends OpMode {
         return autoDriver;
     }
 
-    // Define the order of auto routine components
-    enum AUTO_STATE implements OrderedEnum {
-        INIT,               // Initiate stuff
-        PARSE_JEWEL,        // Parse which jewel is on which side
-        LIFT_INIT,          // Initiate lift & grab block
-        HIT_JEWEL,          // Turn to hit the jewel
-        DELAY,              // Optionally wait for our alliance partner
-        DRIVE_DOWN,         // Get our wheels off the ramp
-        GYRO_WAIT,          // The state we hold in if the gyro isn't working
-        PIVOT_ZERO,         // Pivot back to a heading of 0
-        DRIVE_FORWARD,      // Drive distance to appropriate point
-        PIVOT135,           // Pivot to align with the desired rack
-        DRIVE_DIAGONAL,     // drive to the spot between the balancing plates
-        PIVOT_TO_FACE,      // Pivot to face the rack\
-        LOWER_LIFT,         // Lower the lift so that we don't drop the block on the bottom claw
-        LOWER_LIFT_STOP,    // Stop lowering the lift
-        DRIVE_TO_BOX,       // Drive up to the rack
-        RELEASE,            // Release the block
-        RELEASE_TURN,       // Turn, so we push the block into a specific column if we hit an edge
-        RELEASE_REVERSE,    // Reverse away from the block
-        DONE;               // Finish
-
-        public JewelForward.AUTO_STATE prev() {
-            return OrderedEnumHelper.prev(this);
+    // Process up/down buttons pairs for ordered enums
+    private OrderedEnum updateEnum(String name, OrderedEnum e) {
+        OrderedEnum retval = e;
+        if (buttons.get(name + "-UP")) {
+            retval = e.next();
+        } else if (buttons.get(name + "-DOWN")) {
+            retval = e.prev();
         }
-
-        public JewelForward.AUTO_STATE next() {
-            return OrderedEnumHelper.next(this);
-        }
-    }
-
-    // Configurable delay
-    enum DELAY implements OrderedEnum {
-        NONE(0),
-        SHORT(5000),
-        LONG(10000);
-
-        private final int milliseconds;
-
-        DELAY(int milliseconds) {
-            this.milliseconds = milliseconds;
-        }
-
-        public int milliseconds() {
-            return milliseconds;
-        }
-
-        public float seconds() {
-            return milliseconds / 1000.0f;
-        }
-
-        public JewelForward.DELAY prev() {
-            return OrderedEnumHelper.prev(this);
-        }
-
-        public JewelForward.DELAY next() {
-            return OrderedEnumHelper.next(this);
-        }
+        return retval;
     }
 }
 
