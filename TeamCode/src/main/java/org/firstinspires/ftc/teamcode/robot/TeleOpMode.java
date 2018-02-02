@@ -83,8 +83,8 @@ public class TeleOpMode extends OpMode {
 
         // Intakes
         // TODO: Map the lift to something else so we can use both sticks
-        robot.intakes[INTAKES.LEFT.ordinal()].setPower(-gamepad2.right_stick_y * 1.20f);
-        robot.intakes[INTAKES.RIGHT.ordinal()].setPower(-gamepad2.right_stick_y);
+        robot.intakes[INTAKES.LEFT.ordinal()].setPower(-gamepad2.right_stick_y * 1.1f);
+        robot.intakes[INTAKES.RIGHT.ordinal()].setPower(-gamepad2.right_stick_y * 0.9f);
 
         // Claws
         for (CLAWS claw : CLAWS.values()) {
