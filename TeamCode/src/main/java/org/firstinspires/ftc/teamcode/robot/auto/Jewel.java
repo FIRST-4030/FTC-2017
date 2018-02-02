@@ -15,6 +15,7 @@ import org.firstinspires.ftc.teamcode.robot.common.Lift;
 import org.firstinspires.ftc.teamcode.utils.OrderedEnum;
 import org.firstinspires.ftc.teamcode.utils.OrderedEnumHelper;
 import org.firstinspires.ftc.teamcode.utils.Round;
+import org.firstinspires.ftc.teamcode.vuforia.VuforiaFTC;
 
 //@Disabled
 @com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "Jewel + Block", group = "Auto")
@@ -29,6 +30,7 @@ public class Jewel extends OpMode {
     // Devices and subsystems
     private Robot robot = null;
     private Common common = null;
+    private VuforiaFTC vuforia = null;
 
     // Runtime state
     private AutoDriver driver = new AutoDriver();
@@ -53,9 +55,10 @@ public class Jewel extends OpMode {
         // Init the common tasks elements
         robot = new Robot(hardwareMap, telemetry);
         common = robot.common;
+        vuforia = robot.vuforia;
 
         // Init the camera system
-        robot.vuforia.start();
+        vuforia.start();
 
         // Register buttons
         buttons = new ButtonHandler(robot);
@@ -88,10 +91,10 @@ public class Jewel extends OpMode {
         }
 
         // Update Vuforia tracking, when available
-        if (robot.vuforia.isRunning()) {
-            robot.vuforia.track();
+        if (vuforia.isRunning()) {
+            vuforia.track();
         }
-        targetReady = (robot.vuforia.isRunning() && !robot.vuforia.isStale() && robot.vuforia.getVisible(TARGET));
+        targetReady = (vuforia.isRunning() && !vuforia.isStale() && vuforia.getVisible(TARGET));
 
         // Driver setup
         telemetry.addData("Mode", mode);
@@ -102,10 +105,10 @@ public class Jewel extends OpMode {
         // Driver feedback
         telemetry.addData("", "");
         telemetry.addData("Target ∠",
-                targetReady ? robot.vuforia.getTargetAngle(TARGET) + "°" : "<Not Visible>");
+                targetReady ? vuforia.getTargetAngle(TARGET) + "°" : "<Not Visible>");
         telemetry.addData("Position",
                 targetReady ?
-                        robot.vuforia.getX() + "/" + robot.vuforia.getY() + " " + robot.vuforia.getHeading() + "°" :
+                        vuforia.getX() + "/" + vuforia.getY() + " " + vuforia.getHeading() + "°" :
                         "<Not Visible>");
         telemetry.addData("Gyro", robot.gyro.isReady() ? "Ready" : "Calibrating…");
         telemetry.addData("Lift", liftReady ? "Ready" : "Zeroing");
@@ -135,7 +138,7 @@ public class Jewel extends OpMode {
         // Set the gyro offset, if available
         if (targetReady) {
             // TODO: Make sure this is the angle we mean
-            //robot.gyro.setOffset(robot.vuforia.getTargetAngle(TARGET));
+            //robot.gyro.setOffset(vuforia.getTargetAngle(TARGET));
             offsetReady = true;
         } else {
             telemetry.log().add("Running without target alignment");
