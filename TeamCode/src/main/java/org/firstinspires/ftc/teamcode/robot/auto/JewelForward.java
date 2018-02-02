@@ -108,6 +108,7 @@ public class JewelForward extends OpMode {
 
     @Override
     public void loop() {
+
         // Handle AutoDriver driving
         driver = common.drive.loop(driver);
 
@@ -131,11 +132,7 @@ public class JewelForward extends OpMode {
         switch (state) {
             case INIT:
                 driver.done = false;
-                // Don't start driving until the gyro is ready
-                // TODO: Do something different if the gyro never becomes available
-                if (robot.gyro.isReady()) {
-                    state = state.next();
-                }
+                state = state.next();
                 break;
             case PARSE_JEWEL:
                 driver = delegateDriver(common.jewel.parse(driver));
@@ -153,6 +150,12 @@ public class JewelForward extends OpMode {
             case DRIVE_DOWN:
                 driver.drive = common.drive.distance(250);
                 state = state.next();
+                break;
+            case GYRO_WAIT:
+                // We cannot do the rest of this routine without the gyro, so wait for it
+                if (robot.gyro.isReady()) {
+                    state = state.next();
+                }
                 break;
             case PIVOT_ZERO:
                 driver.drive = common.drive.heading(reverseOnAlliance(alliance == Field.AllianceColor.BLUE ? 3 : 7));
@@ -238,6 +241,7 @@ public class JewelForward extends OpMode {
         HIT_JEWEL,          // Turn to hit the jewel
         DELAY,              // Optionally wait for our alliance partner
         DRIVE_DOWN,         // Get our wheels off the ramp
+        GYRO_WAIT,          // The state we hold in if the gyro isn't working
         PIVOT_ZERO,         // Pivot back to a heading of 0
         DRIVE_FORWARD,      // Drive distance to appropriate point
         PIVOT135,           // Pivot to align with the desired rack
