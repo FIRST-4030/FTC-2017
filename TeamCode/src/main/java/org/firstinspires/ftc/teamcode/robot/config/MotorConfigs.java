@@ -34,12 +34,24 @@ public class MotorConfigs extends Configs {
                     case LIFT:
                         config = new MotorConfig("LM1", false);
                         break;
+                    case INTAKE_LEFT:
+                        config = new MotorConfig("IN_L", false);
+                        break;
+                    case INTAKE_RIGHT:
+                        config = new MotorConfig("IN_R", false);
+                        break;
                 }
                 break;
             case Mecanum:
                 switch (motor) {
                     case LIFT:
                         config = new MotorConfig("LM1", false);
+                        break;
+                    case INTAKE_LEFT:
+                        config = new MotorConfig("IN_L", false);
+                        break;
+                    case INTAKE_RIGHT:
+                        config = new MotorConfig("IN_R", false);
                         break;
                 }
                 break;
