@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.robot.auto;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
-import org.firstinspires.ftc.teamcode.actuators.ServoFTC;
 import org.firstinspires.ftc.teamcode.buttons.PAD_BUTTON;
 import org.firstinspires.ftc.teamcode.buttons.ButtonHandler;
 import org.firstinspires.ftc.teamcode.driveto.AutoDriver;
@@ -25,7 +24,6 @@ public class Jewel extends OpMode {
     // Auto constants
     private static final String TARGET = VuforiaConfigs.TargetNames[0];
     private static final int RELEASE_REVERSE_MM = 125;
-    private static final float RELEASE_DELAY = 0.5f;
     private static final int DRIVE_TO_BOX_MM = 575;
 
     // Devices and subsystems
@@ -139,8 +137,7 @@ public class Jewel extends OpMode {
 
         // Set the gyro offset, if available
         if (targetReady) {
-            float angle = vuforia.getTargetAngle(TARGET) + Heading.HALF_CIRCLE;
-            robot.gyro.setOffset(Heading.normalizeErr(angle));
+            robot.gyro.setOffset(vuforia.getTargetAngle(TARGET));
             offsetReady = true;
         } else {
             telemetry.log().add("Running without target alignment");
@@ -246,10 +243,7 @@ public class Jewel extends OpMode {
                 state = state.next();
                 break;
             case RELEASE:
-                for (ServoFTC claw : robot.claws) {
-                    claw.min();
-                }
-                driver.interval = RELEASE_DELAY;
+                // TODO: Eject blocks
                 state = state.next();
                 break;
             case RELEASE_TURN:

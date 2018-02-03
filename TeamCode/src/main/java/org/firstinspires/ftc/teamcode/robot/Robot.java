@@ -25,7 +25,6 @@ public class Robot {
     public final BOT bot;
     public final Wheels wheels;
     public final Motor lift;
-    public final ServoFTC[] claws;
     public final Motor[] intakes;
     public final Gyro gyro;
     public final Switch liftSwitch;
@@ -60,14 +59,6 @@ public class Robot {
         liftSwitch = switches.init(SWITCHES.LIFT);
         lift = motors.init(MOTORS.LIFT);
         lift.stop();
-
-        //ueseless in current robot configuration, only here so everything that references it actually builds
-        claws = new ServoFTC[CLAWS.values().length];
-        claws[CLAWS.TOP.ordinal()] = servos.init(SERVOS.CLAW_TOP);
-        claws[CLAWS.BOTTOM.ordinal()] = servos.init(SERVOS.CLAW_BOTTOM);
-        for (ServoFTC claw : claws) {
-            claw.min();
-        }
 
         intakes = new Motor[INTAKES.values().length];
         intakes[INTAKES.LEFT.ordinal()] = motors.init(MOTORS.INTAKE_L);

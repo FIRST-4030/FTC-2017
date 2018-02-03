@@ -30,12 +30,6 @@ public class ServoConfigs extends Configs {
         switch (bot) {
             case WestCoast:
                 switch (servo) {
-                    case CLAW_TOP:
-                        config = new ServoConfig("CL1", true, 0.27f, 0.66f);
-                        break;
-                    case CLAW_BOTTOM:
-                        config = new ServoConfig("CL2", true, 0.5f, 0.85f);
-                        break;
                     case JEWEL_ARM:
                         config = new ServoConfig("Jewel Arm", true, 0.2f, 1.0f); // needs calibration
                         break;
@@ -43,12 +37,6 @@ public class ServoConfigs extends Configs {
                 break;
             case Mecanum:
                 switch (servo) {
-                    case CLAW_TOP:
-                        config = new ServoConfig("CL1", true, 0.22f, 0.66f);
-                        break;
-                    case CLAW_BOTTOM:
-                        config = new ServoConfig("CL2", true, 0.08f, 0.44f);
-                        break;
                     case JEWEL_ARM:
                         config = new ServoConfig("Jewel Arm", true, 0.0f, 1.0f); // needs calibration
                         break;

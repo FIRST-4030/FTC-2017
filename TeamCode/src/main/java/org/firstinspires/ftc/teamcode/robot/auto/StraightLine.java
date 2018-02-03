@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.robot.auto;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
-import org.firstinspires.ftc.teamcode.actuators.ServoFTC;
 import org.firstinspires.ftc.teamcode.buttons.PAD_BUTTON;
 import org.firstinspires.ftc.teamcode.buttons.ButtonHandler;
 import org.firstinspires.ftc.teamcode.field.Field;
@@ -17,7 +16,6 @@ public class StraightLine extends OpMode {
 
     // Auto constants
     private static final int RELEASE_REVERSE_MM = 125;
-    private static final float RELEASE_DELAY = 0.5f;
 
     // Devices and subsystems
     private Robot robot = null;
@@ -148,10 +146,7 @@ public class StraightLine extends OpMode {
                 state = state.next();
                 break;
             case RELEASE:
-                for (ServoFTC claw : robot.claws) {
-                    claw.min();
-                }
-                driver.interval = RELEASE_DELAY;
+                // TODO: Release blocks
                 state = state.next();
                 break;
             case RELEASE_REVERSE:

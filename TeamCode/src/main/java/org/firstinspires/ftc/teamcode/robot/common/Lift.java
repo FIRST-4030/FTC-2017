@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.robot.common;
 
 import org.firstinspires.ftc.teamcode.driveto.AutoDriver;
-import org.firstinspires.ftc.teamcode.robot.CLAWS;
 import org.firstinspires.ftc.teamcode.robot.Robot;
 import org.firstinspires.ftc.teamcode.utils.OrderedEnum;
 import org.firstinspires.ftc.teamcode.utils.OrderedEnumHelper;
