@@ -36,6 +36,11 @@ public class TankDrive implements Wheels {
                 if (motor.reverse) {
                     motor.motor.setDirection(DcMotorSimple.Direction.REVERSE);
                 }
+                if (config.brake) {
+                    motor.motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                } else {
+                    motor.motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+                }
             } catch (Exception e) {
                 telemetry.log().add(this.getClass().getSimpleName() + ": No such device: " + motor.name);
                 return;

@@ -54,7 +54,7 @@ public class WheelsConfigs extends Configs {
                         new PIDParams(0.29f, 0.25f, 0.0f), WC_TICKS_PER_MM, WC_MAX_RATE);
                 motors[2] = new WheelMotor("ML2", MOTOR_SIDE.LEFT, false);
                 motors[3] = new WheelMotor("MR2", MOTOR_SIDE.RIGHT, true);
-                config = new WheelsConfig(DRIVE_TYPE.TANK, motors);
+                config = new WheelsConfig(DRIVE_TYPE.TANK, motors, false);
                 break;
             case Mecanum:
                 motors = new WheelMotor[4];
