@@ -22,7 +22,6 @@ public class Lift implements CommonTask {
 
     enum LIFT_STATE implements OrderedEnum {
         INIT,
-        GRAB,
         LIFT,
         READY,
         DONE;
@@ -47,12 +46,6 @@ public class Lift implements CommonTask {
                 robot.jewelArm.setPosition(Common.JEWEL_ARM_RETRACT);
                 liftState = liftState.next();
                 break;
-//            case GRAB:
-//                robot.claws[CLAWS.TOP.ordinal()].max();
-//                robot.claws[CLAWS.BOTTOM.ordinal()].min();
-//                driver.interval = CLAW_DELAY;
-//                liftState = liftState.next();
-//                break;
             case LIFT:
                 robot.lift.setPower(LIFT_SPEED_UP);
                 driver.interval = LIFT_DELAY;
