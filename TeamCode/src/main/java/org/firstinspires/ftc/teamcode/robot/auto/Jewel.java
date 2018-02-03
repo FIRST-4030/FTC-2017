@@ -12,6 +12,7 @@ import org.firstinspires.ftc.teamcode.robot.Robot;
 import org.firstinspires.ftc.teamcode.robot.common.Common;
 import org.firstinspires.ftc.teamcode.robot.common.Drive;
 import org.firstinspires.ftc.teamcode.robot.common.Lift;
+import org.firstinspires.ftc.teamcode.utils.Heading;
 import org.firstinspires.ftc.teamcode.utils.OrderedEnum;
 import org.firstinspires.ftc.teamcode.utils.OrderedEnumHelper;
 import org.firstinspires.ftc.teamcode.utils.Round;
@@ -62,10 +63,12 @@ public class Jewel extends OpMode {
 
         // Register buttons
         buttons = new ButtonHandler(robot);
-        buttons.register("STONE-UP", gamepad1, PAD_BUTTON.y);
-        buttons.register("STONE-DOWN", gamepad1, PAD_BUTTON.a);
+        buttons.register("MODE-UP", gamepad1, PAD_BUTTON.dpad_right);
+        buttons.register("MODE-DOWN", gamepad1, PAD_BUTTON.dpad_left);
         buttons.register("DELAY-UP", gamepad1, PAD_BUTTON.dpad_up);
         buttons.register("DELAY-DOWN", gamepad1, PAD_BUTTON.dpad_down);
+        buttons.register("STONE-UP", gamepad1, PAD_BUTTON.y);
+        buttons.register("STONE-DOWN", gamepad1, PAD_BUTTON.a);
         buttons.register("ALLIANCE-RED", gamepad1, PAD_BUTTON.b);
         buttons.register("ALLIANCE-BLUE", gamepad1, PAD_BUTTON.x);
     }
@@ -103,19 +106,18 @@ public class Jewel extends OpMode {
         telemetry.addData("Delay", delay);
 
         // Driver feedback
-        telemetry.addData("", "");
+        telemetry.addData("\t\t\t", "");
         telemetry.addData("Target ∠",
                 targetReady ? vuforia.getTargetAngle(TARGET) + "°" : "<Not Visible>");
         telemetry.addData("Position",
                 targetReady ?
-                        vuforia.getX() + "/" + vuforia.getY() + " " + vuforia.getHeading() + "°" :
-                        "<Not Visible>");
+                        vuforia.getX() + "/" + vuforia.getY() : "<Not Visible>");
         telemetry.addData("Gyro", robot.gyro.isReady() ? "Ready" : "Calibrating…");
         telemetry.addData("Lift", liftReady ? "Ready" : "Zeroing");
 
         // Overall ready status
         gameReady = (robot.gyro.isReady() && targetReady && liftReady);
-        telemetry.addData("", "");
+        telemetry.addData("\t\t\t", "");
         telemetry.addData(">", gameReady ? "Ready for game state" : "NOT READY");
         telemetry.update();
     }
@@ -137,8 +139,8 @@ public class Jewel extends OpMode {
 
         // Set the gyro offset, if available
         if (targetReady) {
-            // TODO: Make sure this is the angle we mean
-            //robot.gyro.setOffset(vuforia.getTargetAngle(TARGET));
+            float angle = vuforia.getTargetAngle(TARGET) + Heading.HALF_CIRCLE;
+            robot.gyro.setOffset(Heading.normalizeErr(angle));
             offsetReady = true;
         } else {
             telemetry.log().add("Running without target alignment");
