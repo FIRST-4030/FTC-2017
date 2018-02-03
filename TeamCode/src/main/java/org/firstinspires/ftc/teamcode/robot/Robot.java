@@ -70,8 +70,11 @@ public class Robot {
         }
 
         intakes = new Motor[INTAKES.values().length];
-        intakes[INTAKES.LEFT.ordinal()] = motors.init(MOTORS.L_INTAKE);
-        intakes[INTAKES.RIGHT.ordinal()] = motors.init(MOTORS.R_INTAKE);
+        intakes[INTAKES.LEFT.ordinal()] = motors.init(MOTORS.INTAKE_L);
+        intakes[INTAKES.RIGHT.ordinal()] = motors.init(MOTORS.INTAKE_R);
+        for (Motor intake : intakes) {
+            intake.stop();
+        }
 
         jewelArm = servos.init(SERVOS.JEWEL_ARM);
         jewelArm.min();

@@ -55,7 +55,7 @@ public class TeleOpMode extends OpMode {
 
         // Move the robot
         driveBase();
-        clawsAndLift();
+        liftSystem();
 
         // Driver Feedback
         telemetry.addData("Wheels", robot.wheels.isAvailable());
@@ -76,11 +76,16 @@ public class TeleOpMode extends OpMode {
         robot.wheels.loop(gamepad1);
     }
 
-    public void clawsAndLift() {
+    public void liftSystem() {
 
         // Lift
        float liftPower = gamepad2.right_trigger - gamepad2.left_trigger;
        robot.lift.setPower(liftPower);
+
+        // Intakes
+        // TODO: Map the lift to something else so we can use both sticks
+        robot.intakes[INTAKES.LEFT.ordinal()].setPower(-gamepad2.right_stick_y * 1.1f);
+        robot.intakes[INTAKES.RIGHT.ordinal()].setPower(-gamepad2.right_stick_y * 0.9f);
 
         // Claws
 //        for (CLAWS claw : CLAWS.values()) {

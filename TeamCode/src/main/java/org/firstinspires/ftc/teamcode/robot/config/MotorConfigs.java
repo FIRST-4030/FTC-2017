@@ -34,10 +34,10 @@ public class MotorConfigs extends Configs {
                     case LIFT:
                         config = new MotorConfig("LM1", false);
                         break;
-                    case L_INTAKE:
+                    case INTAKE_L:
                         config = new MotorConfig("L_Intake", false);
                         break;
-                    case R_INTAKE:
+                    case INTAKE_R:
                         config = new MotorConfig("R_Intake", false);
                         break;
                 }
@@ -47,10 +47,10 @@ public class MotorConfigs extends Configs {
                     case LIFT:
                         config = new MotorConfig("LM1", false);
                         break;
-                    case L_INTAKE:
+                    case INTAKE_L:
                         config = new MotorConfig("L_Intake", true);
                         break;
-                    case R_INTAKE:
+                    case INTAKE_R:
                         config = new MotorConfig("R_Intake", false);
                         break;
                 }
