@@ -32,7 +32,7 @@ public class MotorConfigs extends Configs {
             case WestCoast:
                 switch (motor) {
                     case LIFT:
-                        config = new MotorConfig("LM1", false);
+                        config = new MotorConfig("LM1", false, true);
                         break;
                     case INTAKE_L:
                         config = new MotorConfig("L_Intake", false);
@@ -45,7 +45,7 @@ public class MotorConfigs extends Configs {
             case Mecanum:
                 switch (motor) {
                     case LIFT:
-                        config = new MotorConfig("LM1", false);
+                        config = new MotorConfig("LM1", false, true);
                         break;
                     case INTAKE_L:
                         config = new MotorConfig("L_Intake", true);

@@ -25,6 +25,11 @@ public class Motor implements Available {
             if (config.reverse) {
                 motor.setDirection(DcMotor.Direction.REVERSE);
             }
+            if (config.brake) {
+                motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            } else {
+                motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+            }
         } catch (Exception e) {
             telemetry.log().add(this.getClass().getSimpleName() + "No such device: " + config.name);
             motor = null;
