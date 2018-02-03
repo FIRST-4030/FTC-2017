@@ -22,7 +22,7 @@ public class TeleOpMode extends OpMode {
     public void init() {
 
         // Placate drivers
-        telemetry.addData(">", "Initializing...");
+        telemetry.addData(">", "Initializing…");
         telemetry.update();
 
         // Init the common tasks elements
@@ -30,8 +30,6 @@ public class TeleOpMode extends OpMode {
 
         // Register buttons
         buttons = new ButtonHandler(robot);
-        //buttons.register("CLAW-" + CLAWS.TOP, gamepad2, PAD_BUTTON.right_bumper);
-        //buttons.register("CLAW-" + CLAWS.BOTTOM, gamepad2, PAD_BUTTON.left_bumper);
         buttons.register("EXTEND-INTAKE", gamepad2, PAD_BUTTON.b);
         buttons.register("SLOW-MODE", gamepad1, PAD_BUTTON.a, BUTTON_TYPE.TOGGLE);
 
@@ -61,8 +59,6 @@ public class TeleOpMode extends OpMode {
         telemetry.addData("Wheels", robot.wheels.isAvailable());
         telemetry.addData("Teleop", robot.wheels.isTeleop());
         telemetry.addData("Slow Mode", buttons.get("SLOW-MODE"));
-        //telemetry.addData("Top CLaw", robot.claws[CLAWS.TOP.ordinal()].getPostion());
-        //telemetry.addData("Bottom Claw", robot.claws[CLAWS.BOTTOM.ordinal()].getPostion());
         telemetry.addData("Lift Height", robot.lift.getEncoder());
         telemetry.update();
     }
@@ -82,20 +78,7 @@ public class TeleOpMode extends OpMode {
        float liftPower = gamepad2.right_trigger - gamepad2.left_trigger;
        robot.lift.setPower(liftPower);
 
-        // Intakes
-        // TODO: Map the lift to something else so we can use both sticks
-        robot.intakes[INTAKES.LEFT.ordinal()].setPower(-gamepad2.right_stick_y * 1.1f);
-        robot.intakes[INTAKES.RIGHT.ordinal()].setPower(-gamepad2.right_stick_y * 0.9f);
-
-        // Claws
-//        for (CLAWS claw : CLAWS.values()) {
-//            if (buttons.get("CLAW-" + claw)) {
-//                robot.claws[claw.ordinal()].toggle();
-//                telemetry.addData("CLAW-" + claw, robot.claws[claw.ordinal()].getPostion());
-//            }
-//        }
-
-        //intake motors
+        // Intake motors
         robot.intakes[INTAKES.LEFT.ordinal()].setPower(gamepad2.left_stick_y);
         robot.intakes[INTAKES.RIGHT.ordinal()].setPower(gamepad2.right_stick_y);
     }

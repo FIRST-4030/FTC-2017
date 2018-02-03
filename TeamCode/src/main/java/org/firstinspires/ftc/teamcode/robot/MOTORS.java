@@ -2,6 +2,6 @@ package org.firstinspires.ftc.teamcode.robot;
 
 public enum MOTORS {
     LIFT,
-    L_INTAKE,
-    R_INTAKE
+    INTAKE_L,
+    INTAKE_R
 }
