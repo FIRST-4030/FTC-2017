@@ -137,7 +137,7 @@ public class Jewel extends OpMode {
 
         // Set the gyro offset, if available
         if (targetReady) {
-            robot.gyro.setOffset(vuforia.getTargetAngle(TARGET));
+            robot.gyro.setOffset(-vuforia.getTargetAngle(TARGET));
             offsetReady = true;
         } else {
             telemetry.log().add("Running without target alignment");
