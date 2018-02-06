@@ -10,17 +10,18 @@ import org.firstinspires.ftc.teamcode.field.Field;
 import org.firstinspires.ftc.teamcode.field.VuforiaConfigs;
 import org.firstinspires.ftc.teamcode.robot.Robot;
 import org.firstinspires.ftc.teamcode.robot.common.Common;
+import org.firstinspires.ftc.teamcode.utils.Heading;
 import org.firstinspires.ftc.teamcode.utils.OrderedEnum;
 import org.firstinspires.ftc.teamcode.utils.OrderedEnumHelper;
 import org.firstinspires.ftc.teamcode.utils.Round;
 import org.firstinspires.ftc.teamcode.vuforia.VuforiaFTC;
 
-//@Disabled
 @com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "Jewel + Block", group = "Auto")
 public class Jewel extends OpMode {
 
     // Auto constants
     private static final String TARGET = VuforiaConfigs.TargetNames[0];
+    private static final float PHONE_OFFSET_ANGLE = 0.0f;
 
     // Devices and subsystems
     private Robot robot = null;
@@ -141,7 +142,7 @@ public class Jewel extends OpMode {
 
         // Set the gyro offset, if available
         if (targetReady) {
-            robot.gyro.setOffset(-vuforia.getTargetAngle(TARGET));
+            robot.gyro.setOffset(-Heading.normalizeErr(vuforia.getTargetAngle(TARGET) + PHONE_OFFSET_ANGLE));
             column = RelicRecoveryVuMark.from(robot.vuforia.getTrackable(TARGET));
             offsetReady = true;
         } else {
