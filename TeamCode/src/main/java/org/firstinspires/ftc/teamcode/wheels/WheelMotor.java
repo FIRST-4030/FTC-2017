@@ -15,22 +15,10 @@ public class WheelMotor implements Available {
     public final PIDParams pid;
     public final float ticksPerMM;
     public final float maxRate;
-
-    public WheelMotor(String name, MOTOR_SIDE side, boolean reverse) {
-        this(name, side, MOTOR_END.FRONT, reverse);
-    }
-
-    public WheelMotor(String name, MOTOR_SIDE side, MOTOR_END end, boolean reverse) {
-        this(name, side, end, reverse, null, 1.0f, 1.0f);
-    }
-
-    public WheelMotor(String name, MOTOR_SIDE side, boolean reverse,
-                      PIDParams pid, float ticksPerMM, float maxRate) {
-        this(name, side, MOTOR_END.FRONT, reverse, pid, ticksPerMM, maxRate);
-    }
+    public final boolean brake;
 
     public WheelMotor(String name, MOTOR_SIDE side, MOTOR_END end, boolean reverse,
-                      PIDParams pid, float ticksPerMM, float maxRate) {
+                      PIDParams pid, float ticksPerMM, float maxRate, boolean brake) {
         this.name = name;
         this.side = side;
         this.end = end;
@@ -40,7 +28,23 @@ public class WheelMotor implements Available {
         this.encoder = (pid != null);
         this.ticksPerMM = ticksPerMM;
         this.maxRate = maxRate;
+        this.brake = brake;
     }
+
+    public WheelMotor(String name, MOTOR_SIDE side, boolean reverse) {
+        this(name, side, MOTOR_END.FRONT, reverse, null, 1.0f, 1.0f, true);
+    }
+
+    public WheelMotor(String name, MOTOR_SIDE side, MOTOR_END end, boolean reverse) {
+        this(name, side, end, reverse, null, 1.0f, 1.0f, true );
+    }
+
+    public WheelMotor(String name, MOTOR_SIDE side, boolean reverse,
+                      PIDParams pid, float ticksPerMM, float maxRate) {
+        this(name, side, MOTOR_END.FRONT, reverse, pid, ticksPerMM, maxRate, true);
+    }
+
+
 
     public boolean isAvailable() {
         return this.motor != null;
