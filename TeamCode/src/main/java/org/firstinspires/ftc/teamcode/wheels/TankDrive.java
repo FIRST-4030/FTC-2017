@@ -6,6 +6,8 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.actuators.Motor;
+import org.firstinspires.ftc.teamcode.actuators.MotorConfig;
 import org.firstinspires.ftc.teamcode.driveto.RatePID;
 import org.firstinspires.ftc.teamcode.utils.Round;
 
@@ -18,35 +20,20 @@ public class TankDrive implements Wheels {
     protected final Telemetry telemetry;
     protected float speedScale = 1.0f;
     private boolean teleop = false;
-    private int[] offsets;
     private RatePID[] pids;
 
     public TankDrive(HardwareMap map, Telemetry telemetry, WheelsConfig config) {
         this.telemetry = telemetry;
-        for (WheelMotor motor : config.motors) {
-            if (motor == null) {
+        for (WheelMotor wheelMotor : config.motors) {
+            if (wheelMotor == null) {
                 telemetry.log().add(this.getClass().getSimpleName() + ": Null motor");
                 break;
             }
-            if (motor.name == null || motor.name.isEmpty()) {
-                throw new IllegalArgumentException(this.getClass().getSimpleName() + ": Null motor or null/empty motor name");
-            }
-            try {
-                motor.motor = map.dcMotor.get(motor.name);
-                if (motor.reverse) {
-                    motor.motor.setDirection(DcMotorSimple.Direction.REVERSE);
-                }
-                if (config.brake) {
-                    motor.motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-                } else {
-                    motor.motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-                }
-            } catch (Exception e) {
-                telemetry.log().add(this.getClass().getSimpleName() + ": No such device: " + motor.name);
+            wheelMotor.motor = new Motor(map, telemetry, wheelMotor);
+            if (wheelMotor.motor == null) {
                 return;
             }
         }
-        this.offsets = new int[config.motors.length];
         this.pids = new RatePID[config.motors.length];
         for (int i = 0; i < config.motors.length; i++) {
             RatePID pid = null;
@@ -71,51 +58,52 @@ public class TankDrive implements Wheels {
         return config != null;
     }
 
-    public void resetEncoder() {
-        resetEncoder(null, null);
+    private void checkMotorIndex(int index) {
+        if (index < 0 || index >= config.motors.length) {
+            throw new ArrayIndexOutOfBoundsException(this.getClass().getSimpleName() + ": Invalid index: " + index);
+        }
     }
 
-    public void resetEncoder(MOTOR_SIDE side) {
-        resetEncoder(side, null);
-    }
-
-    public void resetEncoder(MOTOR_SIDE side, MOTOR_END end) {
+    public DcMotor.RunMode getMode(int index) {
         if (!isAvailable()) {
-            return;
+            return Motor.DEFAULT_MODE;
         }
-        for (int i = 0; i < config.motors.length; i++) {
-            if (config.motors[i].encoder &&
-                    (end == null || config.motors[i].end == end) &&
-                    (side == null || config.motors[i].side == side)) {
-                resetEncoder(i);
-            }
-        }
-    }
-
-    public void resetEncoder(int index) {
-        if (!isAvailable()) {
-            return;
-        }
-        if (!config.motors[index].encoder) {
-            return;
-        }
-
-        DcMotor.RunMode mode;
-        try {
-            mode = config.motors[index].motor.getMode();
-        } catch (Exception e) {
-            mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER;
-        }
-        setMode(index, DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        setMode(index, mode);
-        offsets[index] = -getEncoder(index);
+        checkMotorIndex(index);
+        return config.motors[index].motor.getMode();
     }
 
     public void setMode(int index, DcMotor.RunMode mode) {
         if (!isAvailable()) {
             return;
         }
+        checkMotorIndex(index);
         config.motors[index].motor.setMode(mode);
+    }
+
+    public void resetEncoder(int index) {
+        if (!checkEncoderIndex(index)) {
+            return;
+        }
+        config.motors[index].motor.resetEncoder();
+    }
+
+    public int getEncoder(int index) {
+        if (!checkEncoderIndex(index)) {
+            return 0;
+        }
+        return (config.motors[index].motor.getEncoder());
+    }
+
+    private boolean checkEncoderIndex(int index) {
+        if (!isAvailable()) {
+            return false;
+        }
+        checkMotorIndex(index);
+        if (!config.motors[index].encoder) {
+            telemetry.log().add("No encoder on motor: " + index);
+            return false;
+        }
+        return true;
     }
 
     private Integer findEncoderIndex(MOTOR_SIDE side, MOTOR_END end) {
@@ -137,6 +125,27 @@ public class TankDrive implements Wheels {
                     (end != null ? end : "<any>"));
         }
         return motor;
+    }
+
+    public void resetEncoder() {
+        resetEncoder(null, null);
+    }
+
+    public void resetEncoder(MOTOR_SIDE side) {
+        resetEncoder(side, null);
+    }
+
+    public void resetEncoder(MOTOR_SIDE side, MOTOR_END end) {
+        if (!isAvailable()) {
+            return;
+        }
+        for (int i = 0; i < config.motors.length; i++) {
+            if (config.motors[i].encoder &&
+                    (end == null || config.motors[i].end == end) &&
+                    (side == null || config.motors[i].side == side)) {
+                resetEncoder(i);
+            }
+        }
     }
 
     public float getTicksPerMM() {
@@ -174,20 +183,6 @@ public class TankDrive implements Wheels {
             position = getEncoder(index);
         }
         return position;
-    }
-
-    public int getEncoder(int index) {
-        if (!isAvailable()) {
-            return 0;
-        }
-        if (index < 0 || index >= config.motors.length) {
-            throw new ArrayIndexOutOfBoundsException(this.getClass().getSimpleName() + ": Invalid index: " + index);
-        }
-        if (!config.motors[index].encoder) {
-            telemetry.log().add("No encoder on motor: " + index);
-            return 0;
-        }
-        return (config.motors[index].motor.getCurrentPosition() + offsets[index]);
     }
 
     public float getRate() {
@@ -288,7 +283,7 @@ public class TankDrive implements Wheels {
             return;
         }
         for (int i = 0; i < config.motors.length; i++) {
-            config.motors[i].motor.setPower(0.0d);
+            config.motors[i].motor.setPower(0.0f);
             if (pids[i] != null) {
                 pids[i].reset();
             }

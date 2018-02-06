@@ -1,12 +1,17 @@
 package org.firstinspires.ftc.teamcode.actuators;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.utils.Available;
 
 public class Motor implements Available {
+    public static final DcMotor.RunMode DEFAULT_MODE = DcMotor.RunMode.RUN_WITHOUT_ENCODER;
+    public static final DcMotor.ZeroPowerBehavior DEFAULT_ZERO_POWER = DcMotor.ZeroPowerBehavior.FLOAT;
+    public static final DcMotor.Direction DEFAULT_DIRECTION = DcMotor.Direction.FORWARD;
+
     private DcMotor motor = null;
     private boolean enabled = true;
     private int offset = 0;
@@ -24,11 +29,13 @@ public class Motor implements Available {
             motor = map.dcMotor.get(config.name);
             if (config.reverse) {
                 motor.setDirection(DcMotor.Direction.REVERSE);
+            } else {
+                motor.setDirection(DEFAULT_DIRECTION);
             }
             if (config.brake) {
                 motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             } else {
-                motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+                motor.setZeroPowerBehavior(DEFAULT_ZERO_POWER);
             }
         } catch (Exception e) {
             telemetry.log().add(this.getClass().getSimpleName() + "No such device: " + config.name);
@@ -66,12 +73,7 @@ public class Motor implements Available {
     }
 
     public void resetEncoder() {
-        DcMotor.RunMode mode;
-        try {
-            mode = motor.getMode();
-        } catch (Exception e) {
-            mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER;
-        }
+        DcMotor.RunMode mode = getMode();
         setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         setMode(mode);
         offset = -getEncoder();
@@ -82,5 +84,15 @@ public class Motor implements Available {
             return;
         }
         motor.setMode(mode);
+    }
+
+    public DcMotor.RunMode getMode() {
+        DcMotor.RunMode mode;
+        try {
+            mode = motor.getMode();
+        } catch (Exception e) {
+            mode = DEFAULT_MODE;
+        }
+        return mode;
     }
 }
