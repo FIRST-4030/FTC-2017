@@ -13,8 +13,8 @@ public class Jewel implements CommonTask {
     private static final boolean DEBUG = false;
 
     // Drive constants
-    private static final float ARM_DELAY = 0.5f;
-    private static final int PIVOT_MILLS = 150;
+    private static final float ARM_DELAY = 0.75f;
+    private static final int PIVOT_MILLS = 200;
 
     // Image constants
     private int[] IMAGE_MAX = new int[]{1279, 719};
@@ -23,9 +23,6 @@ public class Jewel implements CommonTask {
     // Jewel parse default values
     public int[] UL = new int[]{0, 0};
     public int[] LR = new int[]{800, 300};
-
-    // TODO: Save/load to disk, so changes are persistent without code updates
-    // TODO: Alert if the default values differ from the saved values
 
     // Runtime
     private final Robot robot;

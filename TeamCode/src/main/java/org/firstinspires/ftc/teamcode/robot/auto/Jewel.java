@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.robot.auto;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
+import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 import org.firstinspires.ftc.teamcode.buttons.PAD_BUTTON;
 import org.firstinspires.ftc.teamcode.buttons.ButtonHandler;
 import org.firstinspires.ftc.teamcode.driveto.AutoDriver;
@@ -23,7 +24,6 @@ public class Jewel extends OpMode {
 
     // Auto constants
     private static final String TARGET = VuforiaConfigs.TargetNames[0];
-    private static final int RELEASE_REVERSE_MM = 125;
 
     // Devices and subsystems
     private Robot robot = null;
@@ -37,6 +37,7 @@ public class Jewel extends OpMode {
     private boolean targetReady = false;
     private boolean offsetReady = false;
     private boolean gameReady = false;
+    private RelicRecoveryVuMark column = RelicRecoveryVuMark.UNKNOWN;
 
     // Init-time config
     private ButtonHandler buttons;
@@ -93,29 +94,36 @@ public class Jewel extends OpMode {
         // Update Vuforia tracking, when available
         if (vuforia.isRunning()) {
             vuforia.track();
+            column = RelicRecoveryVuMark.from(vuforia.getTrackable(TARGET));
         }
         targetReady = (vuforia.isRunning() && !vuforia.isStale() && vuforia.getVisible(TARGET));
 
         // Driver setup
         telemetry.addData("Mode", mode);
         telemetry.addData("Alliance", alliance);
-        telemetry.addData("Stone", stone);
+        telemetry.addData("Starting Stone", stone);
         telemetry.addData("Delay", delay);
 
         // Driver feedback
         telemetry.addData("\t\t\t", "");
+        // TODO: Map these into something useful for field setup
+        // Red-Same: X+1150, Y-500, ∠+
+        // Red-Corner: X+, Y-, ∠-
+        // Blue-Same: X+, Y-, ∠-
+        // Blue-Corner: X+, Y-, ∠-
         telemetry.addData("Target ∠",
                 targetReady ? vuforia.getTargetAngle(TARGET) + "°" : "<Not Visible>");
         telemetry.addData("Position",
                 targetReady ?
-                        vuforia.getX() + "/" + vuforia.getY() : "<Not Visible>");
+                        vuforia.getX() + " / " + vuforia.getY() : "<Not Visible>");
+        telemetry.addData("Column", column);
         telemetry.addData("Gyro", robot.gyro.isReady() ? "Ready" : "Calibrating…");
         telemetry.addData("Lift", liftReady ? "Ready" : "Zeroing");
 
         // Overall ready status
         gameReady = (robot.gyro.isReady() && targetReady && liftReady);
         telemetry.addData("\t\t\t", "");
-        telemetry.addData(">", gameReady ? "Ready for game state" : "NOT READY");
+        telemetry.addData(">", gameReady ? "Ready for game start" : "NOT READY");
         telemetry.update();
     }
 
@@ -137,6 +145,7 @@ public class Jewel extends OpMode {
         // Set the gyro offset, if available
         if (targetReady) {
             robot.gyro.setOffset(-vuforia.getTargetAngle(TARGET));
+            column = RelicRecoveryVuMark.from(robot.vuforia.getTrackable(TARGET));
             offsetReady = true;
         } else {
             telemetry.log().add("Running without target alignment");
@@ -171,7 +180,6 @@ public class Jewel extends OpMode {
         // Main state machine, see enum for description of each state
         switch (state) {
             case INIT:
-                //+1150,-500
                 driver.done = false;
                 state = state.next();
                 break;
@@ -193,7 +201,7 @@ public class Jewel extends OpMode {
                 state = state.next();
                 break;
             case DRIVE_DOWN:
-                driver.drive = common.drive.distance(250);
+                driver.drive = common.drive.distance(275);
                 state = state.next();
                 break;
             case GYRO_WAIT:
@@ -208,20 +216,23 @@ public class Jewel extends OpMode {
                 state = state.next();
                 break;
             case DRIVE_FORWARD:
-                driver.drive = common.drive.distance(575);
+                driver.drive = common.drive.distance(550);
                 state = state.next();
                 break;
             case TURN_ACROSS:
+                // 25° past 90/270
                 driver.drive = (alliance == Field.AllianceColor.RED ?
                         common.drive.heading(115) :
-                        common.drive.heading(65));
+                        common.drive.heading(245));
                 state = state.next();
                 break;
             case DRIVE_ACROSS:
+                // TODO: Drive more/less based on target column
                 driver.drive = common.drive.distance(950);
                 state = state.next();
                 break;
             case PIVOT_TO_FACE:
+                // TODO: Pivot more/less based on target column
                 driver.drive = common.drive.heading(180);
                 state = state.next();
                 break;
@@ -229,23 +240,11 @@ public class Jewel extends OpMode {
                 driver.drive = common.drive.distance(750);
                 state = state.next();
                 break;
-            case RELEASE:
-                robot.intakes[INTAKES.LEFT.ordinal()].setPower(-0.5f);
-                robot.intakes[INTAKES.RIGHT.ordinal()].setPower(-0.5f);
-                driver.interval = Lift.LIFT_DELAY;
-                state = state.next();
-                break;
-            case RELEASE_TURN:
-                driver.drive = common.drive.timeTurn(75, Drive.SPEED_FORWARD_SLOW);
-                state = state.next();
-                break;
-            case RELEASE_REVERSE:
-                driver.drive = common.drive.distance(-RELEASE_REVERSE_MM);
+            case EJECT:
+                driver = delegateDriver(common.lift.eject(driver));
                 state = state.next();
                 break;
             case DONE:
-                robot.intakes[INTAKES.LEFT.ordinal()].stop();
-                robot.intakes[INTAKES.RIGHT.ordinal()].stop();
                 driver.done = true;
                 break;
         }
@@ -259,18 +258,16 @@ public class Jewel extends OpMode {
         HIT_JEWEL,          // Turn to hit the jewel
         DELAY,              // Optionally wait for our alliance partner
         // End here if we are in JEWEL_ONLY mode
-        DRIVE_DOWN,         // Get our wheels off the ramp
+        DRIVE_DOWN,         // Get our front wheels off the stone
         GYRO_WAIT,          // Wait for the gyro
         // Hold indefinitely if the gyro isn't available
-        PIVOT_ZERO,         // Pivot back to a heading of 0
-        DRIVE_FORWARD,      // Drive distance to appropriate point
-        TURN_ACROSS,           // Pivot to align with the desired rack
-        DRIVE_ACROSS,     // drive to the spot between the balancing plates
-        PIVOT_TO_FACE,      // Pivot to face the rack\
-        DRIVE_TO_BOX,       // Drive up to the rack
-        RELEASE,            // Release the block
-        RELEASE_TURN,       // Turn, so we push the block into a specific column if we hit an edge
-        RELEASE_REVERSE,    // Reverse away from the block
+        PIVOT_ZERO,         // Pivot to a heading of 0
+        DRIVE_FORWARD,      // Drive forward from the starting stone
+        TURN_ACROSS,        // Pivot to drive across the field
+        DRIVE_ACROSS,       // Drive to the spot between the starting stones
+        PIVOT_TO_FACE,      // Pivot to face the rack
+        DRIVE_TO_BOX,       // Drive up to the rack (light contact)
+        EJECT,              // Release the block(s)
         DONE;               // Finish
 
         public Jewel.AUTO_STATE prev() {
@@ -333,11 +330,6 @@ public class Jewel extends OpMode {
         public Jewel.MODE next() {
             return OrderedEnumHelper.next(this);
         }
-    }
-
-    // Probably should not be here
-    private int reverseOnAlliance(int turnDegrees) {
-        return (alliance == Field.AllianceColor.RED ? 1 : -1) * turnDegrees;
     }
 
     // Utility function to delegate our AutoDriver to an external provider
