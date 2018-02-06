@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.robot.common;
 
 import org.firstinspires.ftc.teamcode.driveto.AutoDriver;
+import org.firstinspires.ftc.teamcode.robot.INTAKES;
 import org.firstinspires.ftc.teamcode.robot.Robot;
 import org.firstinspires.ftc.teamcode.utils.OrderedEnum;
 import org.firstinspires.ftc.teamcode.utils.OrderedEnumHelper;
@@ -21,8 +22,6 @@ public class Lift implements CommonTask {
 
     enum LIFT_STATE implements OrderedEnum {
         INIT,
-        LIFT,
-        READY,
         DONE;
 
         public LIFT_STATE prev() {
@@ -43,15 +42,8 @@ public class Lift implements CommonTask {
             case INIT:
                 driver.done = false;
                 robot.jewelArm.setPosition(Common.JEWEL_ARM_RETRACT);
-                liftState = liftState.next();
-                break;
-            case LIFT:
-                robot.lift.setPower(LIFT_SPEED_UP);
-                driver.interval = LIFT_DELAY;
-                liftState = liftState.next();
-                break;
-            case READY:
-                robot.lift.stop();
+                robot.intakes[INTAKES.LEFT.ordinal()].setPower(1);
+                robot.intakes[INTAKES.RIGHT.ordinal()].setPower(1);
                 liftState = liftState.next();
                 break;
             case DONE:

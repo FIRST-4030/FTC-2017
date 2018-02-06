@@ -7,11 +7,11 @@ import org.firstinspires.ftc.teamcode.buttons.ButtonHandler;
 import org.firstinspires.ftc.teamcode.driveto.AutoDriver;
 import org.firstinspires.ftc.teamcode.field.Field;
 import org.firstinspires.ftc.teamcode.field.VuforiaConfigs;
+import org.firstinspires.ftc.teamcode.robot.INTAKES;
 import org.firstinspires.ftc.teamcode.robot.Robot;
 import org.firstinspires.ftc.teamcode.robot.common.Common;
 import org.firstinspires.ftc.teamcode.robot.common.Drive;
 import org.firstinspires.ftc.teamcode.robot.common.Lift;
-import org.firstinspires.ftc.teamcode.utils.Heading;
 import org.firstinspires.ftc.teamcode.utils.OrderedEnum;
 import org.firstinspires.ftc.teamcode.utils.OrderedEnumHelper;
 import org.firstinspires.ftc.teamcode.utils.Round;
@@ -24,7 +24,6 @@ public class Jewel extends OpMode {
     // Auto constants
     private static final String TARGET = VuforiaConfigs.TargetNames[0];
     private static final int RELEASE_REVERSE_MM = 125;
-    private static final int DRIVE_TO_BOX_MM = 575;
 
     // Devices and subsystems
     private Robot robot = null;
@@ -172,6 +171,7 @@ public class Jewel extends OpMode {
         // Main state machine, see enum for description of each state
         switch (state) {
             case INIT:
+                //+1150,-500
                 driver.done = false;
                 state = state.next();
                 break;
@@ -204,46 +204,35 @@ public class Jewel extends OpMode {
                 }
                 break;
             case PIVOT_ZERO:
-                driver.drive = common.drive.heading(reverseOnAlliance(alliance == Field.AllianceColor.BLUE ? 3 : 7));
+                driver.drive = common.drive.heading(0);
                 state = state.next();
                 break;
             case DRIVE_FORWARD:
-                driver.drive = common.drive.distance(525);
+                driver.drive = common.drive.distance(575);
                 state = state.next();
                 break;
-            case PIVOT135:
+            case TURN_ACROSS:
                 driver.drive = (alliance == Field.AllianceColor.RED ?
-                        common.drive.heading(reverseOnAlliance(115)) :
-                        common.drive.heading(reverseOnAlliance(-55))); // Turn left and back up vs right and distance
+                        common.drive.heading(115) :
+                        common.drive.heading(65));
                 state = state.next();
                 break;
-            case DRIVE_DIAGONAL:
-                driver.drive = (alliance == Field.AllianceColor.RED ?
-                        common.drive.distance(700) :
-                        common.drive.distance(-725));
+            case DRIVE_ACROSS:
+                driver.drive = common.drive.distance(950);
                 state = state.next();
                 break;
             case PIVOT_TO_FACE:
-                driver.drive = (alliance == Field.AllianceColor.RED ?
-                        common.drive.heading(reverseOnAlliance(173)) :
-                        common.drive.heading(reverseOnAlliance(-173)));
-                state = state.next();
-                break;
-            case LOWER_LIFT:
-                robot.lift.setPower(Lift.LIFT_SPEED_DOWN);
-                driver.interval = Lift.LIFT_DELAY;
-                state = state.next();
-                break;
-            case LOWER_LIFT_STOP:
-                robot.lift.stop();
+                driver.drive = common.drive.heading(180);
                 state = state.next();
                 break;
             case DRIVE_TO_BOX:
-                driver.drive = common.drive.distance(DRIVE_TO_BOX_MM);
+                driver.drive = common.drive.distance(750);
                 state = state.next();
                 break;
             case RELEASE:
-                // TODO: Eject blocks
+                robot.intakes[INTAKES.LEFT.ordinal()].setPower(-0.5f);
+                robot.intakes[INTAKES.RIGHT.ordinal()].setPower(-0.5f);
+                driver.interval = Lift.LIFT_DELAY;
                 state = state.next();
                 break;
             case RELEASE_TURN:
@@ -255,6 +244,8 @@ public class Jewel extends OpMode {
                 state = state.next();
                 break;
             case DONE:
+                robot.intakes[INTAKES.LEFT.ordinal()].stop();
+                robot.intakes[INTAKES.RIGHT.ordinal()].stop();
                 driver.done = true;
                 break;
         }
@@ -273,11 +264,9 @@ public class Jewel extends OpMode {
         // Hold indefinitely if the gyro isn't available
         PIVOT_ZERO,         // Pivot back to a heading of 0
         DRIVE_FORWARD,      // Drive distance to appropriate point
-        PIVOT135,           // Pivot to align with the desired rack
-        DRIVE_DIAGONAL,     // drive to the spot between the balancing plates
+        TURN_ACROSS,           // Pivot to align with the desired rack
+        DRIVE_ACROSS,     // drive to the spot between the balancing plates
         PIVOT_TO_FACE,      // Pivot to face the rack\
-        LOWER_LIFT,         // Lower the lift so that we don't drop the block on the bottom claw
-        LOWER_LIFT_STOP,    // Stop lowering the lift
         DRIVE_TO_BOX,       // Drive up to the rack
         RELEASE,            // Release the block
         RELEASE_TURN,       // Turn, so we push the block into a specific column if we hit an edge
