@@ -20,7 +20,6 @@ public class Jewel extends OpMode {
 
     // Auto constants
     private static final String TARGET = VuforiaConfigs.TargetNames[0];
-    private static final float PHONE_OFFSET_ANGLE = 0.0f;
 
     // Devices and subsystems
     private Robot robot = null;
