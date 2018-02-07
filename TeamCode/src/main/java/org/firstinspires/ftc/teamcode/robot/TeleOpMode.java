@@ -6,6 +6,7 @@ import org.firstinspires.ftc.teamcode.buttons.BUTTON_TYPE;
 import org.firstinspires.ftc.teamcode.buttons.PAD_BUTTON;
 import org.firstinspires.ftc.teamcode.buttons.ButtonHandler;
 import org.firstinspires.ftc.teamcode.robot.common.Common;
+import org.firstinspires.ftc.teamcode.robot.common.Lights;
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "TeleOp")
 public class TeleOpMode extends OpMode {
@@ -17,30 +18,32 @@ public class TeleOpMode extends OpMode {
     // Devices and subsystems
     private Robot robot = null;
     private ButtonHandler buttons;
+    private Lights lights = null;
 
     @Override
     public void init() {
 
         // Placate drivers
-        telemetry.addData(">", "Initializing…");
+        telemetry.addData(">", "NOT READY");
         telemetry.update();
 
         // Init the common tasks elements
         robot = new Robot(hardwareMap, telemetry);
+        lights = new Lights(robot);
 
         // Register buttons
         buttons = new ButtonHandler(robot);
-        buttons.register("EXTEND-INTAKE", gamepad2, PAD_BUTTON.b);
         buttons.register("SLOW-MODE", gamepad1, PAD_BUTTON.a, BUTTON_TYPE.TOGGLE);
 
         // Wait for the game to begin
-        telemetry.addData(">", "Init complete");
+        telemetry.addData(">", "Ready for game start");
         telemetry.update();
 
     }
 
     @Override
     public void start() {
+        lights.start();
         robot.wheels.setTeleop(true);
         robot.jewelArm.setPosition(Common.JEWEL_ARM_RETRACT);
     }
@@ -48,8 +51,9 @@ public class TeleOpMode extends OpMode {
     @Override
     public void loop() {
 
-        // Update buttons
+        // Update buttons & lights
         buttons.update();
+        lights.loop();
 
         // Move the robot
         driveBase();
@@ -75,8 +79,8 @@ public class TeleOpMode extends OpMode {
     public void liftSystem() {
 
         // Lift
-       float liftPower = gamepad2.right_trigger - gamepad2.left_trigger;
-       robot.lift.setPower(liftPower);
+        float liftPower = gamepad2.right_trigger - gamepad2.left_trigger;
+        robot.lift.setPower(liftPower);
 
         // Intake motors
         robot.intakes[INTAKES.LEFT.ordinal()].setPower(gamepad2.left_stick_y);

@@ -40,6 +40,9 @@ public class MotorConfigs extends Configs {
                     case INTAKE_R:
                         config = new MotorConfig("R_Intake", true);
                         break;
+                    case LIGHTS:
+                        config = new MotorConfig("Lights", false);
+                        break;
                 }
                 break;
             case Mecanum:
@@ -52,6 +55,9 @@ public class MotorConfigs extends Configs {
                         break;
                     case INTAKE_R:
                         config = new MotorConfig("R_Intake", true);
+                        break;
+                    case LIGHTS:
+                        config = new MotorConfig("Lights", false);
                         break;
                 }
                 break;

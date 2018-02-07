@@ -30,6 +30,7 @@ public class Robot {
     public final Switch liftSwitch;
     public final VuforiaFTC vuforia;
     public final ServoFTC jewelArm;
+    public final Motor lights;
 
     public final HardwareMap map;
     public final Telemetry telemetry;
@@ -69,6 +70,8 @@ public class Robot {
 
         jewelArm = servos.init(SERVOS.JEWEL_ARM);
         jewelArm.min();
+
+        lights = motors.init(MOTORS.LIGHTS);
 
         gyro = gyros.init();
 
