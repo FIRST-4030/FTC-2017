@@ -10,7 +10,6 @@ import org.firstinspires.ftc.teamcode.field.Field;
 import org.firstinspires.ftc.teamcode.field.VuforiaConfigs;
 import org.firstinspires.ftc.teamcode.robot.Robot;
 import org.firstinspires.ftc.teamcode.robot.common.Common;
-import org.firstinspires.ftc.teamcode.utils.Heading;
 import org.firstinspires.ftc.teamcode.utils.OrderedEnum;
 import org.firstinspires.ftc.teamcode.utils.OrderedEnumHelper;
 import org.firstinspires.ftc.teamcode.utils.Round;
@@ -33,7 +32,6 @@ public class Jewel extends OpMode {
     private AUTO_STATE state = AUTO_STATE.LIFT_INIT;
     private boolean liftReady = false;
     private boolean targetReady = false;
-    private boolean offsetReady = false;
     private boolean gameReady = false;
     private RelicRecoveryVuMark column = RelicRecoveryVuMark.UNKNOWN;
 
@@ -142,9 +140,8 @@ public class Jewel extends OpMode {
 
         // Set the gyro offset, if available
         if (targetReady) {
-            robot.gyro.setOffset(-Heading.normalizeErr(vuforia.getTargetAngle(TARGET) + PHONE_OFFSET_ANGLE));
+            robot.gyro.setOffset(-vuforia.getTargetAngle(TARGET));
             column = RelicRecoveryVuMark.from(robot.vuforia.getTrackable(TARGET));
-            offsetReady = true;
         } else {
             telemetry.log().add("Running without target alignment");
         }
