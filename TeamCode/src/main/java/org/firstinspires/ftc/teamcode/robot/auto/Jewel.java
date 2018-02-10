@@ -234,7 +234,7 @@ public class Jewel extends OpMode {
                 break;
             case DRIVE_ACROSS:
                 int distance = 1085;
-                if((false) && descision == DESCISION_TYPE.DISTANCE && (column != RelicRecoveryVuMark.CENTER || column != RelicRecoveryVuMark.UNKNOWN)){
+                if(descision == DESCISION_TYPE.DISTANCE && (column != RelicRecoveryVuMark.CENTER && column != RelicRecoveryVuMark.UNKNOWN)){
                     distance += COLUMN_DISTANCE_OFFSET
                             * (alliance == Field.AllianceColor.BLUE ? -1 : 1)
                             * (column == RelicRecoveryVuMark.LEFT ? -1 : 1);
@@ -244,7 +244,7 @@ public class Jewel extends OpMode {
                 break;
             case PIVOT_TO_FACE:
                 int heading = 180;
-                if((false) && descision == DESCISION_TYPE.ANGLE && (column != RelicRecoveryVuMark.CENTER || column != RelicRecoveryVuMark.UNKNOWN)){
+                if(descision == DESCISION_TYPE.ANGLE && (column != RelicRecoveryVuMark.CENTER && column != RelicRecoveryVuMark.UNKNOWN)){
                     heading += COLUMN_ANGLE_OFFSET
                             * (column == RelicRecoveryVuMark.LEFT ? -1 : 1);
                 }
