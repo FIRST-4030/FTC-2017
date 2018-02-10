@@ -23,9 +23,11 @@ public class Jewel extends OpMode {
     private static final String TARGET = VuforiaConfigs.TargetNames[0];
     private static final int START_ANGLE = -4;
     private static final int START_DISTANCE = 1120;
-    private static final int COLUMN_ANGLE_OFFSET = 19; // unused
+    private static final int COLUMN_ANGLE_OFFSET = 13; // unused
     private static final int COLUMN_DISTANCE_OFFSET = 185;
-    private static final int COLUMN_DRIVETO_OFFSET = 167;
+    private static final int COLUMN_DRIVETO_OFFSET = 150;
+    private static final int EARLY_PILE_DISTANCE = 750;
+    private static final int COLUMN_CORNER_OFFSET = 175;
 
     // Devices and subsystems
     private Robot robot = null;
@@ -208,7 +210,7 @@ public class Jewel extends OpMode {
                 }
                 break;
             case DRIVE_DOWN:
-                driver.drive = common.drive.distance(275);
+                driver.drive = common.drive.distance(300);
                 state = state.next();
                 break;
             case GYRO_WAIT:
@@ -223,41 +225,139 @@ public class Jewel extends OpMode {
                 state = state.next();
                 break;
             case DRIVE_FORWARD:
-                driver.drive = common.drive.distance(525);
+                driver.drive = common.drive.distance(500);
                 state = state.next();
                 break;
             case TURN_ACROSS:
-                // 25° past 90/270
-                driver.drive = (alliance == Field.AllianceColor.RED ?
-                        common.drive.heading(115) :
-                        common.drive.heading(245));
+                if(stone == STONE.SAME_WALL) {
+                    // 25° past 90/270
+                    driver.drive = (alliance == Field.AllianceColor.RED ?
+                            common.drive.heading(115) :
+                            common.drive.heading(245));
+                } else {
+                    driver.drive = (alliance == Field.AllianceColor.RED ?
+                            common.drive.heading(90) :
+                            common.drive.heading(270));
+                }
                 state = state.next();
                 break;
             case DRIVE_ACROSS:
-                int dirveAcrossDistance = 1085;
-                if(column != RelicRecoveryVuMark.CENTER && column != RelicRecoveryVuMark.UNKNOWN){
-                    dirveAcrossDistance += COLUMN_DISTANCE_OFFSET
-                            * (alliance == Field.AllianceColor.BLUE ? -1 : 1)
-                            * (column == RelicRecoveryVuMark.LEFT ? 1 : -1);
+                if(stone == STONE.SAME_WALL) {
+                    int driveAcrossDistance = 1085;
+                    if (column != RelicRecoveryVuMark.CENTER && column != RelicRecoveryVuMark.UNKNOWN) {
+                        driveAcrossDistance += COLUMN_DISTANCE_OFFSET
+                                * (alliance == Field.AllianceColor.BLUE ? -0.95 : 1)
+                                * (column == RelicRecoveryVuMark.LEFT ? 1 : -1);
+                    }
+                    driver.drive = common.drive.distance(driveAcrossDistance);
+                } else {
+                    driver.drive = common.drive.distance(600); // guess
                 }
-                driver.drive = common.drive.distance(dirveAcrossDistance);
                 state = state.next();
                 break;
-            case PIVOT_TO_FACE:
+            case CORNER_WALL_SKIP:
+                if (stone != STONE.CORNER_WALL) {
+                    state = AUTO_STATE.EXTRA_BLOCK_PILE_SKIP;
+                } else {
+                    state = state.next();
+                }
+                break;
+            case TURN_PERPENDICULAR:
                 driver.drive = common.drive.heading(180);
                 state = state.next();
                 break;
-            case DRIVE_TO_BOX:
-                int toBoxDistance = 575;
+            case DRIVE_ADJACENT:
+                int cornerDescision = 600;
                 if(column != RelicRecoveryVuMark.CENTER && column != RelicRecoveryVuMark.UNKNOWN){
-                    toBoxDistance += COLUMN_DRIVETO_OFFSET
+                    cornerDescision += COLUMN_CORNER_OFFSET
                             * (column == RelicRecoveryVuMark.LEFT ? -1 : 1)
                             * (alliance == Field.AllianceColor.BLUE ? -1 : 1);
                 }
-                driver.drive = common.drive.distance(toBoxDistance);
+                driver.drive = common.drive.distance(cornerDescision);
+                state = AUTO_STATE.PIVOT_TO_FACE;
+                break;
+            case EXTRA_BLOCK_PILE_SKIP:
+                if (extraBlock != EXTRA_BLOCK.PILE_FIRST || stone == STONE.CORNER_WALL) {
+                    state = AUTO_STATE.PIVOT_TO_FACE;
+                } else {
+                    state = state.next();
+                }
+                break;
+            case TURN_TO_PILE_EARLY:
+                driver.drive = common.drive.heading(0);
+                state = state.next();
+                break;
+            case DRIVE_TO_PILE_EARLY:
+                driver.drive = common.drive.distance(EARLY_PILE_DISTANCE);
+                state = state.next();
+                break;
+            case REVERSE_OUT_EARLY:
+                driver.drive = common.drive.distance(-EARLY_PILE_DISTANCE);
+                state = state.next();
+                break;
+            case PIVOT_TO_FACE:
+                if(stone == STONE.SAME_WALL) {
+                    driver.drive = common.drive.heading(180);
+                } else {
+                    driver.drive = common.drive.heading((alliance == Field.AllianceColor.BLUE ? 270 : 90));
+                }
+                state = state.next();
+                break;
+            case DRIVE_TO_BOX:
+                if(stone == STONE.SAME_WALL) {
+                    int toBoxDistance = 575;
+                    if (column != RelicRecoveryVuMark.CENTER && column != RelicRecoveryVuMark.UNKNOWN) {
+                        toBoxDistance += COLUMN_DRIVETO_OFFSET
+                                * (column == RelicRecoveryVuMark.LEFT ? -1 : 1)
+                                * (alliance == Field.AllianceColor.BLUE ? -1 : 1);
+                    }
+                    driver.drive = common.drive.distance(toBoxDistance);
+                } else {
+                    driver.drive = common.drive.distance(50); // guess
+                }
                 state = state.next();
                 break;
             case EJECT:
+                driver = delegateDriver(common.lift.eject(driver));
+                break;
+            case EXTRA_BLOCK_BOX_END:
+                if (extraBlock != EXTRA_BLOCK.BOX_FIRST || stone == STONE.CORNER_WALL) {
+                    state = AUTO_STATE.DONE;
+                } else {
+                    state = state.next();
+                }
+                break;
+            case TURN_TO_PILE:
+                driver.drive = common.drive.heading(0);
+                state = state.next();
+                break;
+            case DRIVE_TO_PILE:
+                common.lift.intake(driver);
+                driver.drive = common.drive.distance(1200);
+                state = state.next();
+                break;
+            case REVERSE_OUT:
+                driver.drive = common.drive.distance(-900);
+                state = state.next();
+                break;
+            case PIVOT_TO_FACE_2:
+                driver.drive = common.drive.heading(180);
+                state = state.next();
+                break;
+            case LIFT_BLOCKS_START:
+                robot.lift.setPower(1);
+                driver.interval = 1000;
+                state = state.next();
+                break;
+            case LIFT_BLOCKS_END:
+                robot.lift.stop();
+                state = state.next();
+                break;
+            case DRIVE_TO_BOX_2:
+                driver.drive = common.drive.distance(300);
+                state = state.next();
+                break;
+            case EJECT_2:
                 driver = delegateDriver(common.lift.eject(driver));
                 break;
             case DONE:
@@ -282,9 +382,29 @@ public class Jewel extends OpMode {
         DRIVE_FORWARD,      // Drive forward from the starting stone
         TURN_ACROSS,        // Pivot to drive across the field
         DRIVE_ACROSS,       // Drive to the spot between the starting stones
+        CORNER_WALL_SKIP,
+        // Skips a few instructions if we are on the corner wall
+        TURN_PERPENDICULAR, // Turn to heading 180
+        DRIVE_ADJACENT,
+        EXTRA_BLOCK_PILE_SKIP,
+        // Skips a few instructions if we aren't in PILE_FIRST extra block
+        TURN_TO_PILE_EARLY, // Turn to the pile so we an grab more blocks
+        DRIVE_TO_PILE_EARLY,    // Drives into the pile, hopefully grabbing another block
+        REVERSE_OUT_EARLY,  // Reverse out of the pile
+        // This is where the auto skips to if we aren't in PILE_FIRST
         PIVOT_TO_FACE,      // Pivot to face the rack
         DRIVE_TO_BOX,       // Drive up to the rack (light contact)
         EJECT,              // Release the block(s)
+        EXTRA_BLOCK_BOX_END,
+        // End here if we aren't in BOX_FIRST extra block
+        TURN_TO_PILE,       // Turn back to the pile
+        DRIVE_TO_PILE,      // Dive into the pile, hoping to pick up blocks
+        REVERSE_OUT,        // Drives backwards out of the pile
+        PIVOT_TO_FACE_2,    // pivots to face the rack again
+        LIFT_BLOCKS_START,  // Moves the lift up so we avoid hitting the previous block
+        LIFT_BLOCKS_END,
+        DRIVE_TO_BOX_2,     // Drives to the box again
+        EJECT_2,            // Ejects the blocks again
         DONE;               // Finish
 
         public Jewel.AUTO_STATE prev() {
@@ -329,7 +449,7 @@ public class Jewel extends OpMode {
     enum EXTRA_BLOCK implements OrderedEnum {
         NONE,
         PILE_FIRST,
-        BLOCK_FIRST;
+        BOX_FIRST;
 
         public Jewel.EXTRA_BLOCK prev() {
             return OrderedEnumHelper.prev(this);

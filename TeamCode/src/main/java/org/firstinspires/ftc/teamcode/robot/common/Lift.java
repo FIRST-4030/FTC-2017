@@ -117,4 +117,12 @@ public class Lift implements CommonTask {
             return OrderedEnumHelper.next(this);
         }
     }
+
+    public AutoDriver intake(AutoDriver driver){
+        for (INTAKES intake : INTAKES.values()) {
+            robot.intakes[intake.ordinal()].setPower(INTAKE_SPEED_IN);
+        }
+        return driver;
+    }
+
 }
