@@ -4,7 +4,7 @@
         <LynxModule name="Lift" port="1">
             <NeveRest40Gearmotor name="L_Intake" port="0" />
             <NeveRest40Gearmotor name="R_Intake" port="1" />
-            <NeveRest40Gearmotor name="" port="2" />
+            <NeveRest40Gearmotor name="Lights" port="2" />
             <NeveRest40Gearmotor name="LM1" port="3" />
             <Servo name="CL2" port="0" />
             <Servo name="CL1" port="1" />
