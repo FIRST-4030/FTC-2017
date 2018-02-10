@@ -23,6 +23,8 @@ public class Jewel extends OpMode {
     private static final String TARGET = VuforiaConfigs.TargetNames[0];
     private static final int START_ANGLE = -4;
     private static final int START_DISTANCE = 1120;
+    private static final int COLUMN_ANGLE_OFFSET = 5; // Just a guess
+    private static final int COLUMN_DISTANCE_OFFSET = 50; // Just a guess
 
     // Devices and subsystems
     private Robot robot = null;
@@ -44,6 +46,7 @@ public class Jewel extends OpMode {
     private Field.AllianceColor alliance = Field.AllianceColor.RED;
     private STONE stone = STONE.SAME_WALL;
     private MODE mode = MODE.JEWEL_BLOCK;
+    private DESCISION_TYPE descision = DESCISION_TYPE.DISTANCE;
 
     @Override
     public void init() {
@@ -67,6 +70,9 @@ public class Jewel extends OpMode {
         buttons.register("STONE-DOWN", gamepad1, PAD_BUTTON.a);
         buttons.register("ALLIANCE-RED", gamepad1, PAD_BUTTON.b);
         buttons.register("ALLIANCE-BLUE", gamepad1, PAD_BUTTON.x);
+
+        buttons.register("DESCISION_TYPE-UP", gamepad1, PAD_BUTTON.dpad_up);
+        buttons.register("DESCISION_TYPE-DOWN", gamepad1, PAD_BUTTON.dpad_down);
     }
 
     @Override
@@ -85,6 +91,7 @@ public class Jewel extends OpMode {
         buttons.update();
         mode = (MODE) updateEnum("MODE", mode);
         stone = (STONE) updateEnum("STONE", stone);
+        descision = (DESCISION_TYPE) updateEnum("DESCISION_TYPE", descision);
         if (buttons.get("ALLIANCE-RED")) {
             alliance = Field.AllianceColor.RED;
         } else if (buttons.get("ALLIANCE-BLUE")) {
@@ -102,6 +109,7 @@ public class Jewel extends OpMode {
         telemetry.addData("Mode", mode);
         telemetry.addData("Alliance", alliance);
         telemetry.addData("Starting Stone", stone);
+        telemetry.addData("Descision Type", descision);
 
         // Positioning feedback
         telemetry.addData("\t\t\t", "");
@@ -225,13 +233,22 @@ public class Jewel extends OpMode {
                 state = state.next();
                 break;
             case DRIVE_ACROSS:
-                // TODO: Drive more/less based on target column
-                driver.drive = common.drive.distance(1085);
+                int distance = 1085;
+                if((false) && descision == DESCISION_TYPE.DISTANCE && (column != RelicRecoveryVuMark.CENTER || column != RelicRecoveryVuMark.UNKNOWN)){
+                    distance += COLUMN_DISTANCE_OFFSET
+                            * (alliance == Field.AllianceColor.BLUE ? -1 : 1)
+                            * (column == RelicRecoveryVuMark.LEFT ? -1 : 1);
+                }
+                driver.drive = common.drive.distance(distance);
                 state = state.next();
                 break;
             case PIVOT_TO_FACE:
-                // TODO: Pivot more/less based on target column
-                driver.drive = common.drive.heading(180);
+                int heading = 180;
+                if((false) && descision == DESCISION_TYPE.ANGLE && (column != RelicRecoveryVuMark.CENTER || column != RelicRecoveryVuMark.UNKNOWN)){
+                    heading += COLUMN_ANGLE_OFFSET
+                            * (column == RelicRecoveryVuMark.LEFT ? -1 : 1);
+                }
+                driver.drive = common.drive.heading(heading);
                 state = state.next();
                 break;
             case DRIVE_TO_BOX:
@@ -301,6 +318,21 @@ public class Jewel extends OpMode {
         }
 
         public Jewel.MODE next() {
+            return OrderedEnumHelper.next(this);
+        }
+    }
+
+
+    // A temporary enum for how the robot chooses which column
+    enum DESCISION_TYPE implements OrderedEnum {
+        DISTANCE,
+        ANGLE;
+
+        public Jewel.DESCISION_TYPE prev() {
+            return OrderedEnumHelper.prev(this);
+        }
+
+        public Jewel.DESCISION_TYPE next() {
             return OrderedEnumHelper.next(this);
         }
     }
