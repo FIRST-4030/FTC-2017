@@ -246,7 +246,7 @@ public class Jewel extends OpMode {
                     int driveAcrossDistance = 1085;
                     if (column != RelicRecoveryVuMark.CENTER && column != RelicRecoveryVuMark.UNKNOWN) {
                         driveAcrossDistance += COLUMN_DISTANCE_OFFSET
-                                * (alliance == Field.AllianceColor.BLUE ? -0.95 : 1)
+                                * (alliance == Field.AllianceColor.BLUE ? -1 : 1)
                                 * (column == RelicRecoveryVuMark.LEFT ? 1 : -1);
                     }
                     driver.drive = common.drive.distance(driveAcrossDistance);
