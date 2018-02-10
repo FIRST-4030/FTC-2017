@@ -1,10 +1,12 @@
 package org.firstinspires.ftc.teamcode.robot.common;
 
+import android.app.backup.FullBackupDataOutput;
+
 import org.firstinspires.ftc.teamcode.robot.Robot;
 
 public class Lights {
     // Light constants
-    private static final float BRIGHTNESS_FULL = 1.0f;
+    private static final float BRIGHTNESS_FULL = -1.0f;
     private static final float BRIGHTNESS_OFF = 0.0f;
     private static final int FLASH_TIMEOUT = 500;
 

@@ -7,19 +7,19 @@ import org.firstinspires.ftc.teamcode.utils.OrderedEnum;
 import org.firstinspires.ftc.teamcode.utils.OrderedEnumHelper;
 
 public class Lift implements CommonTask {
+    private static final boolean DEBUG = true;
 
     // Intake speed
     public final static float INTAKE_SPEED_IN = 1.0f;
-    public final static float INTAKE_SPEED_OUT = -0.5f * INTAKE_SPEED_IN;
+    public final static float INTAKE_SPEED_OUT = -0.75f * INTAKE_SPEED_IN;
 
     // Lift speed -- Up is motor positive, ticks increasing
     public final static float LIFT_SPEED_UP = 1.0f;
     public final static float LIFT_SPEED_DOWN = -LIFT_SPEED_UP;
 
     // Eject constants
-    private final static float EJECT_DELAY = 0.5f;
-    private final static int WIGGLE_MILLS = 75;
-    private final static int REVERSE_MM = 125;
+    private final static float EJECT_DELAY = 0.75f;
+    private final static int REVERSE_MM = 250;
 
     // Runtime
     private final Robot robot;
@@ -31,6 +31,10 @@ public class Lift implements CommonTask {
     }
 
     public AutoDriver autoStart(AutoDriver driver) {
+        if (DEBUG) {
+            robot.telemetry.log().add("Lift state: " + liftState);
+        }
+
         switch (liftState) {
             case INIT:
                 driver.done = false;
@@ -65,6 +69,10 @@ public class Lift implements CommonTask {
     }
 
     public AutoDriver eject(AutoDriver driver) {
+        if (DEBUG) {
+            robot.telemetry.log().add("Eject state: " + ejectState);
+        }
+
         switch (ejectState) {
             case INIT:
                 driver.done = false;
@@ -75,10 +83,6 @@ public class Lift implements CommonTask {
                     robot.intakes[intake.ordinal()].setPower(INTAKE_SPEED_OUT);
                 }
                 driver.interval = Lift.EJECT_DELAY;
-                ejectState = ejectState.next();
-                break;
-            case WIGGLE:
-                driver.drive = robot.common.drive.timeTurn(WIGGLE_MILLS, Drive.SPEED_FORWARD_SLOW);
                 ejectState = ejectState.next();
                 break;
             case REVERSE:
@@ -101,7 +105,6 @@ public class Lift implements CommonTask {
     enum EJECT_STATE implements OrderedEnum {
         INIT,
         EJECT,
-        WIGGLE,
         REVERSE,
         STOP,
         DONE;

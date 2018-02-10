@@ -20,6 +20,8 @@ public class Jewel extends OpMode {
 
     // Auto constants
     private static final String TARGET = VuforiaConfigs.TargetNames[0];
+    private static final int START_ANGLE = -4;
+    private static final int START_DISTANCE = 1120;
 
     // Devices and subsystems
     private Robot robot = null;
@@ -101,16 +103,10 @@ public class Jewel extends OpMode {
 
         // Driver feedback
         telemetry.addData("\t\t\t", "");
-        // TODO: Map these into something useful for field setup
-        // Red-Same: X+1150, Y-500, ∠+
-        // Red-Corner: X+, Y-, ∠-
-        // Blue-Same: X+, Y-, ∠-
-        // Blue-Corner: X+, Y-, ∠-
-        telemetry.addData("Target ∠",
-                targetReady ? vuforia.getTargetAngle(TARGET) + "°" : "<Not Visible>");
-        telemetry.addData("Position",
-                targetReady ?
-                        vuforia.getX() + " / " + vuforia.getY() : "<Not Visible>");
+        telemetry.addData("Start ∠",
+                targetReady ? (vuforia.getTargetAngle(TARGET) - START_ANGLE) + "°" : "<Not Visible>");
+        telemetry.addData("Start Distance",
+                targetReady ? (vuforia.getX() - START_DISTANCE) + "mm" : "<Not Visible>");
         telemetry.addData("Column", column);
         telemetry.addData("Gyro", robot.gyro.isReady() ? "Ready" : "Calibrating…");
         telemetry.addData("Lift", liftReady ? "Ready" : "Zeroing");
@@ -139,7 +135,7 @@ public class Jewel extends OpMode {
 
         // Set the gyro offset, if available
         if (targetReady) {
-            robot.gyro.setOffset(-vuforia.getTargetAngle(TARGET));
+            robot.gyro.setOffset(vuforia.getTargetAngle(TARGET));
             column = RelicRecoveryVuMark.from(robot.vuforia.getTrackable(TARGET));
         } else {
             telemetry.log().add("Running without target alignment");
@@ -210,7 +206,7 @@ public class Jewel extends OpMode {
                 state = state.next();
                 break;
             case DRIVE_FORWARD:
-                driver.drive = common.drive.distance(550);
+                driver.drive = common.drive.distance(525);
                 state = state.next();
                 break;
             case TURN_ACROSS:
@@ -222,7 +218,7 @@ public class Jewel extends OpMode {
                 break;
             case DRIVE_ACROSS:
                 // TODO: Drive more/less based on target column
-                driver.drive = common.drive.distance(950);
+                driver.drive = common.drive.distance(1085);
                 state = state.next();
                 break;
             case PIVOT_TO_FACE:
@@ -231,12 +227,11 @@ public class Jewel extends OpMode {
                 state = state.next();
                 break;
             case DRIVE_TO_BOX:
-                driver.drive = common.drive.distance(750);
+                driver.drive = common.drive.distance(575);
                 state = state.next();
                 break;
             case EJECT:
                 driver = delegateDriver(common.lift.eject(driver));
-                state = state.next();
                 break;
             case DONE:
                 driver.done = true;

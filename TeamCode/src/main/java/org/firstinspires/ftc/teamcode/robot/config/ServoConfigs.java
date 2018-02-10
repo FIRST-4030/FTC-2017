@@ -31,14 +31,14 @@ public class ServoConfigs extends Configs {
             case WestCoast:
                 switch (servo) {
                     case JEWEL_ARM:
-                        config = new ServoConfig("Jewel Arm", true, 0.2f, 1.0f); // needs calibration
+                        config = new ServoConfig("Jewel Arm", true, 0.1f, 1.0f);
                         break;
                 }
                 break;
             case Mecanum:
                 switch (servo) {
                     case JEWEL_ARM:
-                        config = new ServoConfig("Jewel Arm", true, 0.0f, 1.0f); // needs calibration
+                        config = new ServoConfig("Jewel Arm", true, 0.1f, 1.0f);
                         break;
                 }
                 break;
