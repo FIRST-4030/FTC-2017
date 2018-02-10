@@ -35,7 +35,7 @@ public class MotorConfigs extends Configs {
                         config = new MotorConfig("LM1", false, true);
                         break;
                     case INTAKE_L:
-                        config = new MotorConfig("L_Intake", false);
+                        config = new MotorConfig("L_Intake", true);
                         break;
                     case INTAKE_R:
                         config = new MotorConfig("R_Intake", true);
