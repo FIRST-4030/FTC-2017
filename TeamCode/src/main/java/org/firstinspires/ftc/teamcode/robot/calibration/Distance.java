@@ -69,6 +69,7 @@ public class Distance extends Subsystem {
         buttons.deregister(LARGE);
         buttons.deregister(HUGE);
         buttons.deregister(BACK);
+        buttons.deregister(JOYSTICK);
     }
 
     protected void update() {
