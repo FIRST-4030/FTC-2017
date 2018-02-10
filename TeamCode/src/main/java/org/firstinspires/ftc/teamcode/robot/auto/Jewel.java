@@ -10,6 +10,7 @@ import org.firstinspires.ftc.teamcode.field.Field;
 import org.firstinspires.ftc.teamcode.field.VuforiaConfigs;
 import org.firstinspires.ftc.teamcode.robot.Robot;
 import org.firstinspires.ftc.teamcode.robot.common.Common;
+import org.firstinspires.ftc.teamcode.robot.common.Lights;
 import org.firstinspires.ftc.teamcode.utils.OrderedEnum;
 import org.firstinspires.ftc.teamcode.utils.OrderedEnumHelper;
 import org.firstinspires.ftc.teamcode.utils.Round;
@@ -27,6 +28,7 @@ public class Jewel extends OpMode {
     private Robot robot = null;
     private Common common = null;
     private VuforiaFTC vuforia = null;
+    private Lights lights = null;
 
     // Runtime state
     private AutoDriver driver = new AutoDriver();
@@ -35,11 +37,11 @@ public class Jewel extends OpMode {
     private boolean targetReady = false;
     private boolean gameReady = false;
     private RelicRecoveryVuMark column = RelicRecoveryVuMark.UNKNOWN;
+    private Lights.MODE lightsMode = Lights.MODE.OFF;
 
     // Init-time config
     private ButtonHandler buttons;
     private Field.AllianceColor alliance = Field.AllianceColor.RED;
-    private DELAY delay = DELAY.NONE;
     private STONE stone = STONE.SAME_WALL;
     private MODE mode = MODE.JEWEL_BLOCK;
 
@@ -50,6 +52,7 @@ public class Jewel extends OpMode {
 
         // Init the common tasks elements
         robot = new Robot(hardwareMap, telemetry);
+        lights = new Lights(robot, lightsMode);
         common = robot.common;
         vuforia = robot.vuforia;
 
@@ -60,8 +63,6 @@ public class Jewel extends OpMode {
         buttons = new ButtonHandler(robot);
         buttons.register("MODE-UP", gamepad1, PAD_BUTTON.dpad_right);
         buttons.register("MODE-DOWN", gamepad1, PAD_BUTTON.dpad_left);
-        buttons.register("DELAY-UP", gamepad1, PAD_BUTTON.dpad_up);
-        buttons.register("DELAY-DOWN", gamepad1, PAD_BUTTON.dpad_down);
         buttons.register("STONE-UP", gamepad1, PAD_BUTTON.y);
         buttons.register("STONE-DOWN", gamepad1, PAD_BUTTON.a);
         buttons.register("ALLIANCE-RED", gamepad1, PAD_BUTTON.b);
@@ -77,10 +78,12 @@ public class Jewel extends OpMode {
             liftReady = true;
         }
 
+        // Lights
+        lights.loop(lightsMode);
+
         // Process driver input
         buttons.update();
         mode = (MODE) updateEnum("MODE", mode);
-        delay = (DELAY) updateEnum("DELAY", delay);
         stone = (STONE) updateEnum("STONE", stone);
         if (buttons.get("ALLIANCE-RED")) {
             alliance = Field.AllianceColor.RED;
@@ -99,22 +102,26 @@ public class Jewel extends OpMode {
         telemetry.addData("Mode", mode);
         telemetry.addData("Alliance", alliance);
         telemetry.addData("Starting Stone", stone);
-        telemetry.addData("Delay", delay);
 
-        // Driver feedback
+        // Positioning feedback
         telemetry.addData("\t\t\t", "");
         telemetry.addData("Start ∠",
                 targetReady ? (vuforia.getTargetAngle(TARGET) - START_ANGLE) + "°" : "<Not Visible>");
         telemetry.addData("Start Distance",
                 targetReady ? (vuforia.getX() - START_DISTANCE) + "mm" : "<Not Visible>");
-        telemetry.addData("Column", column);
-        telemetry.addData("Gyro", robot.gyro.isReady() ? "Ready" : "Calibrating…");
-        telemetry.addData("Lift", liftReady ? "Ready" : "Zeroing");
 
         // Overall ready status
         gameReady = (robot.gyro.isReady() && targetReady && liftReady);
         telemetry.addData("\t\t\t", "");
         telemetry.addData(">", gameReady ? "Ready for game start" : "NOT READY");
+
+        // Detailed feedback
+        telemetry.addData("\t\t\t", "");
+        telemetry.addData("Gyro", robot.gyro.isReady() ? "Ready" : "Calibrating…");
+        telemetry.addData("Column", column);
+        telemetry.addData("Lift", liftReady ? "Ready" : "Zeroing");
+
+        // Update
         telemetry.update();
     }
 
@@ -143,6 +150,7 @@ public class Jewel extends OpMode {
 
         // Steady…
         state = AUTO_STATE.values()[0];
+        lightsMode = Lights.MODE.AUTO_INIT;
     }
 
     @Override
@@ -177,18 +185,18 @@ public class Jewel extends OpMode {
                 driver = delegateDriver(common.jewel.parse(driver));
                 break;
             case LIFT_INIT:
+                lightsMode = Lights.MODE.AUTO_RUN;
                 driver = delegateDriver(common.lift.autoStart(driver));
                 break;
             case HIT_JEWEL:
                 driver = delegateDriver(common.jewel.hit(driver, alliance));
                 break;
-            case DELAY:
+            case JEWEL_END:
                 if (mode == MODE.JEWEL_ONLY) {
                     state = AUTO_STATE.DONE;
-                    break;
+                } else {
+                    state = state.next();
                 }
-                driver.interval = delay.seconds();
-                state = state.next();
                 break;
             case DRIVE_DOWN:
                 driver.drive = common.drive.distance(275);
@@ -234,6 +242,7 @@ public class Jewel extends OpMode {
                 driver = delegateDriver(common.lift.eject(driver));
                 break;
             case DONE:
+                lightsMode = Lights.MODE.OFF;
                 driver.done = true;
                 break;
         }
@@ -245,7 +254,7 @@ public class Jewel extends OpMode {
         PARSE_JEWEL,        // Parse which jewel is on which side
         LIFT_INIT,          // Initiate lift & grab block
         HIT_JEWEL,          // Turn to hit the jewel
-        DELAY,              // Optionally wait for our alliance partner
+        JEWEL_END,              // Optionally wait for our alliance partner
         // End here if we are in JEWEL_ONLY mode
         DRIVE_DOWN,         // Get our front wheels off the stone
         GYRO_WAIT,          // Wait for the gyro
@@ -264,31 +273,6 @@ public class Jewel extends OpMode {
         }
 
         public Jewel.AUTO_STATE next() {
-            return OrderedEnumHelper.next(this);
-        }
-    }
-
-    // Configurable delay
-    enum DELAY implements OrderedEnum {
-        NONE(0),
-        SHORT(5000),
-        LONG(10000);
-
-        private final int milliseconds;
-
-        DELAY(int milliseconds) {
-            this.milliseconds = milliseconds;
-        }
-
-        public float seconds() {
-            return milliseconds / 1000.0f;
-        }
-
-        public Jewel.DELAY prev() {
-            return OrderedEnumHelper.prev(this);
-        }
-
-        public Jewel.DELAY next() {
             return OrderedEnumHelper.next(this);
         }
     }

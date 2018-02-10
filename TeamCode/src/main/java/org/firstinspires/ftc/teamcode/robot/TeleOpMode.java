@@ -29,7 +29,7 @@ public class TeleOpMode extends OpMode {
 
         // Init the common tasks elements
         robot = new Robot(hardwareMap, telemetry);
-        lights = new Lights(robot);
+        lights = new Lights(robot, Lights.MODE.TELEOP);
 
         // Register buttons
         buttons = new ButtonHandler(robot);
