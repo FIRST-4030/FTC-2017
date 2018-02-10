@@ -217,8 +217,9 @@ public class Jewel implements CommonTask {
                 break;
             case PARSE_JEWEL:
                 isLeftRed();
-                // Save the parsed image for future analysis
-                image.savePNG("auto-" + System.currentTimeMillis() + ".png");
+                if (DEBUG) {
+                    image.savePNG("auto-" + System.currentTimeMillis() + ".png");
+                }
                 parseState = parseState.next();
                 break;
             case DONE:
