@@ -7,7 +7,7 @@ import org.firstinspires.ftc.teamcode.utils.OrderedEnum;
 import org.firstinspires.ftc.teamcode.utils.OrderedEnumHelper;
 
 public class Lift implements CommonTask {
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = false;
 
     // Intake speed
     public final static float INTAKE_SPEED_IN = 1.0f;
