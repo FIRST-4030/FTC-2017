@@ -219,11 +219,11 @@ public class Jewel extends OpMode {
             case PARSE_JEWEL:
                 driver = delegateDriver(common.jewel.parse(driver));
                 break;
-            case JEWEL_ADJUST:
-                int jewelOffset = vuforia.getX() - START_DISTANCE;
-                if(Math.abs(jewelOffset) > 10) driver.drive = common.drive.distance(jewelOffset);
-                state = state.next();
-                break;
+//            case JEWEL_ADJUST:
+//                int jewelOffset = vuforia.getX() - START_DISTANCE;
+//                if(Math.abs(jewelOffset) > 10) driver.drive = common.drive.distance(jewelOffset);
+//                state = state.next();
+//                break;
             case HIT_JEWEL:
                 driver = delegateDriver(common.jewel.hit(driver, alliance));
                 break;
@@ -395,7 +395,7 @@ public class Jewel extends OpMode {
         LIFT_INIT,          // Initiate lift & grab block
         JEWEL_SKIP,         // skips the jewel code if in BLOCK_ONLY mode
         PARSE_JEWEL,        // Parse which jewel is on which side
-        JEWEL_ADJUST,       // Move slightly forward if we are too close to the jewel to hit it
+//        JEWEL_ADJUST,       // Move slightly forward if we are too close to the jewel to hit it
         HIT_JEWEL,          // Turn to hit the jewel
         JEWEL_END,              // Optionally wait for our alliance partner
         // End here if we are in JEWEL_ONLY mode
