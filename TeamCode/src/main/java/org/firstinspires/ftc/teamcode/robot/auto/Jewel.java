@@ -43,6 +43,7 @@ public class Jewel extends OpMode {
     private boolean gameReady = false;
     private RelicRecoveryVuMark column = RelicRecoveryVuMark.UNKNOWN;
     private Lights.MODE lightsMode = Lights.MODE.OFF;
+    private double liftTimer = 0;
 
     // Init-time config
     private ButtonHandler buttons;
@@ -174,6 +175,12 @@ public class Jewel extends OpMode {
 
         // Handle AutoDriver driving
         driver = common.drive.loop(driver);
+
+        if(liftTimer > 0 && liftTimer < time){
+            robot.lift.stop();
+            liftTimer = 0;
+        }
+
 
         // Debug feedback
         telemetry.addData("State", state);
@@ -345,30 +352,27 @@ public class Jewel extends OpMode {
                     state = state.next();
                 }
                 break;
+            case REVERSE_AWAY:
+                driver.drive = common.drive.distance(-300);
+                state = state.next();
+                break;
             case TURN_TO_PILE:
                 driver.drive = common.drive.heading(0);
                 state = state.next();
                 break;
             case DRIVE_TO_PILE:
                 common.lift.intake(driver);
-                driver.drive = common.drive.distance(1200);
+                driver.drive = common.drive.distance(900);
                 state = state.next();
                 break;
             case REVERSE_OUT:
+                robot.lift.setPower(1);
+                liftTimer = time + .5;
                 driver.drive = common.drive.distance(-900);
                 state = state.next();
                 break;
             case PIVOT_TO_FACE_2:
                 driver.drive = common.drive.heading(180);
-                state = state.next();
-                break;
-            case LIFT_BLOCKS_START:
-                robot.lift.setPower(1);
-                driver.interval = 1000;
-                state = state.next();
-                break;
-            case LIFT_BLOCKS_END:
-                robot.lift.stop();
                 state = state.next();
                 break;
             case DRIVE_TO_BOX_2:
@@ -417,12 +421,11 @@ public class Jewel extends OpMode {
         EJECT,              // Release the block(s)
         EXTRA_BLOCK_BOX_END,
         // End here if we aren't in BOX_FIRST extra block
+        REVERSE_AWAY,       // Back away from the box so our bot doesn't descore the block by turning
         TURN_TO_PILE,       // Turn back to the pile
         DRIVE_TO_PILE,      // Dive into the pile, hoping to pick up blocks
-        REVERSE_OUT,        // Drives backwards out of the pile
+        REVERSE_OUT,        // Drives backwards out of the pile. Also move the lift up for .5 secs
         PIVOT_TO_FACE_2,    // pivots to face the rack again
-        LIFT_BLOCKS_START,  // Moves the lift up so we avoid hitting the previous block
-        LIFT_BLOCKS_END,
         DRIVE_TO_BOX_2,     // Drives to the box again
         EJECT_2,            // Ejects the blocks again
         DONE;               // Finish
@@ -502,5 +505,3 @@ public class Jewel extends OpMode {
         return retval;
     }
 }
-
-
