@@ -64,6 +64,7 @@ public class Jewel extends OpMode {
 
         // Init the camera system
         vuforia.start();
+        vuforia.enableCapture(true);
 
         // Register buttons
         buttons = new ButtonHandler(robot);
@@ -159,6 +160,9 @@ public class Jewel extends OpMode {
         } else {
             telemetry.log().add("Running without target alignment");
         }
+
+        // Grab an image
+        vuforia.capture();
 
         // Steady…
         state = AUTO_STATE.values()[0];

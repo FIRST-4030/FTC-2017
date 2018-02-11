@@ -199,8 +199,8 @@ public class Jewel implements CommonTask {
                 parseState = parseState.next();
                 break;
             case ENABLE_CAPTURE:
-                robot.vuforia.enableCapture(true);
                 parseState = parseState.next();
+                image = robot.vuforia.getImage();
                 break;
             case WAIT_FOR_IMAGE:
                 if (image == null) {
