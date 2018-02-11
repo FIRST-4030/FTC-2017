@@ -196,7 +196,7 @@ public class Jewel extends OpMode {
                 driver = delegateDriver(common.jewel.parse(driver));
                 break;
             case LIFT_INIT:
-                lightsMode = Lights.MODE.AUTO_RUN;
+                lightsMode = Lights.MODE.ON;
                 driver = delegateDriver(common.lift.autoStart(driver));
                 break;
             case HIT_JEWEL:
