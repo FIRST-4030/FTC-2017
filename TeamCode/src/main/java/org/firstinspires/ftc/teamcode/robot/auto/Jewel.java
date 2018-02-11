@@ -155,6 +155,7 @@ public class Jewel extends OpMode {
         if (targetReady) {
             robot.gyro.setOffset(vuforia.getTargetAngle(TARGET));
             column = RelicRecoveryVuMark.from(robot.vuforia.getTrackable(TARGET));
+            vuforia.track();
         } else {
             telemetry.log().add("Running without target alignment");
         }
@@ -195,8 +196,13 @@ public class Jewel extends OpMode {
             case PARSE_JEWEL:
                 driver = delegateDriver(common.jewel.parse(driver));
                 break;
+            case JEWEL_ADJUST:
+                int jewelOffset = vuforia.getX() - START_DISTANCE;
+                if(Math.abs(jewelOffset) > 10) driver.drive = common.drive.distance(jewelOffset);
+                state = state.next();
+                break;
             case LIFT_INIT:
-                lightsMode = Lights.MODE.ON;
+                lightsMode = Lights.MODE.OFF;
                 driver = delegateDriver(common.lift.autoStart(driver));
                 break;
             case HIT_JEWEL:
@@ -371,6 +377,7 @@ public class Jewel extends OpMode {
     enum AUTO_STATE implements OrderedEnum {
         INIT,               // Initiate stuff
         PARSE_JEWEL,        // Parse which jewel is on which side
+        JEWEL_ADJUST,       // Move slightly forward if we are too close to the jewel to hit it
         LIFT_INIT,          // Initiate lift & grab block
         HIT_JEWEL,          // Turn to hit the jewel
         JEWEL_END,              // Optionally wait for our alliance partner
