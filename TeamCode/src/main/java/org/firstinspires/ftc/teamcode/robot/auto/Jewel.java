@@ -197,6 +197,17 @@ public class Jewel extends OpMode {
                 driver.done = false;
                 state = state.next();
                 break;
+            case LIFT_INIT:
+                lightsMode = Lights.MODE.OFF;
+                driver = delegateDriver(common.lift.autoStart(driver));
+                break;
+            case JEWEL_SKIP:
+                if(mode == MODE.BLOCK_ONLY){
+                    state = AUTO_STATE.DRIVE_DOWN;
+                } else {
+                    state = state.next();
+                }
+                break;
             case PARSE_JEWEL:
                 driver = delegateDriver(common.jewel.parse(driver));
                 break;
@@ -204,10 +215,6 @@ public class Jewel extends OpMode {
                 int jewelOffset = vuforia.getX() - START_DISTANCE;
                 if(Math.abs(jewelOffset) > 10) driver.drive = common.drive.distance(jewelOffset);
                 state = state.next();
-                break;
-            case LIFT_INIT:
-                lightsMode = Lights.MODE.OFF;
-                driver = delegateDriver(common.lift.autoStart(driver));
                 break;
             case HIT_JEWEL:
                 driver = delegateDriver(common.jewel.hit(driver, alliance));
@@ -380,9 +387,10 @@ public class Jewel extends OpMode {
     // Define the order of auto routine components
     enum AUTO_STATE implements OrderedEnum {
         INIT,               // Initiate stuff
+        LIFT_INIT,          // Initiate lift & grab block
+        JEWEL_SKIP,         // skips the jewel code if in BLOCK_ONLY mode
         PARSE_JEWEL,        // Parse which jewel is on which side
         JEWEL_ADJUST,       // Move slightly forward if we are too close to the jewel to hit it
-        LIFT_INIT,          // Initiate lift & grab block
         HIT_JEWEL,          // Turn to hit the jewel
         JEWEL_END,              // Optionally wait for our alliance partner
         // End here if we are in JEWEL_ONLY mode
@@ -444,7 +452,8 @@ public class Jewel extends OpMode {
     // Balance stone positions
     enum MODE implements OrderedEnum {
         JEWEL_BLOCK,
-        JEWEL_ONLY;
+        JEWEL_ONLY,
+        BLOCK_ONLY;
 
         public Jewel.MODE prev() {
             return OrderedEnumHelper.prev(this);
