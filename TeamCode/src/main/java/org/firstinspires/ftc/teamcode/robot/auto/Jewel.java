@@ -203,6 +203,7 @@ public class Jewel extends OpMode {
                 break;
             case JEWEL_SKIP:
                 if(mode == MODE.BLOCK_ONLY){
+                    vuforia.enableCapture(false);
                     state = AUTO_STATE.DRIVE_DOWN;
                 } else {
                     state = state.next();
