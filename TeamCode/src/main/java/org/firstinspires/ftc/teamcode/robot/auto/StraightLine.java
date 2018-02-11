@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.robot.auto;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.buttons.PAD_BUTTON;
@@ -11,6 +12,7 @@ import org.firstinspires.ftc.teamcode.robot.common.Common;
 import org.firstinspires.ftc.teamcode.utils.OrderedEnum;
 import org.firstinspires.ftc.teamcode.utils.OrderedEnumHelper;
 
+@Disabled
 @com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "Straight Line", group = "Auto")
 public class StraightLine extends OpMode {
 

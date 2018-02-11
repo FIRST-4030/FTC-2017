@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.robot.test;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -11,6 +12,7 @@ import org.firstinspires.ftc.teamcode.robot.common.Common;
 import org.firstinspires.ftc.teamcode.utils.Round;
 import org.firstinspires.ftc.teamcode.vuforia.ImageFTC;
 
+@Disabled
 @TeleOp(name = "Calibration-Old", group = "Calibration")
 public class CalibrationOld extends OpMode {
 
