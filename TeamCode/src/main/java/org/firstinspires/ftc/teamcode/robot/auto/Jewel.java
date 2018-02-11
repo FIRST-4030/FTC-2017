@@ -24,7 +24,7 @@ public class Jewel extends OpMode {
     private static final int START_ANGLE = -4;
     private static final int START_DISTANCE = 1120;
     private static final int COLUMN_ANGLE_OFFSET = 13; // unused
-    private static final int COLUMN_DISTANCE_OFFSET = 185;
+    private static final int COLUMN_DISTANCE_OFFSET = 205;
     private static final int COLUMN_DRIVETO_OFFSET = 150;
     private static final int EARLY_PILE_DISTANCE = 750;
     private static final int COLUMN_CORNER_OFFSET = 175;
@@ -247,11 +247,11 @@ public class Jewel extends OpMode {
                     if (column != RelicRecoveryVuMark.CENTER && column != RelicRecoveryVuMark.UNKNOWN) {
                         driveAcrossDistance += COLUMN_DISTANCE_OFFSET
                                 * (alliance == Field.AllianceColor.BLUE ? -1 : 1)
-                                * (column == RelicRecoveryVuMark.LEFT ? 1 : -1);
+                                * (column == RelicRecoveryVuMark.LEFT ? 1 : -0.975);
                     }
                     driver.drive = common.drive.distance(driveAcrossDistance);
                 } else {
-                    driver.drive = common.drive.distance(750);
+                    driver.drive = common.drive.distance(680);
                 }
                 state = state.next();
                 break;
@@ -267,7 +267,7 @@ public class Jewel extends OpMode {
                 state = state.next();
                 break;
             case DRIVE_ADJACENT:
-                int cornerDescision = 500;
+                int cornerDescision = 455;
                 if(column != RelicRecoveryVuMark.CENTER && column != RelicRecoveryVuMark.UNKNOWN){
                     cornerDescision += COLUMN_CORNER_OFFSET
                             * (column == RelicRecoveryVuMark.LEFT ? -1 : 1)
@@ -305,7 +305,7 @@ public class Jewel extends OpMode {
                 break;
             case DRIVE_TO_BOX:
                 if(stone == STONE.SAME_WALL) {
-                    int toBoxDistance = 575;
+                    int toBoxDistance = 557;
                     if (column != RelicRecoveryVuMark.CENTER && column != RelicRecoveryVuMark.UNKNOWN) {
                         toBoxDistance += COLUMN_DRIVETO_OFFSET
                                 * (column == RelicRecoveryVuMark.LEFT ? -1 : 1)
@@ -313,7 +313,7 @@ public class Jewel extends OpMode {
                     }
                     driver.drive = common.drive.distance(toBoxDistance);
                 } else {
-                    driver.drive = common.drive.distance(350); // guess
+                    driver.drive = common.drive.distance(335); // guess
                 }
                 state = state.next();
                 break;
