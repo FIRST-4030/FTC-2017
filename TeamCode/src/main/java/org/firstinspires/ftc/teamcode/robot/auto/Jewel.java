@@ -26,7 +26,7 @@ public class Jewel extends OpMode {
     private static final int COLUMN_ANGLE_OFFSET = 13; // unused
     private static final int COLUMN_DISTANCE_OFFSET = 205;
     private static final int COLUMN_DRIVETO_OFFSET = 150;
-    private static final int EARLY_PILE_DISTANCE = 750;
+    private static final int EARLY_PILE_DISTANCE = 650;
     private static final int COLUMN_CORNER_OFFSET = 175;
 
     // Devices and subsystems
