@@ -13,6 +13,7 @@
             <Servo name="CL2" port="0" />
             <Servo name="CL1" port="1" />
             <Servo name="Jewel Arm" port="2" />
+            <AnalogInput name="LS1" port="0" />
             <LynxEmbeddedIMU name="imu 1" port="0" bus="0" />
         </LynxModule>
     </LynxUsbDevice>

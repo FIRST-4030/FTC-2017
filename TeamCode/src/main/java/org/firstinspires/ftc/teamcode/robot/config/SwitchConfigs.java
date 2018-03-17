@@ -52,6 +52,13 @@ public class SwitchConfigs extends Configs {
                         break;
                 }
                 break;
+            case WestCoastClaw:
+                switch (name) {
+                    case LIFT:
+                        config = new SwitchConfig(SWITCH_TYPES.VOLTAGE, "LS1");
+                        break;
+                }
+                break;
         }
         return config;
     }

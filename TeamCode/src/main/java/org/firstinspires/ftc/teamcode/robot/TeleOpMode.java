@@ -34,6 +34,8 @@ public class TeleOpMode extends OpMode {
         // Register buttons
         buttons = new ButtonHandler(robot);
         buttons.register("SLOW-MODE", gamepad1, PAD_BUTTON.a, BUTTON_TYPE.TOGGLE);
+        buttons.register("CLAW-" + CLAWS.TOP, gamepad2, PAD_BUTTON.right_bumper);
+        buttons.register("CLAW-" + CLAWS.BOTTOM, gamepad2, PAD_BUTTON.left_bumper);
 
         // Wait for the game to begin
         telemetry.addData(">", "Ready for game start");
@@ -82,8 +84,23 @@ public class TeleOpMode extends OpMode {
         float liftPower = gamepad2.right_trigger - gamepad2.left_trigger;
         robot.lift.setPower(liftPower);
 
-        // Intake motors
-        robot.intakes[INTAKES.LEFT.ordinal()].setPower(gamepad2.left_stick_y);
-        robot.intakes[INTAKES.RIGHT.ordinal()].setPower(gamepad2.right_stick_y);
+        switch (robot.bot) {
+            case WestCoast:
+            case Mecanum: // doesn't exist
+                // Intake motors
+                robot.intakes[INTAKES.LEFT.ordinal()].setPower(gamepad2.left_stick_y);
+                robot.intakes[INTAKES.RIGHT.ordinal()].setPower(gamepad2.right_stick_y);
+                break;
+            case WestCoastClaw:
+                // Claws
+                for (CLAWS claw : CLAWS.values()) {
+                    if (buttons.get("CLAW-" + claw)) {
+                        robot.claws[claw.ordinal()].toggle();
+                        telemetry.addData("CLAW-" + claw, robot.claws[claw.ordinal()].getPostion());
+                    }
+                }
+                break;
+
+        }
     }
 }

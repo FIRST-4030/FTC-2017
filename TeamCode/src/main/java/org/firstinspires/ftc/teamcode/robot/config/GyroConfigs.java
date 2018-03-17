@@ -47,6 +47,9 @@ public class GyroConfigs extends Configs {
             case Mecanum:
                 config = new GyroConfig(GYRO_TYPES.MR, "gyro");
                 break;
+            case WestCoastClaw:
+                config = new GyroConfig(GYRO_TYPES.REV, "imu");
+                break;
         }
         return config;
     }

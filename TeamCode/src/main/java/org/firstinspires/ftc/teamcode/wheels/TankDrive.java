@@ -30,7 +30,7 @@ public class TankDrive implements Wheels {
                 break;
             }
             wheelMotor.motor = new Motor(map, telemetry, wheelMotor);
-            if (wheelMotor.motor == null) {
+            if (!wheelMotor.motor.isAvailable()) {
                 return;
             }
         }

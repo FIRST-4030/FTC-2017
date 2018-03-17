@@ -99,7 +99,7 @@ public class Lights {
         }
 
         // Update the lights
-        robot.lights.setPower(brightness);
+        if (robot.lights != null) robot.lights.setPower(brightness);
     }
 
     private float off() {
