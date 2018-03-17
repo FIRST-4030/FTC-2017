@@ -25,12 +25,13 @@ public class Robot {
     public final BOT bot;
     public final Wheels wheels;
     public final Motor lift;
-    public final Motor[] intakes;
+    public ServoFTC[] claws;
+    public Motor[] intakes;
     public final Gyro gyro;
     public final Switch liftSwitch;
     public final VuforiaFTC vuforia;
     public final ServoFTC jewelArm;
-    public final Motor lights;
+    public Motor lights;
 
     public final HardwareMap map;
     public final Telemetry telemetry;
@@ -61,17 +62,29 @@ public class Robot {
         lift = motors.init(MOTORS.LIFT);
         lift.stop();
 
-        intakes = new Motor[INTAKES.values().length];
-        intakes[INTAKES.LEFT.ordinal()] = motors.init(MOTORS.INTAKE_L);
-        intakes[INTAKES.RIGHT.ordinal()] = motors.init(MOTORS.INTAKE_R);
-        for (Motor intake : intakes) {
-            intake.stop();
+        switch (bot) {
+            case WestCoastClaw:
+                claws = new ServoFTC[CLAWS.values().length];
+                claws[CLAWS.TOP.ordinal()] = servos.init(SERVOS.CLAW_TOP);
+                claws[CLAWS.BOTTOM.ordinal()] = servos.init(SERVOS.CLAW_BOTTOM);
+                for (ServoFTC claw : claws) {
+                    claw.min();
+                }
+                break;
+            case WestCoast:
+                lights = motors.init(MOTORS.LIGHTS);
+            case Mecanum:
+                intakes = new Motor[INTAKES.values().length];
+                intakes[INTAKES.LEFT.ordinal()] = motors.init(MOTORS.INTAKE_L);
+                intakes[INTAKES.RIGHT.ordinal()] = motors.init(MOTORS.INTAKE_R);
+                for (Motor intake : intakes) {
+                    intake.stop();
+                }
+                break;
         }
 
         jewelArm = servos.init(SERVOS.JEWEL_ARM);
         jewelArm.min();
-
-        lights = motors.init(MOTORS.LIGHTS);
 
         gyro = gyros.init();
 

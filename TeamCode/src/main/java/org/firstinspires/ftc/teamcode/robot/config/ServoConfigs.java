@@ -42,6 +42,20 @@ public class ServoConfigs extends Configs {
                         break;
                 }
                 break;
+            case WestCoastClaw:
+                switch (servo) {
+                    case JEWEL_ARM:
+                        config = new ServoConfig("Jewel Arm", true, 0.1f, 1.0f);
+                        break;
+                    case CLAW_TOP:
+                        config = new ServoConfig("CL1", true, 0.27f, 0.66f);
+                        break;
+                    case CLAW_BOTTOM:
+                        config = new ServoConfig("CL2", true, 0.5f, 0.85f);
+                        break;
+
+                }
+                break;
         }
         return config;
     }

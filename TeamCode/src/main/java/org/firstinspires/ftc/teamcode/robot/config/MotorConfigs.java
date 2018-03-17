@@ -61,6 +61,13 @@ public class MotorConfigs extends Configs {
                         break;
                 }
                 break;
+            case WestCoastClaw:
+                switch (motor) {
+                    case LIFT:
+                        config = new MotorConfig("LM1", false, true);
+                        break;
+                }
+                break;
         }
         return config;
     }
