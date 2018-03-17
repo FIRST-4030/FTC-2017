@@ -38,7 +38,7 @@ public class Motor implements Available {
                 motor.setZeroPowerBehavior(DEFAULT_ZERO_POWER);
             }
         } catch (Exception e) {
-            telemetry.log().add(this.getClass().getSimpleName() + "No such device: " + config.name);
+            telemetry.log().add(this.getClass().getSimpleName() + " No such device: " + config.name);
             motor = null;
         }
     }
