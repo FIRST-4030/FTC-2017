@@ -48,10 +48,10 @@ public class ServoConfigs extends Configs {
                         config = new ServoConfig("Jewel Arm", true, 0.1f, 1.0f);
                         break;
                     case CLAW_TOP:
-                        config = new ServoConfig("CL1", true, 0.27f, 0.66f);
+                        config = new ServoConfig("CL1", true, 0.14f, 0.41f);
                         break;
                     case CLAW_BOTTOM:
-                        config = new ServoConfig("CL2", true, 0.5f, 0.85f);
+                        config = new ServoConfig("CL2", true, 0.11f, 0.41f);
                         break;
 
                 }

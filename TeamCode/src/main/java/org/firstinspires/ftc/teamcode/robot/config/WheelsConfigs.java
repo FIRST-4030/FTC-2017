@@ -67,13 +67,13 @@ public class WheelsConfigs extends Configs {
                 break;
             case WestCoastClaw:
                 motors = new WheelMotor[4];
-                motors[0] = new WheelMotor("ML1-Claw", MOTOR_SIDE.LEFT, false,
+                motors[0] = new WheelMotor("ML1-Claw", MOTOR_SIDE.LEFT, true,
                         new PIDParams(0.318f, 0.2f, 0.0f), WC_TICKS_PER_MM, WC_MAX_RATE);
-                motors[1] = new WheelMotor("MR1-Claw", MOTOR_SIDE.RIGHT, true,
+                motors[1] = new WheelMotor("MR1-Claw", MOTOR_SIDE.RIGHT, false,
                         new PIDParams(0.29f, 0.25f, 0.0f), WC_TICKS_PER_MM, WC_MAX_RATE);
-                motors[2] = new WheelMotor("ML2-Claw", MOTOR_SIDE.LEFT, false);
-                motors[3] = new WheelMotor("MR2-Claw", MOTOR_SIDE.RIGHT, true);
-                config = new WheelsConfig(DRIVE_TYPE.TANK, motors, false);
+                motors[2] = new WheelMotor("ML2-Claw", MOTOR_SIDE.LEFT, true);
+                motors[3] = new WheelMotor("MR2-Claw", MOTOR_SIDE.RIGHT, false);
+                config = new WheelsConfig(DRIVE_TYPE.TANK, motors, true);
                 break;
         }
         return config;
