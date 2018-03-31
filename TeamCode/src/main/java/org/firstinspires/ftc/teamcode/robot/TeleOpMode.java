@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.robot;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
+import org.firstinspires.ftc.teamcode.actuators.Motor;
 import org.firstinspires.ftc.teamcode.buttons.BUTTON_TYPE;
 import org.firstinspires.ftc.teamcode.buttons.PAD_BUTTON;
 import org.firstinspires.ftc.teamcode.buttons.ButtonHandler;
@@ -18,7 +19,6 @@ public class TeleOpMode extends OpMode {
     // Devices and subsystems
     private Robot robot = null;
     private ButtonHandler buttons;
-    private Lights lights = null;
 
     @Override
     public void init() {
@@ -29,13 +29,14 @@ public class TeleOpMode extends OpMode {
 
         // Init the common tasks elements
         robot = new Robot(hardwareMap, telemetry);
-        lights = new Lights(robot, Lights.MODE.TELEOP);
 
         // Register buttons
         buttons = new ButtonHandler(robot);
-        buttons.register("SLOW-MODE", gamepad1, PAD_BUTTON.a, BUTTON_TYPE.TOGGLE);
-        buttons.register("CLAW-" + CLAWS.TOP, gamepad2, PAD_BUTTON.right_bumper);
-        buttons.register("CLAW-" + CLAWS.BOTTOM, gamepad2, PAD_BUTTON.left_bumper);
+        buttons.register("SLOW-MODE", gamepad2, PAD_BUTTON.a, BUTTON_TYPE.TOGGLE);
+        buttons.register("CLAW-" + CLAWS.TOP, gamepad1, PAD_BUTTON.right_trigger);
+        buttons.register("CLAW-" + CLAWS.BOTTOM, gamepad1, PAD_BUTTON.left_trigger);
+        buttons.register("ARM", gamepad1, PAD_BUTTON.a, BUTTON_TYPE.TOGGLE);
+        buttons.register("LIGHTS", gamepad1, PAD_BUTTON.b, BUTTON_TYPE.TOGGLE);
 
         // Wait for the game to begin
         telemetry.addData(">", "Ready for game start");
@@ -45,7 +46,7 @@ public class TeleOpMode extends OpMode {
 
     @Override
     public void start() {
-        lights.start();
+//        lights.start();
         robot.wheels.setTeleop(true);
         robot.jewelArm.setPosition(Common.JEWEL_ARM_RETRACT);
     }
@@ -55,11 +56,13 @@ public class TeleOpMode extends OpMode {
 
         // Update buttons & lights
         buttons.update();
-        lights.loop();
 
         // Move the robot
         driveBase();
         liftSystem();
+
+        if (buttons.get("ARM")) robot.jewelArm.max();
+        else robot.jewelArm.setPosition(Common.JEWEL_ARM_RETRACT);
 
         // Driver Feedback
         telemetry.addData("Wheels", robot.wheels.isAvailable());
@@ -81,15 +84,22 @@ public class TeleOpMode extends OpMode {
     public void liftSystem() {
 
         // Lift
-        float liftPower = gamepad2.right_trigger - gamepad2.left_trigger;
+        float liftPower = 0;
+        if (gamepad1.left_bumper && !gamepad1.right_bumper) liftPower = -1;
+        if (!gamepad1.left_bumper && gamepad1.right_bumper) liftPower = 1;
         robot.lift.setPower(liftPower);
 
         switch (robot.bot) {
             case WestCoast:
+                if (buttons.get("LIGHTS")) robot.lights.setPower(Lights.BRIGHTNESS_FULL);
+                else robot.lights.setPower(Lights.BRIGHTNESS_OFF);
+
             case Mecanum: // doesn't exist
                 // Intake motors
-                robot.intakes[INTAKES.LEFT.ordinal()].setPower(gamepad2.left_stick_y);
-                robot.intakes[INTAKES.RIGHT.ordinal()].setPower(gamepad2.right_stick_y);
+                float power = (gamepad1.left_trigger > gamepad1.right_trigger) ? (gamepad1.left_trigger) : (-gamepad1.right_trigger);
+                for (Motor m : robot.intakes) {
+                    m.setPower(power);
+                }
                 break;
             case WestCoastClaw:
                 // Claws
