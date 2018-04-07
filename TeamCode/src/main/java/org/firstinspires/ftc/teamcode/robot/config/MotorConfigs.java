@@ -41,7 +41,7 @@ public class MotorConfigs extends Configs {
                         config = new MotorConfig("R_Intake", true);
                         break;
                     case LIGHTS:
-                        config = new MotorConfig("Lights", false);
+                        config = new MotorConfig("Lights", true);
                         break;
                 }
                 break;
@@ -57,7 +57,7 @@ public class MotorConfigs extends Configs {
                         config = new MotorConfig("R_Intake", true);
                         break;
                     case LIGHTS:
-                        config = new MotorConfig("Lights", false);
+                        config = new MotorConfig("Lights", true);
                         break;
                 }
                 break;
@@ -65,6 +65,9 @@ public class MotorConfigs extends Configs {
                 switch (motor) {
                     case LIFT:
                         config = new MotorConfig("LM1", false, true);
+                        break;
+                    case LIGHTS:
+                        config = new MotorConfig("Lights", false);
                         break;
                 }
                 break;

@@ -46,7 +46,6 @@ public class TeleOpMode extends OpMode {
 
     @Override
     public void start() {
-//        lights.start();
         robot.wheels.setTeleop(true);
         robot.jewelArm.setPosition(Common.JEWEL_ARM_RETRACT);
     }
@@ -54,7 +53,7 @@ public class TeleOpMode extends OpMode {
     @Override
     public void loop() {
 
-        // Update buttons & lights
+        // Update buttons
         buttons.update();
 
         // Move the robot
@@ -89,11 +88,16 @@ public class TeleOpMode extends OpMode {
         if (!gamepad1.left_bumper && gamepad1.right_bumper) liftPower = 1;
         robot.lift.setPower(liftPower);
 
+        // Lights
+        if (buttons.get("LIGHTS")) {
+            robot.lights.setPower(Lights.BRIGHTNESS_FULL);
+        } else {
+            robot.lights.setPower(Lights.BRIGHTNESS_OFF);
+        }
+
+        // Chassis-specific functions (claws and intakes)
         switch (robot.bot) {
             case WestCoast:
-                if (buttons.get("LIGHTS")) robot.lights.setPower(Lights.BRIGHTNESS_FULL);
-                else robot.lights.setPower(Lights.BRIGHTNESS_OFF);
-
             case Mecanum: // doesn't exist
                 // Intake motors
                 float power = (gamepad1.left_trigger > gamepad1.right_trigger) ? (gamepad1.left_trigger) : (-gamepad1.right_trigger);
