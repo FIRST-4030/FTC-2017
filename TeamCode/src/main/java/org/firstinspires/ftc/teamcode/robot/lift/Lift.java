@@ -4,6 +4,7 @@ import org.firstinspires.ftc.teamcode.actuators.Motor;
 import org.firstinspires.ftc.teamcode.backgroundTask.Background;
 import org.firstinspires.ftc.teamcode.driveto.PID;
 import org.firstinspires.ftc.teamcode.driveto.PIDParams;
+import org.firstinspires.ftc.teamcode.robot.Robot;
 import org.firstinspires.ftc.teamcode.sensors.switches.Switch;
 
 /**
@@ -40,7 +41,8 @@ public class Lift extends Background {
 
         } else {
             pid.input(motor.getEncoder());
-            motor.setPower(pid.output());
+//            motor.setPower(pid.output());
+            Robot.robot.telemetry.log().add("PID output: " + pid.output());
         }
     }
 

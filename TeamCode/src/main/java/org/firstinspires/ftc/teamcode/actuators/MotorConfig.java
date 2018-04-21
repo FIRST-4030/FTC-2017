@@ -18,6 +18,6 @@ public class MotorConfig implements Config {
     }
 
     public MotorConfig(String name) {
-        this(name, false, false);
+        this(name, false);
     }
 }
