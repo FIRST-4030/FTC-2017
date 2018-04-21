@@ -62,6 +62,8 @@ public class Robot {
         lift = motors.init(MOTORS.LIFT);
         lift.stop();
 
+        lights = motors.init(MOTORS.LIGHTS);
+
         switch (bot) {
             case WestCoastClaw:
                 claws = new ServoFTC[CLAWS.values().length];
@@ -72,7 +74,6 @@ public class Robot {
                 }
                 break;
             case WestCoast:
-                lights = motors.init(MOTORS.LIGHTS);
             case Mecanum:
                 intakes = new Motor[INTAKES.values().length];
                 intakes[INTAKES.LEFT.ordinal()] = motors.init(MOTORS.INTAKE_L);
