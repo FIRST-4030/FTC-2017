@@ -20,6 +20,7 @@ public class TeleOpMode extends OpMode {
     private Robot robot = null;
     private ButtonHandler buttons;
 
+
     @Override
     public void init() {
 
@@ -29,6 +30,7 @@ public class TeleOpMode extends OpMode {
 
         // Init the common tasks elements
         robot = new Robot(hardwareMap, telemetry);
+
 
         // Register buttons
         buttons = new ButtonHandler(robot);
@@ -69,6 +71,7 @@ public class TeleOpMode extends OpMode {
         telemetry.addData("Teleop", robot.wheels.isTeleop());
         telemetry.addData("Slow Mode", buttons.get("SLOW-MODE"));
         telemetry.addData("Lift Height", robot.lift.getEncoder());
+        telemetry.addData("Switch", robot.liftSwitch.get());
         telemetry.update();
     }
 

@@ -41,7 +41,7 @@ public class SwitchConfigs extends Configs {
             case WestCoast:
                 switch (name) {
                     case LIFT:
-                        config = new SwitchConfig(SWITCH_TYPES.VOLTAGE, "LS1");
+                        config = new SwitchConfig(SWITCH_TYPES.DIGITAL, "LS1");
                         break;
                 }
                 break;

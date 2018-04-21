@@ -28,6 +28,6 @@ public class Digital implements Switch {
     }
 
     public boolean get() {
-        return isAvailable() && button.getState();
+        return isAvailable() && !button.getState();
     }
 }
