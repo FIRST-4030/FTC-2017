@@ -18,7 +18,7 @@ import org.firstinspires.ftc.teamcode.utils.OrderedEnum;
 import org.firstinspires.ftc.teamcode.utils.OrderedEnumHelper;
 import org.firstinspires.ftc.teamcode.utils.Round;
 
-@Disabled
+
 @com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "Simple Auto", group = "Test")
 public class SimpleAuto extends OpMode {
 
@@ -28,6 +28,7 @@ public class SimpleAuto extends OpMode {
     private ButtonHandler buttons = null;
     private AutoDriver driver = new AutoDriver();
     private final PID pid = new PID();
+    private org.firstinspires.ftc.teamcode.robot.lift.Lift lift;
 
     // Lift zero testing
     enum LIFT_STATE implements OrderedEnum {
@@ -61,10 +62,14 @@ public class SimpleAuto extends OpMode {
         robot = new Robot(hardwareMap, telemetry);
         common = robot.common;
 
+        lift = new org.firstinspires.ftc.teamcode.robot.lift.Lift();
+        lift.init(robot.lift, robot.liftSwitch);
+
         // Buttons
         buttons = new ButtonHandler(robot);
-        buttons.register("REVERSE", gamepad1, PAD_BUTTON.left_trigger, BUTTON_TYPE.TOGGLE);
-        buttons.register("VUFORIA", gamepad1, PAD_BUTTON.left_stick_button);
+        buttons.register("LOW", gamepad1, PAD_BUTTON.a);
+        buttons.register("MIDDLE", gamepad1, PAD_BUTTON.b);
+        buttons.register("HIGH", gamepad1, PAD_BUTTON.y);
     }
 
     @Override
@@ -78,108 +83,20 @@ public class SimpleAuto extends OpMode {
 
     @Override
     public void start() {
+        lift.start();
         telemetry.clearAll();
     }
 
     @Override
     public void loop() {
 
-        // Input
-        buttons.update();
-        if (buttons.get("VUFORIA") && !robot.vuforia.isRunning()) {
-            robot.vuforia.start();
-        }
+        if (buttons.get("LOW")) lift.set(org.firstinspires.ftc.teamcode.robot.lift.Lift.LOW);
+        if (buttons.get("MIDDLE")) lift.set(org.firstinspires.ftc.teamcode.robot.lift.Lift.MIDDLE);
+        if (buttons.get("HIGH")) lift.set(org.firstinspires.ftc.teamcode.robot.lift.Lift.HIGH);
 
-        // Vuforia tracking, when available
-        String vuforiaAngle = "<Not Visible>";
-        if (robot.vuforia.isRunning()) {
-            robot.vuforia.track();
-            if (!robot.vuforia.isStale() && robot.vuforia.getVisible(VuforiaConfigs.TargetNames[0])) {
-                vuforiaAngle = robot.vuforia.getTargetAngle(VuforiaConfigs.TargetNames[0]) + "°";
-            }
-        }
-
-        // Handle AutoDriver driving
-        driver = common.drive.loop(driver);
-
-        // PID rate tracking
-        pid.input((int) pid.last + 1);
-        telemetry.addData("PID", Round.truncate(pid.rate) + "\t\t" +
-                Round.truncate(pid.last) + "\t\t" + Round.truncate(pid.last / time));
-
-        // Driver feedback
-        telemetry.addData("Vuforia Angle", vuforiaAngle);
-        telemetry.addData("LiftZero", liftState);
-        telemetry.addData("Lift", robot.lift.getEncoder() +
-                "/" + (robot.liftSwitch.get() ? "Down" : "Up") +
-                " (" + liftState + ")");
-        telemetry.addData("Gyro", robot.gyro.isReady() ? Round.truncate(robot.gyro.getHeading()) : "<Calibrating>");
-        telemetry.addData("Time/Drive", Round.truncate(time) + "/" + driver.drive);
+        telemetry.addData("Lift Height", robot.lift.getEncoder());
+        telemetry.addData("Lift Switch", robot.liftSwitch.get());
         telemetry.update();
 
-        /*
-         * Cut the loop short when we are AutoDriver'ing
-         * This keeps us out of the state machine until the preceding command is complete
-         */
-        if (driver.isRunning(time)) {
-            return;
-        }
-
-        // Test lift zero, with persistent timeout
-        if (!liftReady) {
-            switch (liftState) {
-                case INIT:
-                    liftTimeout = (float) time + (LIFT_TIMEOUT / 1000);
-                    liftState = liftState.next();
-                    break;
-                case RETRACT:
-                    if (robot.liftSwitch.get()) {
-                        liftState = liftState.next();
-                    } else if (time > liftTimeout) {
-                        robot.lift.stop();
-                        liftState = LIFT_STATE.TIMEOUT;
-                    } else {
-                        robot.lift.setPower(Lift.LIFT_SPEED_DOWN);
-                    }
-                    break;
-                case READY:
-                    robot.lift.stop();
-                    robot.lift.resetEncoder();
-                    liftState = liftState.next();
-                    break;
-                case DONE:
-                    liftReady = true;
-                    break;
-            }
-        }
-
-        if (gamepad1.a) {
-            int distance = (int) (Field.MM_PER_INCH * 20);
-            if (buttons.get("REVERSE")) {
-                distance *= -1;
-            }
-            driver.drive = common.drive.distance(distance);
-        } else if (gamepad1.y) {
-            Field.AllianceColor color = Field.AllianceColor.RED;
-            if (buttons.get("REVERSE")) {
-                color = Field.AllianceColor.opposite(color);
-            }
-            driver = common.jewel.hit(driver, color);
-            if (driver.isDone()) {
-                common.jewel.reset();
-            }
-        } else if (gamepad1.b) {
-            float speed = Drive.SPEED_FORWARD;
-            if (buttons.get("REVERSE")) {
-                speed *= -1;
-            }
-            driver.drive = common.drive.timeTurn(1000, speed);
-        } else if (gamepad1.x) {
-            float speed = Drive.SPEED_FORWARD;
-            if (buttons.get("REVERSE")) {
-                speed *= -1;
-            }
-            driver.drive = common.drive.time(1000, speed);
-        }
     }
 }
