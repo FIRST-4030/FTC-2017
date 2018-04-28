@@ -10,6 +10,7 @@ import org.firstinspires.ftc.teamcode.driveto.AutoDriver;
 import org.firstinspires.ftc.teamcode.driveto.PID;
 import org.firstinspires.ftc.teamcode.field.Field;
 import org.firstinspires.ftc.teamcode.field.VuforiaConfigs;
+import org.firstinspires.ftc.teamcode.robot.auto.Jewel;
 import org.firstinspires.ftc.teamcode.robot.common.Common;
 import org.firstinspires.ftc.teamcode.robot.Robot;
 import org.firstinspires.ftc.teamcode.robot.common.Drive;
@@ -84,11 +85,13 @@ public class SimpleAuto extends OpMode {
     @Override
     public void start() {
         lift.start();
+        robot.jewelArm.setPosition(Common.JEWEL_ARM_RETRACT);
         telemetry.clearAll();
     }
 
     @Override
     public void loop() {
+        buttons.update();
 
         if (buttons.get("LOW")) lift.set(org.firstinspires.ftc.teamcode.robot.lift.Lift.LOW);
         if (buttons.get("MIDDLE")) lift.set(org.firstinspires.ftc.teamcode.robot.lift.Lift.MIDDLE);
