@@ -75,7 +75,7 @@ public class SimpleAuto extends OpMode {
 
     @Override
     public void stop() {
-        lift.stop();
+        
     }
 
 }
