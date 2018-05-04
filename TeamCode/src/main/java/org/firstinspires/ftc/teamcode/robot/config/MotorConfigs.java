@@ -67,7 +67,7 @@ public class MotorConfigs extends Configs {
                         config = new MotorConfig("LM1", false, true);
                         break;
                     case LIGHTS:
-                        config = new MotorConfig("Lights", false);
+                        config = new MotorConfig("Lights", true);
                         break;
                 }
                 break;
