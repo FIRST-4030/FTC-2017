@@ -9,12 +9,13 @@
             <LynxEmbeddedIMU name="imu" port="0" bus="0" />
         </LynxModule>
         <LynxModule name="Lift" port="4">
+            <NeveRest40Gearmotor name="Lights" port="2" />
             <NeveRest40Gearmotor name="LM1" port="3" />
             <Servo name="CL2" port="0" />
             <Servo name="CL1" port="1" />
             <Servo name="Jewel Arm" port="2" />
-            <AnalogInput name="LS1" port="0" />
+            <DigitalDevice name="LS1" port="1" />
             <LynxEmbeddedIMU name="imu 1" port="0" bus="0" />
         </LynxModule>
     </LynxUsbDevice>
-</Robot>
+</Robot

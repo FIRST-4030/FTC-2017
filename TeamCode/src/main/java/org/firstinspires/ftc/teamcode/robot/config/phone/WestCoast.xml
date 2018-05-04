@@ -11,7 +11,7 @@
             <Servo name="Jewel Arm" port="2" />
             <Servo name="lBumperS" port="4" />
             <Servo name="rBumperS" port="5" />
-            <AnalogInput name="LS1" port="0" />
+            <DigitalDevice name="LS1" port="1" />
             <LynxEmbeddedIMU name="imu" port="0" bus="0" />
         </LynxModule>
         <LynxModule name="Wheel" port="3">
