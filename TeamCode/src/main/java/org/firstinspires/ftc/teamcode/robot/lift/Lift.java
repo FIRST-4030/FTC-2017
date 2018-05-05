@@ -11,10 +11,11 @@ public class Lift extends Background {
 
     public static final boolean DEBUG = false;
 
-    public static final int MAX = 5750;
-    public static final int HIGH = 5500;
-    public static final int MIDDLE = HIGH / 2;
-    public static final int LOW = 50;
+    public static int MAX = 5750;
+    public static int HIGH = 5500;
+    public static int LOW = 50;
+    public static int MIDDLE = HIGH / 2;
+
 
     public static final float SPEED_CALIBRATION = 0.25f;
 
@@ -29,6 +30,16 @@ public class Lift extends Background {
     public void init(Motor motor, Switch button) {
         this.motor = motor;
         this.button = button;
+        switch (Robot.robot.bot) {
+            case WestCoast:
+                break;
+            case WestCoastClaw:
+                MAX = 6350;
+                HIGH = 6200;
+                LOW = 50;
+                MIDDLE = HIGH / 2; // 3250
+                break;
+        }
         pid.setTarget(LOW);
     }
 
