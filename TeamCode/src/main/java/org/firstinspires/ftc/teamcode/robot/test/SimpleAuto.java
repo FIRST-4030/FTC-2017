@@ -28,7 +28,7 @@ public class SimpleAuto extends OpMode {
     private Common common = null;
     private ButtonHandler buttons = null;
 
-
+    public Sound lift = new Sound();
 
     @Override
     public void init() {
@@ -43,7 +43,9 @@ public class SimpleAuto extends OpMode {
 
         // Buttons
         buttons = new ButtonHandler(robot);
-
+        buttons.register("PAUSE", gamepad1, PAD_BUTTON.a);
+        buttons.register("NEXT", gamepad1, PAD_BUTTON.dpad_right);
+        buttons.register("PREV", gamepad1, PAD_BUTTON.dpad_left);
 
     }
 
@@ -60,22 +62,29 @@ public class SimpleAuto extends OpMode {
     public void start() {
         robot.jewelArm.setPosition(Common.JEWEL_ARM_RETRACT);
         telemetry.clearAll();
+        lift.init();
     }
 
     @Override
     public void loop() {
         buttons.update();
 
-        robot.lights.setPower(-gamepad1.left_stick_y);
+        if (buttons.get("PAUSE")) {
+            if (lift.lift.isPlaying()) lift.lift.pause();
+            else lift.lift.start();
+        }
 
-        telemetry.addData("light power", -gamepad1.left_stick_y);
+        if (buttons.get("NEXT")) lift.next();
+        if (buttons.get("PREV")) lift.prev();
+
+        telemetry.addData("CurrentSong", lift.currentSound);
         telemetry.update();
 
     }
 
     @Override
     public void stop() {
-        
+        lift.stop();
     }
 
 }
